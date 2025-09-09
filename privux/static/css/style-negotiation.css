@@ -1,0 +1,633 @@
+    * {
+    margin: 0;
+    padding: 0;
+    }
+
+    html {
+    height: 100%;
+    }
+
+    p {
+    color: grey;
+    }
+
+    #heading {
+    text-transform: uppercase;
+    color: #673AB7;
+    font-weight: normal;
+    }
+
+    #msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px;
+    }
+
+
+
+    #msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+
+    /*stacking fieldsets above each other*/
+    position: relative;
+    }
+
+    .form-card {
+    text-align: left;
+    }
+
+    /*Hide all except first fieldset*/
+    #msform fieldset:not(:first-of-type) {
+    display: none;
+    }
+
+    #msform input, #msform textarea {
+    padding: 8px 15px 8px 15px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    margin-top: 2px;
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2C3E50;
+    background-color: #ECEFF1;
+    font-size: 16px;
+    letter-spacing: 1px;
+    }
+
+    #msform input:focus, #msform textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: 1px solid #673AB7;
+    outline-width: 0;
+    }
+
+    /*Next Buttons*/
+    #msform .action-button {
+    width: 100px;
+    background: #673AB7;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    float: right;
+    }
+    #msform input[type="button"],
+    #msform input[type="submit"],
+    #msform input[type="reset"] {
+        width: auto; /* Ensure buttons take the width of their content */
+        display: inline-block; /* Aligns buttons inline with other elements */
+        cursor: pointer; /* Changes cursor to pointer on hover */
+        padding: 8px 15px; /* Matches padding with other inputs */
+    }
+    .createRequestBtn {
+    width: 150px;
+    background: #673AB7;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    }
+
+    .createNewRequestBtn {
+        width: 150px;
+        background: #673AB7;
+        font-weight: bold;
+        color: white;
+        border: 0 none;
+        border-radius: 0px;
+        cursor: pointer;
+        padding: 10px 5px;
+        margin: 10px 0px 10px 5px;
+        }
+
+    .styled-button {
+    width: 150px;
+    background: #673AB7;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    float: right;
+    }
+
+    .styled-button-offer {
+    background: #2196F3; /* Blue */
+    width: 100px;
+    }
+
+    .styled-button-agree {
+    background: #FFC107; /* Yellow */
+    width: 100px;
+    }
+    .styled-button-request {
+    background: #2196F3; /* Yellow */
+    width: 100px;
+    }
+    .styled-button-accept {
+    background: #FFC107; /* Yellow */
+    width: 100px;
+    }
+
+    .styled-button-terminate {
+    background: #F44336; /* Red */
+    width: 100px;
+    }
+
+    .styled-button-finalize {
+    background: #4CAF50; /* Green */
+    width: 110px;
+    }
+
+    .styled-button-verify {
+    background: #4CAF50; /* Green */
+    width: 100px;
+    }
+
+
+    #msform .action-button:hover, #msform .action-button:focus {
+    background-color: #311B92;
+    }
+
+    /*Previous Buttons*/
+    #msform .action-button-previous {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right;
+    }
+    #msform .action-button-submit {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right;
+    }
+
+    #msform .action-button-previous:hover, #msform .action-button-previous:focus {
+    background-color: #000000;
+    }
+
+    /*The background card*/
+    .card {
+    z-index: 0;
+    border: none;
+    position: relative;
+    }
+
+    /*FieldSet headings*/
+    .fs-title {
+    font-size: 25px;
+    color: #673AB7;
+    margin-bottom: 15px;
+    font-weight: normal;
+    text-align: left;
+    }
+
+    .purple-text {
+    color: #673AB7;
+    font-weight: normal;
+    }
+
+    /*Step Count*/
+    .steps {
+    font-size: 25px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: right;
+    }
+
+    /*Field names*/
+    .fieldlabels {
+    color: gray;
+    text-align: left;
+    }
+
+    /*Icon progressbar*/
+    #progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey;
+    display: flex;
+    justify-content: center;
+    }
+
+    #progressbar .active {
+    color: #673AB7;
+    }
+
+    #progressbar li {
+    list-style-type: none;
+    font-size: 15px;
+    width: 20%; 
+    float: left;
+    position: relative;
+    font-weight: 400;
+    }
+
+    /*Icons in the ProgressBar*/
+    #progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f13e";
+    }
+
+    #progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f007";
+    }
+
+    #progressbar #resource:before {
+    font-family: FontAwesome;
+    content: "\f2bc";
+    }
+    #progressbar #dpw:before {
+    font-family: FontAwesome;
+    content: "\f0ec";
+    }
+    #progressbar #odrl:before {
+    font-family: FontAwesome;
+    content: "\f24e";
+    }
+    #progressbar #nl:before {
+    font-family: FontAwesome;
+    content: "\f1ab";
+    }
+    #progressbar #np:before {
+    font-family: FontAwesome;
+    content: "\f2b5";
+    }
+
+    #progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c";
+    }
+
+    /*Icon ProgressBar before any progress*/
+    #progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px;
+    }
+
+    /*ProgressBar connectors*/
+    #progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1;
+    }
+
+    /*Color number of the step and the connector before it*/
+    #progressbar li.active:before, #progressbar li.active:after {
+    background: #673AB7;
+    }
+
+    /*Animated Progress Bar*/
+    .progress {
+    height: 20px;
+    }
+
+    .progress-bar {
+    background-color: #673AB7;
+    }
+
+    /*Fit image in bootstrap div*/
+    .fit-image{
+    width: 100%;
+    object-fit: cover;
+    }
+
+    .non-readonly-input{
+    background-color: white; /* Change the background color as an example */
+    }
+    td{
+    border:none;
+    }
+    body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    }
+
+    h2 {
+    text-align: center;
+    }
+
+    label {
+    display: block;
+    margin-bottom: 5px;
+    }
+
+    select, input {
+    padding: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    }
+
+    #constraintsContainer .constraintRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    #constraintsContainer .removeRow {
+    margin-left: 10px;
+    }
+
+    #addConstraintRow, #saveButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    }
+
+    #savedObjects {
+    margin-top: 20px;
+    }
+
+    #savedList {
+    list-style: none;
+    padding: 0;
+    }
+
+    #savedList li {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 5px;
+    }
+
+    #queryTextbox {
+    width: 50%;
+    height: 150px;
+    float: center;
+    display: none;
+    }
+
+    #constraintsContainer {
+    border: 1px solid #ccc; /* Border for the box */
+    padding: 15px; /* Padding for internal spacing */
+    margin-bottom: 20px; /* Adjust margin as needed */
+    }
+
+    #constraintsContainer .box {
+    background-color: #f8f8f8; /* Background color for the box */
+    }
+
+
+    .right-align {
+    float: right;
+    /* You can add more styles as needed */
+    }
+
+    #savedOdrl {
+    width: 100%;
+    box-sizing: border-box; /* This ensures that padding and border are included in the width */
+    }
+
+    /* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    position: relative;
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+#data_processing_workflow_object {
+    height: 200px; /* Set the desired height here */
+}
+
+        .sign-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .sign-modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .sign-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .sign-close:hover,
+        .sign-close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #signatureCanvas {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            width: 120px;
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .diff-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .diff-table th, .diff-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .diff-table .diff_header {
+            background-color: #f1f1f1;
+        }
+        .diff-table .diff_next {
+            background-color: #e6e6e6;
+        }
+        .diff-table .diff_add {
+            background-color: #d4edda;
+        }
+        .diff-table .diff_chg {
+            background-color: #ffeeba;
+        }
+        .diff-table .diff_sub {
+            background-color: #f8d7da;
+        }
+
+
+                .last-changes-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .last-changes-button:hover {
+            background-color: #0056b3;
+        }
+        .diff-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .diff-modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .diff-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .diff-close:hover,
+        .diff-close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        table.diff {font-family:Courier; border:medium;  border-top: 1px solid black; border-bottom: 1px solid black;}
+        .diff_header {background-color:#e0e0e0}
+        td.diff_header {text-align:right}
+        .diff_next {background-color:#c0c0c0}
+        .diff_add {background-color:#aaffaa}
+        .diff_chg {background-color:#ffff77}
+        .diff_sub {background-color:#ffaaaa}

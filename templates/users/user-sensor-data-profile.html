@@ -1,0 +1,35 @@
+{% extends 'base_template_users.html' %}
+{%load static %}
+{% block title %} User Profile{% endblock %}
+{% block content %}
+  <main id="main">
+    <section id="faq" class="faq">
+
+      <div class="container" data-aos="fade-up">
+
+        <header class="section-header">
+          <p>Data Information</p>
+            <small>Please select the (sensor) data that you are interested in sharing.</small>
+        </header>
+
+
+            <div class="row justify-content-center">
+                <div class="col-md-6"> <!-- Adjust the column size as needed -->
+                    <form id="sensorForm"  class="text-left" action="{% url 'saveconsent' %}" method="POST">
+                    {% csrf_token %}
+                        {% for sensor in sensors %}
+                            <input type="checkbox" id="{{ sensor.id }}" name="sensor" value="{{ sensor.sensor_data }}" {% if sensor.sensor_data in consents %}checked{% endif %}>
+
+                            <label for="{{ sensor.id }}">{{ sensor.sensor_data }}</label><br>
+                        {% endfor %}
+                    <br>
+                        <button type="submit" class="btn btn-primary">Save Data Information</button>
+                    </form>
+                </div>
+            </div>
+
+
+    </section>
+ </main><!-- End #main -->
+{% endblock %}
+```

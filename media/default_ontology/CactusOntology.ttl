@@ -1,0 +1,78 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix dpv: <https://w3id.org/dpv/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cactus: <https://www.cactusweb.gr/vocab/> . 
+@prefix cactusid: <https://www.cactusweb.gr/vocab/id/> . 
+
+cactus:LLM_Processing rdf:type odrl:Action ;
+	rdfs:subClassOf dpv:Processing ;
+	skos:broader dpv:Processing ;
+	rdfs:label "Processing Data With an LLM" ;
+	skos:prefLabel "Processing Data With an LLM" ;
+	skos:definition "The act of using a Large Language Model while providing the data, in whole or in part, as inputs." .
+cactus:Financial_Analysis rdf:type odrl:Action ;
+	rdfs:subClassOf dpv:Analyse ;
+	skos:broader dpv:Analyse ;
+	rdfs:label "Financial Analysis" ;
+	skos:prefLabel "Financial Analysis" .
+cactus:Customer_Analysis rdf:type odrl:Action ;
+	rdfs:subClassOf dpv:Analyse ;
+	skos:broader dpv:Analyse ;
+	rdfs:label "Customer Analysis" ;
+	skos:prefLabel "Customer Analysis" .
+cactus:Marketing_Analysis rdf:type odrl:Action ;
+	rdfs:subClassOf dpv:Analyse ;
+	skos:broader dpv:Analyse ;
+	rdfs:label "Marketing Analysis" ;
+	skos:prefLabel "Marketing Analysis" .
+cactus:Report_Creation rdf:type odrl:Action ;
+	rdfs:subClassOf dpv:Analyse ;
+	skos:broader dpv:Analyse ;
+	rdfs:label "Report Creation" ;
+	skos:prefLabel "Report Creation" .
+cactus:Cactus_Account_Manager rdf:type odrl:Party ;
+	rdfs:subClassOf odrl:Party ;
+	skos:broader odrl:Party ;
+	rdfs:label "Cactus Account Managers" ;
+	skos:prefLabel "Cactus Account Managers" .
+cactus:Cactus rdf:type odrl:Party ;
+	rdfs:subClassOf odrl:Party ;
+	skos:broader odrl:Party ;
+	rdfs:label "Cactus" ;
+	skos:prefLabel "Cactus" .
+cactus:Personal_Info_Identification rdf:type odrl:Purpose ;
+	rdf:type dpv:Purpose ;
+	rdfs:subClassOf dpv:Purpose ;
+	skos:broader dpv:Purpose ;
+	rdfs:subClassOf odrl:Purpose ;
+	skos:broader odrl:Purpose ;
+	rdfs:label "Personal Information Identification" ;
+	skos:prefLabel "Personal Information Identification" .
+cactus:Audit_Provision rdf:type odrl:Purpose ;
+	rdf:type dpv:Purpose ;
+	rdfs:subClassOf dpv:Purpose ;
+	skos:broader dpv:Purpose ;
+	rdfs:subClassOf odrl:Purpose ;
+	skos:broader odrl:Purpose ;
+	rdfs:label "Audit Provision" ;
+	skos:prefLabel "Audit Provision" .
+cactus:Benchmarking rdf:type odrl:Purpose ;
+	rdf:type dpv:Purpose ;
+	rdfs:subClassOf dpv:Purpose ;
+	skos:broader dpv:Purpose ;
+	rdfs:subClassOf odrl:Purpose ;
+	skos:broader odrl:Purpose ;
+	rdfs:label "Benchmarking" ;
+	skos:prefLabel "Benchmarking" .
+cactus:part rdfs:domain odrl:Asset ;
+	rdfs:domain dpv:Data ;
+	rdfs:label "specific part" ;
+	skos:prefLabel "specific part" .
+<http://xmlns.com/foaf/0.1/name> rdfs:domain cactus:Cactus_Account_Manager ;
+	rdfs:label "name" ;
+	skos:prefLabel "name" .
+<https://w3id.org/dpv/owl#Store> rdf:type odrl:Action .

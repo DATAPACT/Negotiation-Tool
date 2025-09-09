@@ -1,0 +1,107 @@
+version: '3'
+services:
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8000"
+    environment:
+      - API_BASE_URL=${API_BASE_URL}
+      - DJANGO_BASE_URL=${DJANGO_BASE_URL}
+      - DEBUG=True
+      - MASTER_PASSWORD=${MASTER_PASSWORD}
+
+    depends_on:
+      - api_v1
+      - api
+  api_v1:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: python negotiationapi_v1.py
+    volumes:
+      - .:/app
+    ports:
+      - "8007:8001"
+    environment:
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: mongo_v1
+      MONGO_PORT: 27017
+    depends_on:
+      - mongo_v1
+  mongo_v1:
+    image: mongo:latest
+    container_name: mongodb_v1
+    restart: always
+    ports:
+      - "27020:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}   # Use the same user
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD} # Use the same password
+    volumes:
+      - mongodb-data-v1:/data/db
+
+  api:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: python negotiation_secure_api.py
+    volumes:
+      - .:/app
+    ports:
+      - "8002:8001"
+    environment:
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_PORT: ${MONGO_PORT}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
+    depends_on:
+      - mongo
+      - kafka
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}   # Use the same user
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD} # Use the same password
+    volumes:
+      - mongodb-data:/data/db
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    restart: always
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    # No ports section → Kafka is NOT exposed externally
+
+volumes:
+  mongodb-data:
+  mongodb-data-v1:

@@ -1,0 +1,2116 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://ontologies.atb-bremen.de/smashHitCore#"
+     xml:base="http://ontologies.atb-bremen.de/smashHitCore"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:dc1="http://purl.org/dc/terms/dc:"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:odrl="http://www.w3.org/ns/odrl/2/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:terms="http://purl.org/dc/terms/"
+     xmlns:Contracts="https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/"
+     xmlns:data-view="http://www.w3.org/2003/g/data-view#"
+     xmlns:smashHitCore="http://ontologies.atb-bremen.de/smashHitCore#">
+    <owl:Ontology rdf:about="http://ontologies.atb-bremen.de/smashHitCore">
+        <owl:versionIRI rdf:resource="http://ontologies.atb-bremen.de/202210/smashHitCore/"/>
+        <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema"/>
+        <dc:abstract>The adoption of GDPR has resulted in a significant shift in how the data of European Union citizens is handled. A variety of data sharing challenges in scenarios such as smart cities have arised, especially, when attempting to semantically represent GDPR legal basis, such as consent, contracts and the data types and specific data sources related to them. Many ontologies that model GDPR exist, however, they focus mainly on consent. In order to represent other GDPR basis such as contracts, multiple ontologies need to be reused. The process is time-consuming and requires expert knowledge of semantics. To solve this challenge, we present the smashHit Core ontology, which provides an unified and coherent model for both consent and contracts, as well as the sensor data and data processing associated with them, in one place. The ontology was developed in response to real-world data sharing use cases in the insurance and smart cities domains.</dc:abstract>
+        <dc:contributor xml:lang="en">smashHit project consortium partners (This project has received funding from the European Union’s Horizon 2020 research and innovation program under grant agreement No. 871477)</dc:contributor>
+        <dc:creator xml:lang="en">Albert Zilverberg (ATB Bremen)</dc:creator>
+        <dc:creator xml:lang="en">Amar Tauqeer (University of Innsbruck)</dc:creator>
+        <dc:creator xml:lang="en">Ana Correia (ATB Bremen)</dc:creator>
+        <dc:creator xml:lang="en">Anelia Kurteva (University of Innsbruck)</dc:creator>
+        <dc:creator xml:lang="en">Anna Fensel (University of Innsbruck)</dc:creator>
+        <dc:creator xml:lang="en">Elena Demidova (University of Bonn)</dc:creator>
+        <dc:creator xml:lang="en">Kevin Nagorny (ATB Bremen)</dc:creator>
+        <dc:creator xml:lang="en">Rainer Hilscher (University of Innsbruck)</dc:creator>
+        <dc:creator xml:lang="en">Stefan Schestakov (Leibniz University Hannover)</dc:creator>
+        <dc:creator xml:lang="en">Tek Raj Chhetri (University of Innsbruck)</dc:creator>
+        <dc:creator xml:lang="en">Thorben Funke (Leibniz University Hannover)</dc:creator>
+        <dc:description>The smashHit Core ontology extends the scope of existing ontologies by providing an integrated semantic model for multiple domains such as consent, contracts, licenses and sensor data. This work is part of the smashhit project, which is developing a framework for trusted and secure sharing of data streams from both personal and industrial platforms needed to build sectorial and cross-sectorial services. The ontology models multiple GDPR legal bases such as consent and contracts, but is not limited to them. Concepts such as metadata, sensor data, data processing, involved entities, which can be useful for compliance checking, are modelled as well.</dc:description>
+        <dc:title>smashHit Core Ontology</dc:title>
+        <terms:license>https://creativecommons.org/licenses/by/4.0/</terms:license>
+        <owl:versionInfo xml:lang="en">0.5</owl:versionInfo>
+        <owl:versionInfo>2023/03/28</owl:versionInfo>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#RevokedAtTime -->
+
+    <owl:AnnotationProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#RevokedAtTime"/>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#contractType -->
+
+    <owl:AnnotationProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#contractType"/>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#forPurpose -->
+
+    <owl:AnnotationProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#forPurpose"/>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasRole -->
+
+    <owl:AnnotationProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasRole"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/abstract -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/abstract"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/contributor -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/contributor"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/creator -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/creator"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/description -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/description"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/title -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/title"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/hasVersion -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/hasVersion">
+        <rdfs:comment xml:lang="en">A related resource that is a version, edition, or adaptation of the described resource.
+Can be the version of consent and/or contract.</rdfs:comment>
+        <rdfs:label xml:lang="en">hasVersion</rdfs:label>
+        <rdfs:domain rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#License"/>
+        <rdfs:domain rdf:resource="https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/Contract"/>
+        <rdfs:domain rdf:resource="https://w3id.org/GConsent#Consent"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/identifier -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/identifier"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/license -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/license"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/dc:description -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/dc:description">
+        <rdfs:comment xml:lang="en">
+Description may include but is not limited to an abstract, a table of contents, a graphical representation, or a free text account of the resource.</rdfs:comment>
+        <rdfs:label xml:lang="en">description</rdfs:label>
+        <rdfs:domain rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#License"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#value -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#value">
+        <rdfs:comment>Idiomatic property used for structured values.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <rdfs:label>value</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#comment -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#comment">
+        <rdfs:comment>A description of the subject resource.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2000/01/rdf-schema#"/>
+        <rdfs:label>comment</rdfs:label>
+        <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#isDefinedBy -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#isDefinedBy">
+        <rdfs:comment>The defininition of the subject resource.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2000/01/rdf-schema#"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#label -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label">
+        <rdfs:comment>A human-readable name for the subject.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2000/01/rdf-schema#"/>
+        <rdfs:label>label</rdfs:label>
+        <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#seeAlso -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#seeAlso">
+        <rdfs:comment>Further information about the subject resource.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2000/01/rdf-schema#"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#backwardCompatibleWith -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#backwardCompatibleWith">
+        <rdfs:comment>The annotation property that indicates that a given ontology is backward compatible with another ontology.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#deprecated -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#deprecated">
+        <rdfs:comment>The annotation property that indicates that a given entity has been deprecated.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>deprecated</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#imports -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#imports">
+        <rdfs:comment>The property that is used for importing other ontologies into a given ontology.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>imports</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#incompatibleWith -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#incompatibleWith">
+        <rdfs:comment>The annotation property that indicates that a given ontology is incompatible with another ontology.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>incompatibleWith</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#priorVersion -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#priorVersion">
+        <rdfs:comment>The annotation property that indicates the predecessor ontology of a given ontology.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>priorVersion</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#versionIRI -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#versionIRI">
+        <rdfs:comment>The property that identifies the version IRI of an ontology.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>versionIRI</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#versionInfo -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#versionInfo">
+        <rdfs:comment>The annotation property that provides version information for an ontology or another OWL construct.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>versionInfo</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2003/g/data-view#namespaceTransformation -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2003/g/data-view#namespaceTransformation"/>
+    
+
+
+    <!-- http://www.w3.org/ns/odrl/2/assignee -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/ns/odrl/2/assignee">
+        <dc1:description xml:lang="en">Relates to agents who are the recipient of the rules.</dc1:description>
+        <rdfs:label xml:lang="en">assignee</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/ns/prov#Agent"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/ns/odrl/2/Policy"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/odrl/2/assigner -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/ns/odrl/2/assigner">
+        <dc1:description xml:lang="en">Relates to agents to assign some rule to others.</dc1:description>
+        <rdfs:label xml:lang="en">assigner</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/ns/prov#Agent"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasExecutionDate -->
+
+    <owl:AnnotationProperty rdf:about="https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasExecutionDate"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"/>
+    
+
+
+    <!-- https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp -->
+
+    <rdfs:Datatype rdf:about="https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp">
+        <rdfs:label xml:lang="en">dateTimeStamp</rdfs:label>
+    </rdfs:Datatype>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- fibo-der-drc-ma:hasBeneficiary -->
+
+    <owl:ObjectProperty rdf:about="fibo-der-drc-ma:hasBeneficiary">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Links a trust to a named beneficiary.</dc:description>
+        <rdfs:label xml:lang="en">has beneficiary</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#GrantedAtTime -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#GrantedAtTime">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasConsentStatus"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Links consent to the time it was granted.</dc:description>
+        <rdfs:label xml:lang="en">granted at time</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#Has_trace -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#Has_trace">
+        <dc:description xml:lang="en">Used to retrieve a list of all the companies with which the data has been shared based on the consent given (consent id) or on the contract given (contract id)</dc:description>
+        <rdfs:label>has trace</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#WithdrawnAtTime -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#WithdrawnAtTime">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasConsentStatus"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Links consent to the time it was withdrawn.</dc:description>
+        <rdfs:label xml:lang="en">withdrawn at time</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#atCity -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#atCity">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#atLocation"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Specifies that the location of an event is a municipality such as a city, town, village.</dc:description>
+        <rdfs:label xml:lang="en">at city</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#atCountry -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#atCountry">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#atLocation"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Specifies that the location of an event is a country.</dc:description>
+        <rdfs:label xml:lang="en">at country</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#atDateTime -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#atDateTime">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContext"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associates status with an instant of time when a change occurred.</dc:description>
+        <rdfs:label xml:lang="en">at date time</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#atLocation -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#atLocation">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContext"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates consent, contract, license with a specific location, where a status change occurred.</dc:description>
+        <rdfs:label xml:lang="en">at location</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#atRegion -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#atRegion">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#atLocation"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Specifies that the location of an event is a region.</dc:description>
+        <rdfs:label xml:lang="en">at region</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#atState -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#atState">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#atLocation"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Specifies that the location of an event is a state.</dc:description>
+        <rdfs:label xml:lang="en">at state</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#forDataProcessing -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#forDataProcessing">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates consent to specific data processing.</dc:description>
+        <rdfs:label xml:lang="en">for data processing</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasAssociatedRisk -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasAssociatedRisk">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Related a risk to a specific data processing.</dc:description>
+        <rdfs:label>has associated risk</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasBusinessToBusiness -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasBusinessToBusiness">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractCategory"/>
+        <dc:description>Associates a business to business category to a contract.</dc:description>
+        <rdfs:label>has business to business</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasBusinessToConsumer -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasBusinessToConsumer">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractCategory"/>
+        <dc:description>Associates a business to consumer category to a contract.</dc:description>
+        <rdfs:label>has business to consumer</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasConsentStatus -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasConsentStatus">
+        <owl:inverseOf rdf:resource="https://w3id.org/GConsent#isStatusForConsent"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to link consent to its status.</dc:description>
+        <rdfs:label xml:lang="en">has consent status</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasContactPoint -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasContactPoint">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associated an agent with specific contact information</dc:description>
+        <rdfs:label xml:lang="en">has contact point</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasContext -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasContext">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates the consent, contracts and licenses to their specific context.</dc:description>
+        <rdfs:label xml:lang="en">has context</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasContractCategory -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasContractCategory">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to related a contract to a specific contract category (e.g., business to consumer).</dc:description>
+        <rdfs:label>has contract category</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Links contract status to a contract</dc:description>
+        <rdfs:label xml:lang="en">has contract status</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasContractType -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasContractType">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to related a contract to a specific contract type.</dc:description>
+        <rdfs:label xml:lang="en">has contract type</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasCountry -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasCountry">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to process associated country.</dc:description>
+        <rdfs:label>has country</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasCreated -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasCreated">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to indicate that a contract has been created.</dc:description>
+        <rdfs:label>has created</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasCreationDate -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasCreationDate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates contracts and licenses to their creation date.</dc:description>
+        <rdfs:label xml:lang="en">creation date</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasDataController -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasDataController">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates consent and contracts to a specific data controller.</dc:description>
+        <rdfs:label xml:lang="en">has data controller</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasDataProcessor -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasDataProcessor">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates consent and contract to a specific data processor.</dc:description>
+        <rdfs:label xml:lang="en">has data processor</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasDataProtectionOfficer -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasDataProtectionOfficer">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates consent and contract to a specific data protection officer.</dc:description>
+        <rdfs:label xml:lang="en">has data protection officer</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasDataSubject -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasDataSubject">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates consent and contract to a specific data subject.</dc:description>
+        <rdfs:label xml:lang="en">has data subject</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasEmail -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasEmail">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associates an agent with an email address.</dc:description>
+        <rdfs:label xml:lang="en">has email</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasEndDate -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasEndDate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Relates contracts and licenses to their ending dates.</dc:description>
+        <rdfs:label xml:lang="en">has end date</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasExpirationDate -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasExpirationDate">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContext"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">The expiration date of consent or contract. Format: xsd:dateTime</dc:description>
+        <rdfs:label xml:lang="en">expiration date</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasExpired -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasExpired">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to indicate the expired state of contract.</dc:description>
+        <rdfs:label xml:lang="en">has expired</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasFingerprint -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasFingerprint">
+        <dc:description xml:lang="en">specifies the fingerprint of a resource</dc:description>
+        <rdfs:label xml:lang="en">has fingerprint</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasFulfilled -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasFulfilled">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasStates"/>
+        <dc:description xml:lang="en">Indicates that an obligation has been fulfilled.</dc:description>
+        <rdfs:label>has fulfilled</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasHash -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasHash">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/ns/dpv#DataSource"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasInvalid -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasInvalid">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasStates"/>
+        <dc:description xml:lang="en">Indicates an obligation is invalid.</dc:description>
+        <rdfs:label>has invalid</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasMetadata -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasMetadata">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Links a resource to some metadata from the class InformationEntity.</dc:description>
+        <rdfs:label xml:lang="en">has metadata</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasMethod -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasMethod">
+        <dc:description xml:lang="en">identifies the method used</dc:description>
+        <rdfs:label xml:lang="en">has method</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasMinimumDuration -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasMinimumDuration">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Specifies the minimum duration of a contract or license.</dc:description>
+        <rdfs:label xml:lang="en">has minimum duration</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasName -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to associate and agent, for example, a person with a name.</dc:description>
+        <rdfs:label xml:lang="en">has name</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasParameter -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasParameter">
+        <dc:description xml:lang="en">the parameter involved</dc:description>
+        <rdfs:label xml:lang="en">has parameter</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasPassword -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasPassword">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasPersonalData"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associates an agent with his/her password.</dc:description>
+        <rdfs:label xml:lang="en">has password</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasPending -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasPending">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to indicate the pending state of contract.</dc:description>
+        <rdfs:label xml:lang="en">has pending</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasPendingState -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasPendingState">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasStates"/>
+        <dc:description xml:lang="en">Indicates pending state of an obligation.</dc:description>
+        <rdfs:label>has pending state</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasPersonalData -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasPersonalData">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associates agents with their personal data.</dc:description>
+        <rdfs:label xml:lang="en">has personal data</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasPostalAddress -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasPostalAddress">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to specify the physical address of a location.</dc:description>
+        <rdfs:label xml:lang="en">has postal address</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasPostalCode -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasPostalCode">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to specify the postal code related to a postal address.</dc:description>
+        <rdfs:label xml:lang="en">has postal code</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasPurposePreference -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasPurposePreference">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associates an agent to his/her purpose preference.</dc:description>
+        <rdfs:label xml:lang="en">has purpose preference</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasRetentionDate -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasRetentionDate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associates a personal data category to its retention date.</dc:description>
+        <rdfs:label xml:lang="en">has retention date</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasSensorDataCategory -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasSensorDataCategory">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">Associates the sensor data to a specific sensor data category.</dc:description>
+        <rdfs:label xml:lang="en">has sensor data category</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasSigned -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasSigned">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to indicate the signed state of contract.</dc:description>
+        <rdfs:label xml:lang="en">has signed</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasStates -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasStates">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Defines obligation states for contracts.</dc:description>
+        <rdfs:label>has obligation states</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasTelephone -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasTelephone">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to associate and agent, for example, a person with an email.</dc:description>
+        <rdfs:label xml:lang="en">has telephone</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasTermTypes -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasTermTypes">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasTermsAndConditions"/>
+        <dc:description>Used to specify the basic term types related with a contract.</dc:description>
+        <rdfs:label>has term types</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasTerminated -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasTerminated">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to indicate the terminated state of contract.</dc:description>
+        <rdfs:label xml:lang="en">has terminated</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasTermsAndConditions -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasTermsAndConditions">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to specify the obligations to a contract</dc:description>
+        <rdfs:label xml:lang="en">has terms and conditions</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasTerritory -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasTerritory">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Specifies a location in detail.</dc:description>
+        <rdfs:label>has territory</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasUpdated -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasUpdated">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContractStatus"/>
+        <dc:description xml:lang="en">Used to indicate an update in the state pf a contract.</dc:description>
+        <rdfs:label>has updated</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasUsername -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasUsername">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasPersonalData"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Associates an agent with his/her username.</dc:description>
+        <rdfs:label xml:lang="en">has username</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasViolated -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasViolated">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasStates"/>
+        <dc:description xml:lang="en">Indicated an obligation has been violated.</dc:description>
+        <rdfs:label>has violated</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasWatermark -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasWatermark">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Specifies the watermark of a resource.</dc:description>
+        <rdfs:label xml:lang="en">has watermark</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#inMedium -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#inMedium">
+        <rdfs:subPropertyOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#hasContext"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to associate consent and contract with the medium through which they were created.</dc:description>
+        <rdfs:label xml:lang="en">in medium</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#isAboutData -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#isAboutData">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/ns/dpv#DataSource"/>
+        <dc:description xml:lang="en">Used to specify the resource and/or data source which this consent is about.</dc:description>
+        <rdfs:label xml:lang="en">is about data</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#isProvidedBy -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#isProvidedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <dc:description xml:lang="en">Indicates the entity or activitiy that provided the consent.</dc:description>
+        <rdfs:label xml:lang="en">is provided by</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#is_received_by -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#is_received_by">
+        <dc:description xml:lang="en">Indicates the company which received the data.</dc:description>
+        <rdfs:label>is received by</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#is_registered_by -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#is_registered_by">
+        <dc:description xml:lang="en">Used by Data Provider to register new data in smashHit that makes the data available to other Actors.</dc:description>
+        <rdfs:label>is registered by</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#is_send_by -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#is_send_by">
+        <dc:description xml:lang="en">Indicates the company which sent the data.</dc:description>
+        <rdfs:label>is send by</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#requestedBy -->
+
+    <owl:ObjectProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#requestedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to specify the agent by whom this consent was requested by.</dc:description>
+        <rdfs:label xml:lang="en">requested by</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/creator -->
+
+    <owl:ObjectProperty rdf:about="http://purl.org/dc/terms/creator">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">An entity responsible for making the resource.</dc:description>
+        <rdfs:label xml:lang="en">creator</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#hasInputData -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#hasInputData">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <dc:description xml:lang="en">Associates input data from a resource with specific processing.</dc:description>
+        <rdfs:label xml:lang="en">has input data</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#hasOutputData -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#hasOutputData">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description>Associates output data with a type of processing.</dc:description>
+        <rdfs:label xml:lang="en">has output data</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#hasType -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#hasType">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to identify the type of an agent.</dc:description>
+        <rdfs:label xml:lang="en">has type</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#differentFrom -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/2002/07/owl#differentFrom">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <dc:description xml:lang="en">The property that determines that two given individuals are different.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>different from</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#topObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/2002/07/owl#topObjectProperty">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:comment>The object property that relates every two individuals.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>top object property</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/2006/time#hasBeginning -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/2006/time#hasBeginning">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Beginning of a temporal entity.</dc:description>
+        <rdfs:label xml:lang="en">has beginning</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/2006/time#hasEnd -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/2006/time#hasEnd">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">End of a temporal entity.</dc:description>
+        <rdfs:label xml:lang="en">has end</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/dcat#bbox -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/dcat#bbox">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">The geographic bounding box of a resource.</dc:description>
+        <rdfs:label xml:lang="en">bounding box</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/dcat#distribution -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/dcat#distribution">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">A specific representation of a dataset. A dataset might be available in multiple serializations that may differ in various ways, including natural language, media-type or format, schematic organization, temporal and spatial resolution, level of detail or profiles (which might specify any or all of the above).</dc:description>
+        <rdfs:label xml:lang="en">distribution</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/dcat#hadRole -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/dcat#hadRole">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">The function of an entity or agent with respect to another entity or resource.</dc:description>
+        <rdfs:label xml:lang="en">had role</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/dpv#hasPersonalDataCategory -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/dpv#hasPersonalDataCategory">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">This property associates a personal data category with an instance of legal data handling or consent</dc:description>
+        <rdfs:label xml:lang="en">has personal data category</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/dpv#hasPurpose -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/dpv#hasPurpose">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">This property associates a purpose with an instance of legal data handling or consent</dc:description>
+        <rdfs:label xml:lang="en">has purpose</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#actedOnBehalfOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/prov#actedOnBehalfOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#wasInfluencedBy"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">An object property to express the accountability of an agent towards another agent. The subordinate agent acted on behalf of the responsible agent in an actual activity.</dc:description>
+        <rdfs:label xml:lang="en">acted on behalf of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#wasGeneratedBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/prov#wasGeneratedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to identify how a dataset was generated. Specifically, what data processing generated the dataset.</dc:description>
+        <rdfs:label xml:lang="en">was generated by</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#wasInfluencedBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/prov#wasInfluencedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Influence is the capacity of an entity, activity, or agent to have an effect on the character, development, or behaviour of another by means of usage, start, end, generation, invalidation, communication, derivation, attribution, association, or delegation.
+
+See https://www.w3.org/TR/prov-o/#wasInfluencedBy</dc:description>
+        <rdfs:label xml:lang="en">was influenced by</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasContractualElement -->
+
+    <owl:ObjectProperty rdf:about="https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasContractualElement">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to indicate something that is a component of an agreement/contract.</dc:description>
+        <rdfs:label xml:lang="en">has contractual element</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasEffectiveDate -->
+
+    <owl:ObjectProperty rdf:about="https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasEffectiveDate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Used to indicate the date a contract, relationship, or policy comes into force.</dc:description>
+        <rdfs:label xml:lang="en">has effective date</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://w3id.org/GConsent#hasRole -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/GConsent#hasRole">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description xml:lang="en">Indicates the role played by specified Person or Organisation or Third Party in the specified Association.</dc:description>
+        <rdfs:label xml:lang="en">has role</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://w3id.org/GConsent#isStatusForConsent -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/GConsent#isStatusForConsent">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+        <dc:description xml:lang="en">Links a status to the consent that uses it.</dc:description>
+        <rdfs:label xml:lang="en">is status for consent</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#agentID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#agentID">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to associate an agent with an agent ID.</dc:description>
+        <rdfs:label xml:lang="en">agent id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#birth_date -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#birth_date">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTimeStamp"/>
+        <dc:description xml:lang="en">An agent&apos;s date of birth.</dc:description>
+        <rdfs:label>birth date</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#consentID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#consentID">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to associate a consent with a consent ID.</dc:description>
+        <rdfs:label xml:lang="en">consent id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#contractID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#contractID">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to associate a contract to a contract ID.</dc:description>
+        <rdfs:label>contract id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#contractorID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#contractorID">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#description -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#description">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Describes the steps for achieving a result.</dc:description>
+        <rdfs:label>description</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasContractors -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasContractors">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The agents involved in a contract.</dc:description>
+        <rdfs:label>has contractors</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasHash -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasHash">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasObligations -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasObligations">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Specifies contract&apos;s obligations.</dc:description>
+        <rdfs:label>has obligations</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasSignature -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasSignature">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to store signature text or url for a contract.</dc:description>
+        <rdfs:label>has signature</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasSignatures -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasSignatures">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to contain a list of contractor signatures to a specific contract.</dc:description>
+        <rdfs:label>has signatures</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hasTerms -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasTerms">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Specifies contract&apos;s terms.</dc:description>
+        <rdfs:label>has terms</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#hash -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hash">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">A hash function is any function that can be used to map data of arbitrary size to fixed-size values. smashHit uses hashes for traceability.</dc:description>
+        <rdfs:label xml:lang="en">hash</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#licenseID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#licenseID">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to associate a license with a license ID.</dc:description>
+        <rdfs:label xml:lang="en">license id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#obligationID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#obligationID">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#obligationStateID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#obligationStateID">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to associate a obligation state to a obligation state ID.</dc:description>
+        <rdfs:label>obligation state id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#signatureID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#signatureID">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to associate a contractor signature with an signature ID.</dc:description>
+        <rdfs:label>signature id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#telephone_number -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#telephone_number">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <dc:description xml:lang="en">Telephone number of an agent.</dc:description>
+        <rdfs:label>telephone number</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#termID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#termID">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#termTypeID -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#termTypeID">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Used to associate a term type to a contract term type ID.</dc:description>
+        <rdfs:label>term type id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#time_instant -->
+
+    <owl:DatatypeProperty rdf:about="http://ontologies.atb-bremen.de/smashHitCore#time_instant">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTimeStamp"/>
+        <dc:description xml:lang="en">An instance of time.</dc:description>
+        <rdfs:label>time instant</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/accessRights -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/accessRights">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">A rights statement that concerns how the distribution is accessed.</dc:description>
+        <rdfs:label xml:lang="en">access rights</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/format -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/format">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The file format of the distribution.</dc:description>
+        <rdfs:label xml:lang="en">format</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/issued -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/issued">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <dc:description xml:lang="en">Date of formal issuance (e.g., publication) of the distribution.</dc:description>
+        <rdfs:label xml:lang="en">issued</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/language -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/language">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">A language of the item. This refers to the natural language used for textual metadata (i.e. titles, descriptions, etc) of a cataloged resource (i.e. dataset or service) or the textual values of a dataset distribution</dc:description>
+        <rdfs:label xml:lang="en">language</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/modified -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/modified">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp"/>
+        <dc:description xml:lang="en">Most recent date on which the distribution was changed, updated or modified.</dc:description>
+        <rdfs:label xml:lang="en">modified</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/rights -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/rights">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">Information about rights held in and over the distribution.</dc:description>
+        <rdfs:label xml:lang="en">rights</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/title -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/title">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">A name given to the distribution.</dc:description>
+        <rdfs:label xml:lang="en">title</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#bottomDataProperty -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#bottomDataProperty">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+        <dc:description xml:lang="en">The data property that does not relate any individual to any data value.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>bottom data property</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#cardinality -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#cardinality">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+        <dc:description xml:lang="en">The property that determines the cardinality of an exact cardinality restriction.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>cardinality</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#maxCardinality -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#maxCardinality">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+        <dc:description xml:lang="en">The property that determines the cardinality of a maximum cardinality restriction.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>max cardinality</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#maxQualifiedCardinality -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#maxQualifiedCardinality">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+        <dc:description xml:lang="en">The property that determines the cardinality of a maximum qualified cardinality restriction.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>max qualified cardinality</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#minCardinality -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#minCardinality">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+        <dc:description xml:lang="en">The property that determines the cardinality of a minimum cardinality restriction.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>min cardinality</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#minQualifiedCardinality -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#minQualifiedCardinality">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+        <dc:description xml:lang="en">The property that determines the cardinality of a minimum qualified cardinality restriction.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>min qualified cardinality</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#qualifiedCardinality -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#qualifiedCardinality">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+        <dc:description xml:lang="en">The property that determines the cardinality of an exact qualified cardinality restriction.</dc:description>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>qualified cardinality</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#topDataProperty -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/2002/07/owl#topDataProperty">
+        <rdfs:comment>The data property that relates every individual to every data value.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>top data property</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLatitude -->
+
+    <owl:DatatypeProperty rdf:about="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLatitude">
+        <rdfs:domain rdf:resource="http://mmisw.org/ont/univmemphis/sensor#GPS"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The angle formed by the intersection of a line perpendicular to the Earth&apos;s surface at a point and the plane of the Equator</dc:description>
+        <rdfs:label xml:lang="en">has latitude</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLongitude -->
+
+    <owl:DatatypeProperty rdf:about="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLongitude">
+        <rdfs:domain rdf:resource="http://mmisw.org/ont/univmemphis/sensor#GPS"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The angle between a plane that passes through the point and the North and South poles, and a reference plane</dc:description>
+        <rdfs:label xml:lang="en">has longitude</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMaximumLatitude -->
+
+    <owl:DatatypeProperty rdf:about="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMaximumLatitude">
+        <rdfs:subPropertyOf rdf:resource="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLatitude"/>
+        <rdfs:domain rdf:resource="http://mmisw.org/ont/univmemphis/sensor#GPS"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The maximum latitude value that was recorded.</dc:description>
+        <rdfs:label xml:lang="en">has maximum latitude</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMaximumLongitude -->
+
+    <owl:DatatypeProperty rdf:about="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMaximumLongitude">
+        <rdfs:subPropertyOf rdf:resource="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLongitude"/>
+        <rdfs:domain rdf:resource="http://mmisw.org/ont/univmemphis/sensor#GPS"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The maximum longitude value that was recorded.</dc:description>
+        <rdfs:label xml:lang="en">has maximum longitude</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMinimumLatitude -->
+
+    <owl:DatatypeProperty rdf:about="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMinimumLatitude">
+        <rdfs:subPropertyOf rdf:resource="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLatitude"/>
+        <rdfs:domain rdf:resource="http://mmisw.org/ont/univmemphis/sensor#GPS"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The minimum latitude value that was recorded.</dc:description>
+        <rdfs:label xml:lang="en">has minimum latitude</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMinimumLongitude -->
+
+    <owl:DatatypeProperty rdf:about="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasMinimumLongitude">
+        <rdfs:subPropertyOf rdf:resource="https://www.omg.org/spec/LCC/Countries/CountryRepresentation/hasLongitude"/>
+        <rdfs:domain rdf:resource="http://mmisw.org/ont/univmemphis/sensor#GPS"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <dc:description xml:lang="en">The minimum longitude value that was recorded.</dc:description>
+        <rdfs:label xml:lang="en">has minimum longitude</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://mmisw.org/ont/univmemphis/sensor#GPS -->
+
+    <owl:Class rdf:about="http://mmisw.org/ont/univmemphis/sensor#GPS">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">A GPS Sensor</dc:description>
+        <rdfs:label xml:lang="en">GPS</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://mmisw.org/ont/univmemphis/sensor#Humidity -->
+
+    <owl:Class rdf:about="http://mmisw.org/ont/univmemphis/sensor#Humidity">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">A humidity sensor.</dc:description>
+        <rdfs:label xml:lang="en">Humidity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://mmisw.org/ont/univmemphis/sensor#Motion -->
+
+    <owl:Class rdf:about="http://mmisw.org/ont/univmemphis/sensor#Motion">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">A Motion Sensor</dc:description>
+        <rdfs:label xml:lang="en">Motion</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://mmisw.org/ont/univmemphis/sensor#Orientation -->
+
+    <owl:Class rdf:about="http://mmisw.org/ont/univmemphis/sensor#Orientation">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">An orientation sensor.</dc:description>
+        <rdfs:label xml:lang="en">Orientation</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://mmisw.org/ont/univmemphis/sensor#Sensor -->
+
+    <owl:Class rdf:about="http://mmisw.org/ont/univmemphis/sensor#Sensor">
+        <rdfs:subClassOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#Device"/>
+        <dc:description xml:lang="en">Sensor - Device, agent (including humans), or software (simulation) involved in, or implementing, a procedure. Sensors respond to a stimulus, e.g., a change in the environment, or Input data composed from the results of prior observations, and generate a result. Sensors can be hosted by platforms.</dc:description>
+        <rdfs:label xml:lang="en">Sensor</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#AcousticDetector -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#AcousticDetector">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">Acoustic sensors can be used to measure speed, volume, carriageway occupancy and presence. The advantage of acoustic sensors is that they can function under all lighting conditions and during adverse weather.</dc:description>
+        <rdfs:label xml:lang="en">Acoustic </rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#AirPollutionSensor -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#AirPollutionSensor">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">Air pollution sensors detect gases like carbon monoxide and carbon dioxide by measuring the absorption of infrared light.</dc:description>
+        <rdfs:label xml:lang="en">Air Pollution Sensor</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#Device -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#Device">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/dpv#DataSource"/>
+        <dc:description xml:lang="en">A thing made or adapted for a particular purpose, especially a piece of mechanical or electronic equipment.</dc:description>
+        <rdfs:label xml:lang="en">Device</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#InductiveLoopDetector -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#InductiveLoopDetector">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">Inductive loop detectors are mainly used at intersections in conjunction with advanced signal traffic control systems, and on freeways for traffic monitoring and incident detection purposes.</dc:description>
+        <rdfs:label xml:lang="en">Inductive Loop Detector</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#Magnetometer -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#Magnetometer">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">Magnetometers can provide information on traffic volume, lane occupancy, speed as well as vehicle length. Further, magnetometers provide for point detection.</dc:description>
+        <rdfs:label xml:lang="en">Magnetometer</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#MicroLoop -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#MicroLoop">
+        <rdfs:subClassOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#Magnetometer"/>
+        <dc:description xml:lang="en">A type of magnetometer that is installed in pavements.</dc:description>
+        <rdfs:label xml:lang="en">Micro Loop</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#MicrowaveRadarDetector -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#MicrowaveRadarDetector">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">Microwave radar detectors are examples of non-intrusive detection devices whose installation and maintenance does NOT require lane closure and pavement modifications. Unlike inductive loops, non-intrusive detection devices are not embedded in the pavement.</dc:description>
+        <rdfs:label xml:lang="en">Microwave Radar Detector</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#PhotoelectricSensor -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#PhotoelectricSensor">
+        <rdfs:subClassOf rdf:resource="http://mmisw.org/ont/univmemphis/sensor#Sensor"/>
+        <dc:description xml:lang="en">A photoelectric sensor uses a light beam to detect smoke.</dc:description>
+        <rdfs:label xml:lang="en">Photoelectric Sensor</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontologies.atb-bremen.de/smashHitCore#WirelessMagnetometers -->
+
+    <owl:Class rdf:about="http://ontologies.atb-bremen.de/smashHitCore#WirelessMagnetometers">
+        <rdfs:subClassOf rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#Magnetometer"/>
+        <dc:description xml:lang="en">A type of magnetometers that do not require extensive work under concrete.</dc:description>
+        <rdfs:label xml:lang="en">Wireless Magentometers</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="http://www.w3.org/2002/07/owl#Thing">
+        <rdfs:comment>The class of OWL individuals.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>Thing</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/ns/dpv#DataSource -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/dpv#DataSource">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <dc:description xml:lang="en">Source of data</dc:description>
+        <rdfs:label xml:lang="en">Data Source</rdfs:label>
+    </owl:Class>
+    <rdf:Description>
+        <obligationID rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#OB001"/>
+        <obligationID rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#OB002"/>
+    </rdf:Description>
+    <rdf:Description>
+        <termID rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#T001"/>
+        <termID rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#T002"/>
+    </rdf:Description>
+    <rdf:Description>
+        <contractorID rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#C001"/>
+        <contractorID rdf:resource="http://ontologies.atb-bremen.de/smashHitCore#C002"/>
+    </rdf:Description>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="dct:Location">
+        <rdfs:comment xml:lang="en">A spatial region or named place.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="dct:PeriodOfTime">
+        <rdfs:comment xml:lang="en">An interval of time that is named or defined by its start and end dates.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="dct:accessRights">
+        <rdfs:comment xml:lang="en">A rights statement that concerns how the distribution is accessed.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="dct:modified">
+        <rdfs:comment xml:lang="en">Most recent date on which the distribution was changed, updated or modified.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="dct:rights">
+        <rdfs:comment xml:lang="en">Information about rights held in and over the distribution.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://ontologies.atb-bremen.de/smashHitCore#PostCode">
+        <dc1:description xml:lang="en">A short series of letters and/or numbers that is part of an address, and shows exactly where a place is</dc1:description>
+        <rdfs:label xml:lang="en">Post Code</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://ontologies.atb-bremen.de/smashHitCore#contractorID">
+        <dc:description xml:lang="en">Used to associate a contractor to a contractor ID.</dc:description>
+        <rdfs:label>contractor id</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://ontologies.atb-bremen.de/smashHitCore#given">
+        <rdfs:label xml:lang="en">Given</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://ontologies.atb-bremen.de/smashHitCore#hasHash">
+        <dc:description xml:lang="en">Used to associate a concept with its hash.</dc:description>
+        <rdfs:label xml:lang="en">has hash</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://ontologies.atb-bremen.de/smashHitCore#not_given">
+        <rdfs:label xml:lang="en">NotGiven</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://ontologies.atb-bremen.de/smashHitCore#obligationID">
+        <rdfs:label>obligation id</rdfs:label>
+        <dc:description xml:lang="en">Used to associate a obligation to a contract obligation ID.</dc:description>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://ontologies.atb-bremen.de/smashHitCore#termID">
+        <rdfs:label>term id</rdfs:label>
+        <dc:description xml:lang="en">Used to associate a term to a contract term ID.</dc:description>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#first">
+        <rdfs:label>first</rdfs:label>
+        <rdfs:comment>The first item in the subject RDF list.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <rdfs:comment>The empty list, with no items in it. If the rest of a list is nil then the list has no more items in it.</rdfs:comment>
+        <rdfs:label>nil</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#object">
+        <rdfs:label>object</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <rdfs:comment>The object of the subject RDF statement.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate">
+        <rdfs:label>predicate</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <rdfs:comment>The predicate of the subject RDF statement.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#rest">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <rdfs:comment>The rest of the subject RDF list after the first item.</rdfs:comment>
+        <rdfs:label>rest</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#subject">
+        <rdfs:comment>The subject of the subject RDF statement.</rdfs:comment>
+        <rdfs:label>subject</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <rdfs:comment>The subject is an instance of a class.</rdfs:comment>
+        <rdfs:label>type</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#domain">
+        <rdfs:comment>A domain of the subject property.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2000/01/rdf-schema#"/>
+        <rdfs:label>domain</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#allValuesFrom">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the class that a universal property restriction refers to.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#annotatedProperty">
+        <rdfs:comment>The property that determines the predicate of an annotated axiom or annotated annotation.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#annotatedSource">
+        <rdfs:comment>The property that determines the subject of an annotated axiom or annotated annotation.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#annotatedTarget">
+        <rdfs:comment>The property that determines the object of an annotated axiom or annotated annotation.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#assertionProperty">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the predicate of a negative property assertion.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#complementOf">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines that a given class is the complement of another class.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#datatypeComplementOf">
+        <rdfs:comment>The property that determines that a given data range is the complement of another data range with respect to the data domain.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#disjointUnionOf">
+        <rdfs:comment>The property that determines that a given class is equivalent to the disjoint union of a collection of other classes.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#disjointWith">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines that two given classes are disjoint.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#distinctMembers">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>distinctMembers</rdfs:label>
+        <rdfs:comment>The property that determines the collection of pairwise different individuals in a owl:AllDifferent axiom.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#equivalentClass">
+        <rdfs:label>equivalentClass</rdfs:label>
+        <rdfs:comment>The property that determines that two given classes are equivalent, and that is used to specify datatype definitions.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#equivalentProperty">
+        <rdfs:comment>The property that determines that two given properties are equivalent.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>equivalentProperty</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#hasKey">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the collection of properties that jointly build a key.</rdfs:comment>
+        <rdfs:label>hasKey</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#hasSelf">
+        <rdfs:label>hasSelf</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the property that a self restriction refers to.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#hasValue">
+        <rdfs:label>hasValue</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the individual that a has-value restriction refers to.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#intersectionOf">
+        <rdfs:comment>The property that determines the collection of classes or data ranges that build an intersection.</rdfs:comment>
+        <rdfs:label>intersectionOf</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#inverseOf">
+        <rdfs:label>inverseOf</rdfs:label>
+        <rdfs:comment>The property that determines that two given properties are inverse.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#members">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the collection of members in either a owl:AllDifferent, owl:AllDisjointClasses or owl:AllDisjointProperties axiom.</rdfs:comment>
+        <rdfs:label>members</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#onClass">
+        <rdfs:label>onClass</rdfs:label>
+        <rdfs:comment>The property that determines the class that a qualified object cardinality restriction refers to.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#onDataRange">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the data range that a qualified data cardinality restriction refers to.</rdfs:comment>
+        <rdfs:label>onDataRange</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#onDatatype">
+        <rdfs:label>onDatatype</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the datatype that a datatype restriction refers to.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#onProperties">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>onProperties</rdfs:label>
+        <rdfs:comment>The property that determines the n-tuple of properties that a property restriction on an n-ary data range refers to.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#onProperty">
+        <rdfs:label>onProperty</rdfs:label>
+        <rdfs:comment>The property that determines the property that a property restriction refers to.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#oneOf">
+        <rdfs:comment>The property that determines the collection of individuals or data values that build an enumeration.</rdfs:comment>
+        <rdfs:label>oneOf</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#propertyChainAxiom">
+        <rdfs:comment>The property that determines the n-tuple of properties that build a sub property chain of a given property.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>propertyChainAxiom</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#propertyDisjointWith">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines that two given properties are disjoint.</rdfs:comment>
+        <rdfs:label>propertyDisjointWith</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#someValuesFrom">
+        <rdfs:comment>The property that determines the class that an existential property restriction refers to.</rdfs:comment>
+        <rdfs:label>someValuesFrom</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#targetValue">
+        <rdfs:comment>The property that determines the value of a negative data property assertion.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>targetValue</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#unionOf">
+        <rdfs:label>unionOf</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:comment>The property that determines the collection of classes or data ranges that build a union.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#withRestrictions">
+        <rdfs:comment>The property that determines the collection of facet-value pairs that define a datatype restriction.</rdfs:comment>
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2002/07/owl#"/>
+        <rdfs:label>withRestrictions</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/ns/dpv-gdpr#A7-3">
+        <rdfs:label xml:lang="en">A7-3 Right to Withdraw Consent</rdfs:label>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

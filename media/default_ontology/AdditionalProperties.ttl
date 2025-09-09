@@ -1,0 +1,349 @@
+@prefix dpv: <https://w3id.org/dpv/owl#> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.org/datasets/> .
+
+# Enhanced property for the complete list of classes as Actors
+dpv:actorEnhancedProperty rdf:type owl:DatatypeProperty ;
+    rdfs:label "Actor enhanced property"@en ;
+    rdfs:domain dpv:Recipient,
+                dpv:ThirdParty,
+                dpv:DataImporter,
+                dpv:DataProcessor,
+                dpv:DataSubProcessor,
+                dpv:DataExporter,
+                dpv:DataSubject,
+                dpv:Subscriber,
+                dpv:Consumer,
+                dpv:VulnerableDataSubject,
+                dpv:MentallyVulnerableDataSubject,
+                dpv:ElderlyDataSubject,
+                dpv:AsylumSeeker,
+                dpv:Applicant,
+                dpv:JobApplicant,
+                dpv:Citizen,
+                dpv:Student,
+                dpv:Child,
+                dpv:Immigrant,
+                dpv:User,
+                dpv:Tourist,
+                dpv:Member,
+                dpv:GuardianOfDataSubject,
+                dpv:Employee,
+                dpv:NonCitizen,
+                dpv:ParentOfDataSubject,
+                dpv:Customer,
+                dpv:Client,
+                dpv:Adult,
+                dpv:Participant,
+                dpv:Patient,
+                dpv:Visitor,
+                dpv:Representative,
+                dpv:DataProtectionOfficer,
+                dpv:Organisation,
+                dpv:AcademicScientificOrganisation,
+                dpv:NonProfitOrganisation,
+                dpv:IndustryConsortium,
+                dpv:NonGovernmentalOrganisation,
+                dpv:ForProfitOrganisation,
+                dpv:InternationalOrganisation,
+                dpv:GovernmentalOrganisation,
+                dpv:Authority,
+                dpv:SupraNationalAuthority,
+                dpv:NationalAuthority,
+                dpv:RegionalAuthority,
+                dpv:DataProtectionAuthority,
+                dpv:DataController,
+                dpv:JointDataControllers ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+
+
+# Enhanced property for the complete list of classes as Actors
+dpv:actorEnhancedProperty2 rdf:type owl:DatatypeProperty ;
+    rdfs:label "Actor enhanced property"@en ;
+    rdfs:domain dpv:Recipient,
+                dpv:ThirdParty,
+                dpv:DataImporter,
+                dpv:DataProcessor,
+                dpv:DataSubProcessor,
+                dpv:DataExporter,
+                dpv:DataSubject,
+                dpv:Subscriber,
+                dpv:Consumer,
+                dpv:VulnerableDataSubject,
+                dpv:MentallyVulnerableDataSubject,
+                dpv:ElderlyDataSubject,
+                dpv:AsylumSeeker,
+                dpv:Applicant,
+                dpv:JobApplicant,
+                dpv:Citizen,
+                dpv:Student,
+                dpv:Child,
+                dpv:Immigrant,
+                dpv:User,
+                dpv:Tourist,
+                dpv:Member,
+                dpv:GuardianOfDataSubject,
+                dpv:Employee,
+                dpv:NonCitizen,
+                dpv:ParentOfDataSubject,
+                dpv:Customer,
+                dpv:Client,
+                dpv:Adult,
+                dpv:Participant,
+                dpv:Patient,
+                dpv:Visitor,
+                dpv:Representative,
+                dpv:DataProtectionOfficer,
+                dpv:Organisation,
+                dpv:AcademicScientificOrganisation,
+                dpv:NonProfitOrganisation,
+                dpv:IndustryConsortium,
+                dpv:NonGovernmentalOrganisation,
+                dpv:ForProfitOrganisation,
+                dpv:InternationalOrganisation,
+                dpv:GovernmentalOrganisation,
+                dpv:Authority,
+                dpv:SupraNationalAuthority,
+                dpv:NationalAuthority,
+                dpv:RegionalAuthority,
+                dpv:DataProtectionAuthority,
+                dpv:DataController,
+                dpv:JointDataControllers ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+
+
+# Enhanced property for the complete list of classes as Actions
+dpv:actionEnhancedProperty rdf:type owl:DatatypeProperty ;
+    rdfs:label "action enhanced property"@en ;
+    rdfs:domain
+        cc:Attribution,
+        cc:CommercialUse,
+        cc:DerivativeWorks,
+        cc:Distribution,
+        cc:Notice,
+        cc:Reproduction,
+        cc:ShareAlike,
+        cc:Sharing,
+        cc:SourceCode,
+        odrl:acceptTracking,
+        odrl:adHocShare,
+        odrl:aggregate,
+        odrl:annotate,
+        odrl:anonymize,
+        odrl:append,
+        odrl:appendTo,
+        odrl:archive,
+        odrl:attachPolicy,
+        odrl:attachSource,
+        odrl:attribute,
+        odrl:commercialize,
+        odrl:compensate,
+        odrl:concurrentUse,
+        odrl:copy,
+        odrl:delete,
+        odrl:derive,
+        odrl:digitize,
+        odrl:display,
+        odrl:distribute,
+        odrl:ensureExclusivity,
+        odrl:execute,
+        odrl:export,
+        odrl:extract,
+        odrl:extractChar,
+        odrl:extractPage,
+        odrl:extractWord,
+        odrl:give,
+        odrl:grantUse,
+        odrl:include,
+        odrl:index,
+        odrl:inform,
+        odrl:install,
+        odrl:lease,
+        odrl:lend,
+        odrl:license,
+        odrl:modify,
+        odrl:move,
+        odrl:nextPolicy,
+        odrl:obtainConsent,
+        odrl:pay,
+        odrl:play,
+        odrl:present,
+        odrl:preview,
+        odrl:print,
+        odrl:read,
+        odrl:reproduce,
+        odrl:reviewPolicy,
+        odrl:secondaryUse,
+        odrl:sell,
+        odrl:share,
+        odrl:shareAlike,
+        odrl:stream,
+        odrl:synchronize,
+        odrl:textToSpeech,
+        odrl:transfer,
+        odrl:transform,
+        odrl:translate,
+        odrl:uninstall,
+        odrl:use,
+        odrl:watermark,
+        odrl:write,
+        odrl:writeTo ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+
+# Enhanced property for the complete list of classes as Actions
+dpv:actionEnhancedProperty2 rdf:type owl:DatatypeProperty ;
+    rdfs:label "action enhanced property"@en ;
+    rdfs:domain
+        odrl:reviewPolicy,
+        odrl:secondaryUse,
+        odrl:sell,
+        odrl:share,
+        odrl:shareAlike,
+        odrl:stream,
+        odrl:synchronize,
+        odrl:textToSpeech,
+        odrl:transfer,
+        odrl:transform,
+        odrl:translate,
+        odrl:uninstall,
+        odrl:use,
+        odrl:watermark,
+        odrl:write,
+        odrl:writeTo ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+# Enhanced property for the complete list of classes as Actions
+dpv:actionEnhancedProperty rdf:type owl:DatatypeProperty ;
+    rdfs:label "action enhanced property"@en ;
+    rdfs:domain
+        cc:Attribution,
+        cc:CommercialUse,
+        cc:DerivativeWorks,
+        cc:Distribution,
+        cc:Notice,
+        cc:Reproduction,
+        cc:ShareAlike,
+        cc:Sharing,
+        cc:SourceCode,
+        odrl:acceptTracking,
+        odrl:adHocShare,
+        odrl:aggregate,
+        odrl:annotate,
+        odrl:anonymize,
+        odrl:append,
+        odrl:appendTo,
+        odrl:archive,
+        odrl:attachPolicy,
+        odrl:attachSource,
+        odrl:attribute,
+        odrl:commercialize,
+        odrl:compensate,
+        odrl:concurrentUse,
+        odrl:copy,
+        odrl:delete,
+        odrl:derive,
+        odrl:digitize,
+        odrl:display,
+        odrl:distribute,
+        odrl:ensureExclusivity,
+        odrl:execute,
+        odrl:export,
+        odrl:extract,
+        odrl:extractChar,
+        odrl:extractPage,
+        odrl:extractWord,
+        odrl:give,
+        odrl:grantUse,
+        odrl:include,
+        odrl:index,
+        odrl:inform,
+        odrl:install,
+        odrl:lease,
+        odrl:lend,
+        odrl:license,
+        odrl:modify,
+        odrl:move,
+        odrl:nextPolicy,
+        odrl:obtainConsent,
+        odrl:pay,
+        odrl:play,
+        odrl:present,
+        odrl:preview,
+        odrl:print,
+        odrl:read,
+        odrl:reproduce,
+        odrl:reviewPolicy,
+        odrl:secondaryUse,
+        odrl:sell,
+        odrl:share,
+        odrl:shareAlike,
+        odrl:stream,
+        odrl:synchronize,
+        odrl:textToSpeech,
+        odrl:transfer,
+        odrl:transform,
+        odrl:translate,
+        odrl:uninstall,
+        odrl:use,
+        odrl:watermark,
+        odrl:write,
+        odrl:writeTo ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+
+# Enhanced property for the specified classes for Purpose
+dpv:purposeEnhancedProperty rdf:type owl:DatatypeProperty ;
+    rdfs:label "purpose enhanced property"@en ;
+    rdfs:domain
+        dpv:HumanResourceManagement,
+        dpv:ServiceProvision,
+        dpv:EnforceSecurity,
+        dpv:ResearchAndDevelopment,
+        dpv:CustomerManagement,
+        dpv:VendorManagement,
+        dpv:RecordManagement,
+        dpv:Marketing,
+        dpv:CommunicationManagement,
+        dpv:FulfilmentOfObligation,
+        dpv:Personalisation,
+        dpv:OrganisationGovernance,
+        dpv:AccountManagement,
+        dpv:EstablishContractualAgreement ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+
+
+# Enhanced property for the specified classes for Purpose
+dpv:purposeEnhancedProperty2 rdf:type owl:DatatypeProperty ;
+    rdfs:label "purpose enhanced property"@en ;
+    rdfs:domain
+        dpv:Marketing,
+        dpv:CommunicationManagement,
+        dpv:FulfilmentOfObligation,
+        dpv:Personalisation,
+        dpv:OrganisationGovernance,
+        dpv:AccountManagement,
+        dpv:EstablishContractualAgreement ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+
+# Enhanced property for the specified classes for Purpose
+ex:title rdf:type owl:DatatypeProperty ;
+    rdfs:label "Title"@en ;
+    rdfs:domain
+        ex:covid19Stats,
+        ex:climateChangeData,
+        ex:economicIndicators,
+        ex:biodiversityRecords,
+        ex:socialMediaAnalytics;
+    rdfs:range xsd:string ;
+    rdfs:comment "A property with enhanced features."@en .
+

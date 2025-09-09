@@ -1,0 +1,380 @@
+    body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    }
+
+    h2 {
+    text-align: center;
+    }
+
+    label {
+    display: block;
+    margin-bottom: 5px;
+    }
+
+    select, input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 0px;
+    box-sizing: border-box;
+    }
+
+    #constraintsContainer .constraintRow {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    #constraintsContainer .removeRow {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px 0;
+    cursor: pointer;
+    }
+
+    #addConstraintRow, #saveButton, #clearButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    }
+
+
+    .common-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 14px;
+    margin: 10px 0;
+    cursor: pointer;
+
+    }
+
+    .button-container {
+        display: flex;
+        gap: 10px;
+    }
+
+
+    #refinementTargetContainer .refinementTargetRow {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    #refinementTargetContainer .removeRefinementTargetRow {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px 0;
+    cursor: pointer;
+    }
+    #refinementTargetContainer {
+    border: 1px solid #ccc; /* Border for the box */
+    padding: 15px; /* Padding for internal spacing */
+    margin-bottom: 20px; /* Adjust margin as needed */
+    }
+
+    #refinementTargetContainer .box {
+    background-color: #f8f8f8; /* Background color for the box */
+    }
+
+    #addRefinementTargetRow, #saveButton , #clearButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    }
+
+
+    #refinementActorContainer .refinementActorRow {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    #refinementActorContainer .removeRefinementActorRow {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    }
+    #refinementActorContainer {
+    border: 1px solid #ccc; /* Border for the box */
+    padding: 15px; /* Padding for internal spacing */
+    margin-bottom: 20px; /* Adjust margin as needed */
+    }
+
+    #refinementActorContainer .box {
+    background-color: #f8f8f8; /* Background color for the box */
+    }
+
+    #addRefinementActorRow, #saveButton , #clearButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    }
+
+
+    #refinementActionContainer .refinementActionRow {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    #refinementActionContainer .removeRefinementActionRow {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px 0;
+    cursor: pointer;
+    }
+    #refinementActionContainer {
+    border: 1px solid #ccc; /* Border for the box */
+    padding: 15px; /* Padding for internal spacing */
+    margin-bottom: 20px; /* Adjust margin as needed */
+    }
+
+    #refinementActionContainer .box {
+    background-color: #f8f8f8; /* Background color for the box */
+    }
+
+    #addRefinementActionRow, #saveButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    }
+
+    #refinementActionContainer .refinementActionRow {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    #refinementActionContainer .removeRefinementActionRow {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px 0;
+    cursor: pointer;
+    }
+    #refinementActionContainer {
+    border: 1px solid #ccc; /* Border for the box */
+    padding: 15px; /* Padding for internal spacing */
+    margin-bottom: 20px; /* Adjust margin as needed */
+    }
+
+    #refinementActionContainer .box {
+    background-color: #f8f8f8; /* Background color for the box */
+    }
+
+    #addRefinementActionRow, #saveButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    }
+
+
+    #refinementPurposeContainer .refinementPurposeRow {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    #refinementPurposeContainer .removeRefinementPurposeRow {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px 0;
+    cursor: pointer;
+    }
+    #refinementPurposeContainer {
+    border: 1px solid #ccc; /* Border for the box */
+    padding: 15px; /* Padding for internal spacing */
+    margin-bottom: 20px; /* Adjust margin as needed */
+    }
+
+    #refinementPurposeContainer .box {
+    background-color: #f8f8f8; /* Background color for the box */
+    }
+
+    #addRefinementPurposeRow, #saveButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    }
+
+    #savedObjects {
+    margin-top: 20px;
+    }
+
+    #savedList {
+    list-style: none;
+    padding: 0;
+    }
+
+    #savedList li {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 5px;
+    }
+
+    #queryTextbox {
+    width: 50%;
+    height: 150px;
+    float: center;
+    display: none;
+    }
+    #queryTextboxLabel {
+    display: none;
+    }
+
+    #constraintsContainer {
+    border: 1px solid #ccc; /* Border for the box */
+    padding: 15px; /* Padding for internal spacing */
+    margin-bottom: 20px; /* Adjust margin as needed */
+    }
+
+    #constraintsContainer .box {
+    background-color: #f8f8f8; /* Background color for the box */
+    }
+
+
+
+    .right-align {
+    float: right;
+    /* You can add more styles as needed */
+    }
+
+    #savedOdrl {
+    width: 100%;
+    box-sizing: border-box; /* This ensures that padding and border are included in the width */
+    }
+
+    .flex {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    }
+    .flex > * {
+    margin-right: 10px; /* Add spacing between elements */
+    }
+
+    .form-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    }
+
+    .form-actions {
+        margin-top: 10px;
+        text-align: right;
+    }
+
+    .remove-form-button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .remove-form-button:hover {
+        background-color: #c82333;
+    }
+
+    .remove-form-button:focus {
+        outline: none;
+    }
+
+    .changed-field {
+        border: 2px solid red;
+    }

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{%load static %}
+{% block title %} Auto Login {% endblock %}
+{% block inpagecss %}
+{% endblock %}
+{% block content %}
+
+ <main id="main">
+    <section id="auto-login-section">
+
+      <div class="container" data-aos="fade-up">
+          <div class="mb-4">
+            <label for="autoLoginToken" class="form-label">Token</label>
+            <input type="text"  id="autoLoginToken" class="form-control">
+          </div>
+          <div class="mb-4">
+            <label for="autoLoginNegotiationId" class="form-label">Negotiation ID</label>
+            <input type="text"  id="autoLoginNegotiationId" class="form-control">
+          </div>
+          <button id="autoLoginButton" class="btn btn-primary">Auto Login</button>
+      </div>
+
+    </section>
+ </main>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+
+const DJANGO_BASE_URL = "{{ django_base_url }}";
+
+$(document).ready(function () {
+    $('#autoLoginButton').click(function () {
+        const token = $('#autoLoginToken').val();
+        const negotiationId = $('#autoLoginNegotiationId').val();
+
+        const url = `${DJANGO_BASE_URL}/negotiation/auto-login-session`;
+
+        $.ajax({
+          url: url,
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ token: token }),
+          success: function () {
+              window.location.href = `/negotiation/organization/negotiation?negotiation_id=${negotiationId}`
+          },
+          error: function (xhr) {
+              alert("Auto-login failed: " + xhr.responseText);
+          }
+        });
+
+    });
+});
+
+</script>
+{% endblock %}

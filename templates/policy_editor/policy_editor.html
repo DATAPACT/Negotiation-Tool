@@ -1,0 +1,828 @@
+<fieldset id="fieldset-odrl" >
+    <div class="row">
+        <div class="button-container">
+            <input type="button" name="NewRule" id="newRuleButton" class="common-button" value="New Rule"/>
+        </div>
+
+        <div id="refinementTarget2Container">
+            <div class="flex">
+                <label for="Target2Dropdown">Target:</label>
+                <select id="Target2Dropdown" class="dropdowns">
+                    {% for target in targets %}
+                        <option value= "{{ target.label }}">{{ target.label }} </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="form-card" style="display: none">
+                <div>
+                    <label for="ruleDropdown">Rule:</label>
+                    <select id="ruleDropdown" class="dropdowns" onchange="actionChosen()"></select>
+                </div>
+                <div id="refinementActorContainer">
+                    <div class="flex">
+                        <label for="ActorDropdown">Actor:</label>
+                        <select id="ActorDropdown" class="dropdowns"></select>
+                        <input id="addRefinementActorRow" type="button" class="common-button" value="Refine"/>
+                    </div>
+                    <div class="refinementActorRow">
+                        <label for="refinementActorDropdown">Refinement:</label>
+                        <select id="refinementActorDropdown" class="refinementActorDropdown"></select>
+                        <label for="operatorRefinementActorDropdown"></label>
+                        <select id="operatorRefinementActorDropdown" class="operatorRefinementActorDropdown"></select>
+                        <label for="refinementActorValue"></label>
+                        <input id="refinementActorValue" type="text" class="refinementActorValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                        <input type="button" class="removeRefinementActorRow" value="X"/>
+                    </div>
+                </div>
+                <div id="refinementActionContainer">
+                    <div class="flex">
+                        <label for="ActionDropdown">Action:</label>
+                        <select id="ActionDropdown" class="dropdowns" onchange="actionChosen()"></select>
+                        <input id="addRefinementActionRow" type="button" class="common-button" value="Refine"/>
+                    </div>
+                    <div class="refinementActionRow">
+                        <label for="refinementActionDropdown">Refinement:</label>
+                        <select id="refinementActionDropdown" class="refinementActionDropdown"></select>
+                        <label for="operatorRefinementActionDropdown"></label>
+                        <select id="operatorRefinementActionDropdown" class="operatorRefinementActionDropdown"></select>
+                        <label for="refinementActionValue"></label>
+                        <input id="refinementActionValue" type="text" class="refinementActionValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                        <input type="button" class="removeRefinementActionRow" value="X"/>
+                    </div>
+                </div>
+                <div>
+                    <label for="queryTextbox" id="queryTextboxLabel">Enter a Query:</label>
+                    <textarea id="queryTextbox" class="queryTextbox" placeholder="Write your query here."></textarea>
+                </div>
+                <div id="refinementPurposeContainer">
+                    <div class="flex">
+                        <label for="PurposeDropdown">Purpose:</label>
+                        <select id="PurposeDropdown" class="dropdowns"></select>
+                        <input type="button" id="addRefinementPurposeRow" value="Refine"/>
+                    </div>
+                    <div class="refinementPurposeRow">
+                        <label for="refinementPurposeDropdown">Refinement:</label>
+                        <select id="refinementPurposeDropdown" class="refinementPurposeDropdown"></select>
+                        <label for="operatorRefinementPurposeDropdown"></label>
+                        <select id="operatorRefinementPurposeDropdown" class="operatorRefinementPurposeDropdown"></select>
+                        <label for="refinementPurposeValue"></label>
+                        <input id="refinementPurposeValue" type="text" class="refinementPurposeValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                        <input type="button" class="removeRefinementPurposeRow" value="X"/>
+                    </div>
+                </div>
+                <div id="refinementTargetContainer">
+                    <div class="flex">
+                        <label for="TargetDropdown">Target:</label>
+                        <select id="TargetDropdown" class="dropdowns" disabled></select>
+                        <input id="addRefinementTargetRow" type="button" class="common-button" value="Refine"/>
+                    </div>
+                    <div class="refinementTargetRow">
+                        <label for="refinementTargetDropdown">Refinement:</label>
+                        <select id="refinementTargetDropdown" class="refinementTargetDropdown"></select>
+                        <label for="operatorRefinementTargetDropdown"></label>
+                        <select id="operatorRefinementTargetDropdown" class="operatorRefinementTargetDropdown"></select>
+                        <label for="refinementTargetValue"></label>
+                        <input id="refinementTargetValue" type="text" class="refinementTargetValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                        <input type="button" class="removeRefinementTargetRow" value="X"/>
+                    </div>
+                </div>
+                <div id="constraintsContainer">
+                    <input id="addConstraintRow" type="button" class="common-button" value="Add Constraint"/>
+                    <div class="constraintRow">
+                        <label for="constraintDropdown">Constraint:</label>
+                        <select id="constraintDropdown" class="constraintDropdown"></select>
+                        <label for="operatorDropdown"></label>
+                        <select id="operatorDropdown" class="operatorDropdown"></select>
+                        <label for="constraintValue"></label>
+                        <input id="constraintValue" type="text" class="constraintValue" placeholder="Value e.g., '2024-12-12', 'http://example.org/'">
+                        <input type="button" class="removeRow" value="Remove"/>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <input type="button" class="remove-form-button" value="Remove Rule"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</fieldset>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Include DataTables CSS and JS -->
+
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        function loadJsonDataNewRule($fieldset, data) {
+            var $originalForm = $fieldset.find('.form-card').first();
+            //var $originalForm = $('.form-card').first();
+            var $newForm = $originalForm.clone();
+
+            $newForm.css('display', '');
+
+            $newForm.appendTo('.col-lg-12');
+            _actions_for_dropdown_form("Actor", $newForm);
+            _actions_for_dropdown_form("Action", $newForm);
+            _actions_for_dropdown_form("Purpose", $newForm);
+            _actions_for_dropdown_form("Target", $newForm);
+            // Populate HTML components within the duplicated form
+            $newForm.find('#ruleDropdown').val(data.rule);
+            
+            $newForm.find('#ActorDropdown').val(data.actor);
+            
+            $newForm.find('#ActionDropdown').val(data.action);
+            
+            $newForm.find('#PurposeDropdown').val(data.purpose);
+            
+            $newForm.find('#TargetDropdown').val($('#Target2Dropdown').val()); 
+
+            $newForm.find('#TargetDropdown').prop("disabled", true); 
+            
+            console.log('target value', data.target);
+
+            $newForm.find('#queryTextbox').val(data.query);
+
+            // Clear existing rows before loading new data
+            $newForm.find('.constraintRow:gt(0)').remove();
+            $newForm.find('.refinementActorRow:gt(0)').remove();
+            $newForm.find('.refinementActionRow:gt(0)').remove();
+            $newForm.find('.refinementPurposeRow:gt(0)').remove();
+            $newForm.find('.refinementTargetRow:gt(0)').remove();
+
+            applyFormActions($newForm);
+
+            if (Object.keys(data).length > 0)
+            {
+                //console.log(data)
+                // Load constraints
+                data.constraints.forEach(function (constraint) {
+                    var newConstraintRow = $('<div class="constraintRow">').append(
+                        $('<select class="constraintDropdown">').val(constraint.type),
+                        $('<select class="operatorDropdown">').val(constraint.operator),
+                        $('<input type="text" class="constraintValue">').val(constraint.value),
+                        $('<input class="removeRow" type="button" value="Remove"/>').click(function () {
+                            $(this).parent().remove();
+                        })
+                    );
+                    $newForm.find('#constraintsContainer').append(newConstraintRow);
+                });
+
+                // Function to add refinement row with delay
+                function addRefinementRowWithDelay($form, entity, entityName, type, operator, value, index) {
+                        addRefinementRow($form, entity, entityName, type, operator, value);
+                }
+
+                // Load actor refinements synchronously with delay
+                data.actorrefinements.forEach(function (refinement, index) {
+                    addRefinementRowWithDelay($newForm, data.actor, 'Actor', refinement.type, refinement.operator, refinement.value, index);
+                });
+
+                // Load action refinements synchronously with delay
+                var actionRefinementsLength = data.actionrefinements.length;
+                data.actionrefinements.forEach(function (refinement, index) {
+                    addRefinementRowWithDelay($newForm, data.action, 'Action', refinement.type, refinement.operator, refinement.value, index + actionRefinementsLength);
+                });
+
+                // Load purpose refinements synchronously with delay
+                var purposeRefinementsLength = data.purposerefinements.length;
+                data.purposerefinements.forEach(function (refinement, index) {
+                    addRefinementRowWithDelay($newForm, data.purpose, 'Purpose', refinement.type, refinement.operator, refinement.value, index + actionRefinementsLength);
+                });
+
+                // Load target refinements synchronously with delay
+                var targetRefinementsLength = data.targetrefinements.length;
+                data.targetrefinements.forEach(function (refinement, index) {
+                    addRefinementRowWithDelay($newForm, data.target, 'Target', refinement.type, refinement.operator, refinement.value, index + actionRefinementsLength + purposeRefinementsLength);
+                });
+            }
+
+        } 
+
+        
+        // ODRL Policy Section
+
+
+        // Function to fill dropdown
+        function fillDropdown(dropdownId, data) {
+            var dropdown = $('#' + dropdownId);
+            dropdown.empty();
+
+
+            // Recursive function to populate the dropdown with indentation for nested children
+            function populateDropdown(data, parent = "", level = 0) {
+                // Sort data alphabetically by label at each level
+                data.sort((a, b) => a.label.localeCompare(b.label));
+
+                data.forEach(item => {
+                    // Construct display text with indentation based on hierarchy level
+                    //var displayText = (level > 0 ? '-'.repeat(level * 4) : '') + item.label;
+                    let txt = "";
+                    if (parent =="")
+                    {
+                        txt = item.label
+                    }
+                    else
+                    {
+                        txt = parent + "->" + item.label
+                    }
+                    dropdown.append($('<option>', {
+                        value: item.uri,
+                        text: txt
+                    }));
+
+                    // console.log('txt', txt)
+                    // Recursively handle children if present
+                    if (item.children && item.children.length > 0) {
+                        populateDropdown(item.children, txt, level + 1); // Increment level for children
+                    }
+                });
+            }
+
+            // Start populating the dropdown
+            populateDropdown(data,"", 0);
+
+            // Set the dropdown's selected index to none
+            dropdown.prop('selectedIndex', -1);
+
+        }
+
+        // Fill all dropdowns on page load
+        fillDropdown('ruleDropdown',   {{ rules|safe }} );
+        fillDropdown('ActionDropdown', {{ actions|safe }} );
+        fillDropdown('TargetDropdown', {{ targets|safe }} );
+        fillDropdown('PurposeDropdown', {{ purposes|safe }} );
+        fillDropdown('constraintDropdown', {{ constraints|safe }} );
+        fillDropdown('operatorDropdown', {{ operators|safe }} );
+        fillDropdown('operatorRefinementTargetDropdown', {{ operators|safe }} );
+        fillDropdown('operatorRefinementActorDropdown', {{ operators|safe }} );
+        fillDropdown('operatorRefinementActionDropdown', {{ operators|safe }} );
+        fillDropdown('operatorRefinementPurposeDropdown', {{ operators|safe }} );
+        fillDropdown('operatorRefinementDropdown', {{ operators|safe }} );
+        fillDropdown('ActorDropdown', {{ actors|safe }} );
+
+        $("#Target2Dropdown").on("change", function () {
+            var newTarget = $(this).val(); // Get the selected value
+            console.log("Target change fired " + newTarget);
+        
+            // Update all elements with id TargetDropdown
+            $(".form-card #TargetDropdown").val(newTarget).trigger("change");
+            console.log('new target', $("#TargetDropdown").val(newTarget));
+        });
+
+        // Remove refinement row
+        $('#refinementContainer').on('click', '.removeRefinementRow', function () {
+            $(this).closest('.refinementRow').remove();
+        });
+
+        // Remove constraint row
+        $('#constraintsContainer').on('click', '.removeRow', function () {
+            $(this).closest('.constraintRow').remove();
+        });
+
+
+        $('#newRuleButton').click(function(){ 
+            console.log('create new rule');
+            loadJsonDataNewRule($("#fieldset-odrl"), {})
+        });
+
+        function applyFormActions($form) {
+
+            $form.find('.removeRow').click(function () {
+                $(this).parent().remove();
+            });
+            $form.find('.remove-form-button').click(function() {
+                var formCard = $(this).closest('.form-card');
+                if (formCard.length > 0) {
+                    formCard.remove();
+                }
+            });
+                // Add new constraint row within the form
+            $form.find('#addConstraintRow').click(function () {
+                let newRow;
+                if ($form.find('#constraintsContainer').find('.constraintRow').length > 0) {
+                    newRow = $form.find('#constraintsContainer .constraintRow:first').clone();
+                    newRow.find('input[type="text"]').val('');
+                    newRow.find('select').val('');
+                    newRow.css('display', 'flex');
+                    newRow.appendTo($form.find('#constraintsContainer'));
+                } else {
+                    newRow = document.createElement('div');
+                    newRow.classList.add('constraintRow');
+                    const label = document.createElement('label');
+                    label.setAttribute('for', 'constraintDropdown');
+                    label.innerText = "Constraint:";
+                    const select = document.createElement('select');
+                    select.setAttribute('id', 'constraintDropdown');
+                    select.classList.add('constraintDropdown');
+                    newRow.append(label);
+                    newRow.append(select);
+                    const label2 = document.createElement('label');
+                    label2.setAttribute('for', 'operatorDropdown');
+                    const select2 = document.createElement('select');
+                    select2.setAttribute('id', 'operatorDropdown');
+                    select2.classList.add('operatorDropdown');
+                    newRow.append(label2);
+                    newRow.append(select2);
+                    const label3 = document.createElement('label');
+                    label3.setAttribute('for', 'constraintValue');
+                    const text = document.createElement('input');
+                    text.setAttribute('id', 'constraintValue');
+                    text.classList.add('constraintValue');
+                    text.placeholder = "Value e.g., '2024-12-12', 'http://example.org/'";
+                    newRow.append(label3);
+                    newRow.append(text);
+                    const button = document.createElement('button');
+                    button.classList.add('removeRow');
+                    button.innerText = "Remove";
+                    newRow.append(button);
+                    $form.find('#constraintsContainer').append(newRow);
+                    fillDropdown('constraintDropdown', {{ constraints|safe }});
+                    fillDropdown('operatorDropdown', {{ operators|safe }});
+                }
+
+                // Apply the remove click action to the new row
+                applyFormActions($(newRow));
+
+            });
+        }
+        
+        function addRefinementRow(newForm, parent_value, entity, type, operator, value) {
+
+            _clearAdditionalRefinementRows(entity);
+            _clearRefinementRows(entity);
+
+
+            //setTimeout(function() {
+            //    console.log("World");
+            //}, 1000);
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'ajax_get_properties_from_properties_file' %}',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                },
+                data: JSON.stringify({
+                    uri: parent_value
+                }),
+                success: function (response) {
+                        var refinementDropdown = $('#refinement' + entity + 'Dropdown');
+                        refinementDropdown.empty();
+                        $.each(response.fields, function (index, field) {
+                            refinementDropdown.append($('<option>', {
+                                value: field.uri,
+                                text: field.label
+                            }));
+                        });
+
+                        let newRow = $(`.refinement${entity}Row:first`).clone();
+
+                        // Set the values for the cloned element
+                        newRow.find(`select.refinement${entity}Dropdown`).val(type);
+                        newRow.find(`select.operatorRefinement${entity}Dropdown`).val(operator);
+                        newRow.find('input[type="text"]').val(value);
+
+                        if (value.trim() !== '') {
+                            newRow.css({
+                                'display': 'flex', // Overwrite the display property to make it visible
+                                'justify-content': 'space-between',
+                                'align-items': 'center',
+                                'margin-bottom': '10px',
+                                'visibility': 'visible' // Ensure the row itself is visible
+                            });
+                            {#newRow.appendTo();#}
+                            c = newForm.find('#refinement' + entity + 'Container');
+                            c.append(newRow);
+                        }
+                },
+                error: function (error) {
+                    console.error('Error fetching column names:', error);
+                }
+            });
+        }
+
+});    
+
+
+    function _clearAdditionalRefinementRows(refinementName) {
+        $('.refinement'+refinementName+'Row').not(':first').remove();
+    }
+
+    function _clearRefinementRows(refinementName) {
+        $('.refinement'+refinementName+'Row').each(function () {
+            $(this).find('select').val('');
+            $(this).find('input[type="text"]').val('');
+        });
+    }
+
+    function _clearAdditionalRefinementRowsForm(refinementName, $form) {
+        $form.find('.refinement'+refinementName+'Row').not(':first').remove();
+    }
+
+    function _clearRefinementRowsForm(refinementName, $form) {
+        $form.find('.refinement'+refinementName+'Row').each(function () {
+            $(this).find('select').val('');
+            $(this).find('input[type="text"]').val('');
+        });
+    }
+
+    
+    // Function to fill refinement dropdown based on selected target
+    function _fillRefinementDropdownForm(uri, refinementName, $form) {
+			
+        // console.log("WE ARE IN FILLREFINEMENT DROPDOWN FORM FOR " + uri + " AND " + refinementName);
+    
+        req_url = ""
+        if (refinementName=="Actor")
+            req_url = 'get_properties_of_a_class'
+        if (refinementName=="Action")
+            req_url = 'get_properties_of_a_class'
+        if (refinementName=="Purpose")
+            req_url = 'get_properties_of_a_class'
+        if (refinementName=="Target")
+            req_url = 'ajax_get_fields_from_datasets'
+        _clearAdditionalRefinementRowsForm(refinementName, $form);
+        _clearRefinementRowsForm(refinementName, $form);
+            $.ajax({
+                type: 'POST',
+                url: req_url,
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                },
+                data: JSON.stringify({
+                    uri: uri
+                }),
+                success: function (response) {
+                    var refinementDropdown = $form.find('#refinement' + refinementName + 'Dropdown');
+                    refinementDropdown.empty();
+                    $.each(response.fields, function (index, field) {
+                        refinementDropdown.append($('<option>', {
+                            value: field.uri,
+                            text: field.label
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching column names:', error);
+                }
+            });
+        }
+
+    function findObjectAndChildren(data, targetUri) {
+        for (const item of data) {
+            // Check if the current item's URI matches
+            if (item.uri === targetUri) {
+                return item; // Found the object, return it
+            }
+
+            // If children exist, search recursively
+            if (item.children && item.children.length > 0) {
+                const found = findObjectAndChildren(item.children, targetUri);
+                if (found) {
+                    return found; // Return if found in children
+                }
+            }
+        }
+        return null; // Return null if not found
+    }
+
+    //Find the object and its parents
+    function findObjectAndParents(data, targetUri, parents = []) {
+        for (const item of data) {
+            // If the current item's URI matches the target URI
+            if (item.uri === targetUri) {
+                // Return the object and its parent hierarchy
+                return {
+                    object: item,
+                    parents: parents.reverse() // Reverse to get the parents in the correct order
+                };
+            }
+            // If the current item has children, recursively search in the children
+            if (item.children && item.children.length > 0) {
+                const found = findObjectAndParents(item.children, targetUri, [...parents, item]);
+                if (found) {
+                    return found; // If found, return the object and its parents
+                }
+            }
+        }
+        return null; // Return null if the target object is not found
+    }
+
+
+    function rebuildNestedArray(parents, object) {
+
+        let nestedStructure = null;
+
+        // Clear the children array of the object
+        object = {...object, children: []};
+
+        //check if parents is null or empty
+        if (!parents || parents.length === 0) {
+            console.log('No parents found');
+            nestedStructure = {...object, children: []};
+        } else {
+            // Build the nested structure using only the parent objects
+            for (let i = 0; i < parents.length; i++) {
+                const parent = parents[i];
+                if (i === 0) {
+                    // Start with the first parent object and include the target object as its child
+                    nestedStructure = { ...parent, children: [object] };
+                } else {
+                    // Add the nested structure as a child of the next parent
+                    nestedStructure = { ...parent, children: [nestedStructure]}
+                }
+            }
+        }
+        return nestedStructure
+    }
+
+    function extractURIs(nodes) {
+        let uris = [];
+      
+        for (const node of nodes) {
+          if (node.uri) {
+            uris.push(node.uri);
+          }
+          if (Array.isArray(node.children) && node.children.length > 0) {
+            uris = uris.concat(extractURIs(node.children));
+          }
+        }
+      
+        return uris;
+    }
+
+    function _actions_for_dropdown_form(dropdownName, $form) {
+        var $dropdown = $form.find('#' + dropdownName + 'Dropdown');
+
+        // Trigger when target dropdown changes
+        //$(document).on('change', $dropdown, function() {
+        $dropdown.off('change').change(function() {
+            var targetValue = $(this).val();
+
+            console.log('targetValue', targetValue);
+
+            _fillRefinementDropdownForm(targetValue, dropdownName, $form);
+
+            var current_odrl_data = prepare_key_odrl_data();
+            console.log('current_odrl_data', current_odrl_data);
+            
+
+            // Store min/max values before removing the extra forms
+            var $originalForm = $("#fieldset-np").find('.form-card:gt(1)')
+            
+            var minPrefDropdownValue = $originalForm.find('#minPref' + dropdownName + 'Dropdown').val();
+            var maxPrefDropdownValue = $originalForm.find('#maxPref' + dropdownName + 'Dropdown').val();
+            console.log('minPrefDropdown value', minPrefDropdownValue);
+            console.log('maxPrefDropdown value', maxPrefDropdownValue);
+
+            let data;
+
+            if(dropdownName === "Actor"){
+                data = {{ actors|safe }};
+            }
+            else if(dropdownName === "Action"){
+                data = {{ actions|safe }};
+            }
+            else if(dropdownName === "Purpose"){
+                data = {{ purposes|safe }};
+            }
+
+            // If there are preferences, evaluate the new policy selection against them
+            if (minPrefDropdownValue && minPrefDropdownValue !== "" && maxPrefDropdownValue && maxPrefDropdownValue !== "") {
+                var maxOptions = findObjectAndParents(data, minPrefDropdownValue);
+                maxOptionsNested = rebuildNestedArray(maxOptions.parents, maxOptions.object);
+                var maxOptionsArray = Array.isArray(maxOptionsNested) ? maxOptionsNested : [maxOptionsNested];
+                console.log('max options array', maxOptionsArray);
+
+                //get all the uri values from the max options array, including uri values for children
+                maxOptionsUris = extractURIs(maxOptionsArray);
+                console.log('max options uris', maxOptionsUris);
+
+
+                var minOptions = findObjectAndChildren(data, maxPrefDropdownValue);
+                var minOptionsArray = Array.isArray(minOptions) ? minOptions : [minOptions];
+                console.log('min options array', minOptionsArray);
+                //get all the uri values from the min options array, including uri values for children
+                minOptionsUris = extractURIs(minOptionsArray);
+                console.log('min options uris', minOptionsUris);
+
+                // get the uri values that are in minOptionsUris and in maxOptionsUris and remove duplicates
+                var commonUris = [...new Set(minOptionsUris.filter(uri => maxOptionsUris.includes(uri)))];
+                console.log('common uris', commonUris);
+
+                // if targetValue is not in commonUris, raise an alert saying preferences have been reset 
+                // and reset the preference for the actor, action, or purpose that was changed
+                if (!commonUris.includes(targetValue)) {
+                    Swal.fire({
+                        title: 'Incompatible Preferences',
+                        text: 'New value is incompatible with current preferences. Preferences have been reset. Please select a new preference.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $originalForm.find('#minPref' + dropdownName + 'Dropdown').val('');
+                            $originalForm.find('#maxPref' + dropdownName + 'Dropdown').val('');
+
+                            storedValues = {
+                                minPrefActor: $originalForm.find('#minPrefActorDropdown').val(),
+                                maxPrefActor: $originalForm.find('#maxPrefActorDropdown').val(),
+                                minPrefAction: $originalForm.find('#minPrefActionDropdown').val(),
+                                maxPrefAction: $originalForm.find('#maxPrefActionDropdown').val(),
+                                minPrefPurpose: $originalForm.find('#minPrefPurposeDropdown').val(),
+                                maxPrefPurpose: $originalForm.find('#maxPrefPurposeDropdown').val(),
+                            };
+
+                            console.log('storedValues after reset', storedValues);
+                            $("#fieldset-np").find('.form-card:gt(1)').remove();
+                            console.log('current_odrl_data[0]', current_odrl_data[0]);
+                            loadPreferencesData($("#fieldset-np"), current_odrl_data[0], storedValues);
+                            
+                        }
+                    });
+                }
+
+                // If the new value is in the current preferences range, raise an alert asking the user whether they want 
+                // to keep or reset the preference for the actor, action, or purpose that was changed.
+                else {
+                    Swal.fire({
+                        title: 'Reset Preferences?',
+                        text: 'Do you want to reset your preferences for ' + dropdownName + '?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Reset',
+                        cancelButtonText: 'Keep',
+                        reverseButtons: true
+                      }).then((result) => {
+                    
+                        if (result.isConfirmed) {
+                          // User chose Reset
+                          $originalForm.find('#minPref' + dropdownName + 'Dropdown').val('');
+                          $originalForm.find('#maxPref' + dropdownName + 'Dropdown').val('');
+
+                          storedValues = {
+                              minPrefActor: $originalForm.find('#minPrefActorDropdown').val(),
+                              maxPrefActor: $originalForm.find('#maxPrefActorDropdown').val(),
+                              minPrefAction: $originalForm.find('#minPrefActionDropdown').val(),
+                              maxPrefAction: $originalForm.find('#maxPrefActionDropdown').val(),
+                              minPrefPurpose: $originalForm.find('#minPrefPurposeDropdown').val(),
+                              maxPrefPurpose: $originalForm.find('#maxPrefPurposeDropdown').val(),
+                          };
+
+                          console.log('storedValues after reset', storedValues);
+                          $("#fieldset-np").find('.form-card:gt(1)').remove();
+                          console.log('current_odrl_data[0]', current_odrl_data[0]);
+                          loadPreferencesData($("#fieldset-np"), current_odrl_data[0], storedValues);
+                        } else {
+                          // User chose Keep
+                            storedValues = {
+                                minPrefActor: $originalForm.find('#minPrefActorDropdown').val(),
+                                maxPrefActor: $originalForm.find('#maxPrefActorDropdown').val(),
+                                minPrefAction: $originalForm.find('#minPrefActionDropdown').val(),
+                                maxPrefAction: $originalForm.find('#maxPrefActionDropdown').val(),
+                                minPrefPurpose: $originalForm.find('#minPrefPurposeDropdown').val(),
+                                maxPrefPurpose: $originalForm.find('#maxPrefPurposeDropdown').val(),
+                            };
+                            console.log('storedValues after reset', storedValues);
+                            $("#fieldset-np").find('.form-card:gt(1)').remove();
+                            console.log('current_odrl_data[0]', current_odrl_data[0]);
+                            loadPreferencesData($("#fieldset-np"), current_odrl_data[0], storedValues);
+                        }
+                      });
+                }
+            } 
+
+            // if there are no preferences save the current preferences and repopulate preferences tab with the new policy and previous preferences
+            else {    
+                storedValues = {
+                    minPrefActor: $originalForm.find('#minPrefActorDropdown').val(),
+                    maxPrefActor: $originalForm.find('#maxPrefActorDropdown').val(),
+                    minPrefAction: $originalForm.find('#minPrefActionDropdown').val(),
+                    maxPrefAction: $originalForm.find('#maxPrefActionDropdown').val(),
+                    minPrefPurpose: $originalForm.find('#minPrefPurposeDropdown').val(),
+                    maxPrefPurpose: $originalForm.find('#maxPrefPurposeDropdown').val(),
+                };
+
+                console.log('storedValues after reset', storedValues);
+                $("#fieldset-np").find('.form-card:gt(1)').remove();
+                console.log('current_odrl_data[0]', current_odrl_data[0]);
+                loadPreferencesData($("#fieldset-np"), current_odrl_data[0], storedValues);
+            }
+
+        });
+
+
+        $form.find('#addRefinement' + dropdownName + 'Row').off('click').click(function() {
+            if ($dropdown.val() !== null) {
+                let newRow = $form.find('.refinement' + dropdownName + 'Row:first').clone();
+                newRow.find('select').val('');
+                newRow.find('input[type="text"]').val('');
+                newRow.css('display', 'flex'); // Set display property to flex for visibility
+                newRow.appendTo($form.find('#refinement' + dropdownName + 'Container'));
+            }
+        });
+
+        // Use delegation for dynamically added elements
+        $form.find('#refinement' + dropdownName + 'Container').off('click', '.removeRefinement' + dropdownName + 'Row').on('click', '.removeRefinement' + dropdownName + 'Row', function() {
+            $(this).closest('.refinement' + dropdownName + 'Row').remove();
+        });
+    }
+
+    function actionChosen() {
+        var action = document.getElementById("ActionDropdown").value;
+        var policyType = document.getElementById("ruleDropdown").value;
+
+        if (action === "http://www.w3.org/ns/odrl/2/execute" && policyType === "http://www.w3.org/ns/odrl/2/Prohibition") {
+            var hiddenTextbox = document.getElementById("queryTextbox");
+            hiddenTextbox.style.display = "block";
+
+            var hiddenTextboxLabel = document.getElementById("queryTextboxLabel");
+            hiddenTextboxLabel.style.display = "block";
+        }
+        else {
+            var hiddenTextbox = document.getElementById("queryTextbox");
+            hiddenTextbox.style.display = "none";
+            hiddenTextbox.value = "";
+            var hiddenTextboxLabel = document.getElementById("queryTextboxLabel");
+            hiddenTextboxLabel.style.display = "none";
+        }
+    }
+
+
+    // Function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function prepare_key_odrl_data() {
+
+        var saveddata = []; // Initialize saveddata array to store data from all forms
+
+        // Iterate over each form with class .form-card
+        $('.form-card').each(function () {
+            var form = $(this);
+
+            if (form.find('#ruleDropdown').val()){
+                var data = {
+                    rule: form.find('#ruleDropdown').val(),
+                    actor: form.find('#ActorDropdown').val(),
+                    action: form.find('#ActionDropdown').val(),
+                    purpose: form.find('#PurposeDropdown').val(),
+                }; 
+                saveddata.push(data);                  
+            }
+        });
+
+        console.log('saved key odrl data', saveddata)
+        return saveddata;
+    }
+
+    function loadPreferencesData($fieldset, data, storedValues) {
+        var $originalForm = $fieldset.find('#preferencesFormCard');
+    
+        var $newForm = $originalForm.clone();
+        $newForm.css('display', '');
+        $newForm.appendTo('#preferencesFormCardContainer');
+
+        console.log('data.rule', data.rule);
+        console.log('data.actor', data.actor);
+        console.log('data.action', data.action);
+        console.log('data.purpose', data.purpose);
+    
+        // Set main dropdown values
+        $newForm.find('#prefRuleDropdown').val(data.rule).prop("disabled", true);
+        $newForm.find('#prefActorDropdown').val(data.actor).prop("disabled", true);
+        $newForm.find('#prefActionDropdown').val(data.action).prop("disabled", true);
+        $newForm.find('#prefPurposeDropdown').val(data.purpose).prop("disabled", true);
+    
+        $newForm.find('#minPrefActorDropdown').val(storedValues.minPrefActor);
+        $newForm.find('#maxPrefActorDropdown').val(storedValues.maxPrefActor);
+    
+        $newForm.find('#minPrefActionDropdown').val(storedValues.minPrefAction);
+        $newForm.find('#maxPrefActionDropdown').val(storedValues.maxPrefAction);
+    
+        $newForm.find('#minPrefPurposeDropdown').val(storedValues.minPrefPurpose);
+        $newForm.find('#maxPrefPurposeDropdown').val(storedValues.maxPrefPurpose);
+    }
+
+
+</script>

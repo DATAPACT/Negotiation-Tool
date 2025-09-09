@@ -1,0 +1,54 @@
+version: '3'
+services:
+  web_test:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8101:8000"
+    environment:
+      - API_BASE_URL=${API_BASE_URL}
+      - DJANGO_BASE_URL=${DJANGO_BASE_URL}
+      - DEBUG=True
+      - MASTER_PASSWORD=${MASTER_PASSWORD}
+    depends_on:
+      - api
+
+  api_test:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: python negotiation_secure_api.test.py
+    volumes:
+      - .:/app
+    ports:
+      - "8102:8001"
+    environment:
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_PORT: ${MONGO_PORT}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
+    depends_on:
+      - mongo
+      - kafka
+  mongo_test:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27117:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}   # Use the same user
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD} # Use the same password
+    volumes:
+      - mongodb-data-test:/data/db
+
+volumes:
+  mongodb-data-test:
+

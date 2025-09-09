@@ -1,0 +1,66 @@
+{% extends 'base_template_users.html' %}
+{% load static %}
+{% block title %} Consent Request{% endblock %}
+{% block content %}
+    <main id="main">
+        <section id="faq" class="faq">
+
+            <div class="container" data-aos="fade-up">
+
+                <header class="section-header">
+                    <p>Consent Request</p>
+                </header>
+
+
+                <div class="row justify-content-center">
+
+                    <div class="col-md-12"> <!-- Adjust the column size as needed -->
+                        <table class="table table-responsive">
+                            <thead>
+
+                            <tr>
+                                <th>Request Form</th>
+                                <th>Consent Status</th>
+                                <th>Response Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for consent_req in consent_requests %}
+                                <tr>
+                                    <td>{{ consent_req.consent_requestform.consent_request_form_title }}</td>
+                                    <td>
+                                        {% if consent_req.consent_given_status == "NotGiven" %}
+                                            <b style="color:red;">{{ consent_req.consent_given_status }}</b>
+                                        {% else %}
+                                            <b style="color:green;">{{ consent_req.consent_given_status }}</b>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ consent_req.consent_answer_status }}</td>
+                                    <td>
+                                        {% if consent_req.consent_answer_status == "REQUESTED"  and consent_req.consent_given_status == "Requested" %}
+                                            <a href="{% url 'view_consent_request_user_single' consent_req.id %}"
+                                               class="btn btn-success">Grant Consent</a>
+                                        {% elif consent_req.consent_answer_status == "RESPONDED" and consent_req.consent_given_status == "Given" %}
+                                            <a href="{% url 'view_consent_request_user_single' consent_req.id %}"
+                                               class="btn btn-danger">Revoke Consent</a>
+
+                                        {% else %}
+                                            <a href="{% url 'view_consent_request_user_single' consent_req.id %}"
+                                               class="btn btn-primary">View Response</a>
+                                        {% endif %}
+
+                                    </td>
+
+
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->
+{% endblock %}
+```

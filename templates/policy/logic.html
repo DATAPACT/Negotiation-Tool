@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Extract Logic Expressions {% endblock %}
+
+{% block content %}
+<main id="main">
+   <section id="faq" class="faq">
+
+      <div class="container" data-aos="fade-up">
+
+        <header class="section-header">
+          <p>Extract Logic Expressions</p>
+        </header>
+
+    <form id="extractForm">
+        <textarea id="inputText" rows="20" style="width: 100%;" placeholder="Enter odrl content">
+[{
+  "uid": "http://example.com/policy:001",
+  "@type": "Policy",
+  "profile": "http://example.com/odrl:profile:10",
+  "prohibition": [
+    {
+      "target": "q(x1,x3) :- Table1(x1,'u8',x3,x4), Table2(x4,x5,x6)",
+      "uid": "http://example.com/rule:001",
+      "assignee":  "https://w3id.org/dpv/dpv-owl#Employee",
+      "action": "aggregate",
+      "constraint": [{
+            "leftOperand": "purpose",
+            "operator": "eq",
+            "rightOperand": "https://w3id.org/dpv/dpv-owl#ResearchAndDevelopment"
+          }]
+    },
+    {
+      "target": "q(x2,x4) :- Table1(x2,'r8',x3,x4), Table2(x4,x5,x6), Table3(x4,x7)",
+      "uid": "http://example.com/rule:002",
+      "assignee":  "https://w3id.org/dpv/dpv-owl#Employee",
+      "action": "aggregate",
+      "constraint": [{
+            "leftOperand": "purpose",
+            "operator": "eq",
+            "rightOperand": "https://w3id.org/dpv/dpv-owl#ResearchAndDevelopment"
+          }]
+    }
+    ]
+}]
+        </textarea>
+        <br>
+        <button id="extractButton" type="button">Extract Logic Expressions</button>
+    </form>
+
+    <h2>Result</h2>
+
+    <textarea id="resultText" rows="5" style="width: 100%;" readonly></textarea>
+
+    <script>
+        $(document).ready(function () {
+            $('#extractButton').click(function () {
+                var saveddata = $('#inputText').val(); // Get input data
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                    },
+                    url: '{% url "extract_logic_expressions" %}', // Assuming 'extract_logic_expressions' is the URL name in Django
+                    contentType: 'application/json',
+                    data: JSON.stringify(saveddata),
+                    success: function (result) {
+                        // Write the result to the <textarea> element with id 'resultText'
+                        console.log(result);
+                        $('#resultText').val(result.logic_expression);
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    </script>
+           </section>
+</main>
+{% endblock %}

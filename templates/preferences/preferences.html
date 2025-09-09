@@ -1,0 +1,373 @@
+<fieldset id="fieldset-np">
+    <div class="form-card">
+            <div class="row">
+                <div class="section-title">Price</div>
+                <div class="col-md-4">
+                    <label for="default-price" class="fieldlabels">Default Price:</label>
+                    <input type="text" id="default-price" name="default-price" placeholder="Default Price" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="min-price" class="fieldlabels">Minimum Price:</label>
+                    <input type="text" id="min-price" name="min-price" placeholder="Min Price" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="max-price" class="fieldlabels">Maximum Price:</label>
+                    <input type="text" id="max-price" name="max-price" placeholder="Max Price" class="form-control">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="section-title">Environmental Cost of Generation</div>
+                <div class="col-md-4">
+                    <label for="default-energy-consumption" class="fieldlabels">Default Energy Consumption</label>
+                    <input type="text" id="default-energy-consumption" name="default-energy-consumption" placeholder="Default Energy Consumption in kWh" class="form-control">
+                    <label for="default-carbon-emission" class="fieldlabels">Default Carbon Emission</label>
+                    <input type="text" id="default-carbon-emission" name="default-carbon-emission" placeholder="Default Carbon Emission in kilograms" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="min-energy-consumption" class="fieldlabels">Minimum Energy Consumption</label>
+                    <input type="text" id="min-energy-consumption" name="min-energy-consumption" placeholder="Min Energy Consumption in kWh" class="form-control">
+                    <label for="min-carbon-emission" class="fieldlabels">Minimum Carbon Emission</label>
+                    <input type="text" id="min-carbon-emission" name="min-carbon-emission" placeholder="Min Carbon Emission in kilograms" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="max-energy-consumption" class="fieldlabels">Maximum Energy Consumption</label>
+                    <input type="text" id="max-energy-consumption" name="max-energy-consumption" placeholder="Max Energy Consumption in kWh" class="form-control">
+                    <label for="max-carbon-emission" class="fieldlabels">Maximum Carbon Emission</label>
+                    <input type="text" id="max-carbon-emission" name="max-carbon-emission" placeholder="Max Carbon Emission in kilograms" class="form-control">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="section-title">Environmental Cost of Serving</div>
+                <div class="col-md-4">
+                    <label for="default-generating-cost" class="fieldlabels">Default Generating Cost</label>
+                    <input type="text" id="default-generating-cost" name="default-generating-cost" placeholder="Default Generating Cost in kWh" class="form-control">
+                    <label for="default-serving-cost" class="fieldlabels">Default Serving Cost</label>
+                    <input type="text" id="default-serving-cost" name="default-serving-cost" placeholder="Default Serving Cost in kilograms" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="min-generating-cost" class="fieldlabels">Minimum Generating Cost</label>
+                    <input type="text" id="min-generating-cost" name="min-generating-cost" placeholder="Min Generating Cost in kWh" class="form-control">
+                    <label for="min-serving-cost" class="fieldlabels">Minimum Serving Cost</label>
+                    <input type="text" id="min-serving-cost" name="min-serving-cost" placeholder="Min Serving Cost in kilograms" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="max-generating-cost" class="fieldlabels">Maximum Generating Cost</label>
+                    <input type="text" id="max-generating-cost" name="max-generating-cost" placeholder="Max Generating Cost in kWh" class="form-control">
+                    <label for="max-serving-cost" class="fieldlabels">Maximum Serving Cost</label>
+                    <input type="text" id="max-serving-cost" name="max-serving-cost" placeholder="Max Serving Cost in kilograms" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="section-title m-3">Rules</div>
+        <div id="preferencesFormCardContainer">
+            <div class="form-card" id="preferencesFormCard" style="display: none">
+                <div id="prefRuleContainer" class="m-3">
+                    <label for="prefRuleDropdown">Rule:</label>
+                    <select id="prefRuleDropdown" class="dropdowns"></select>
+                </div>
+                <div id="prefActorContainer" class="m-3">
+                        <label for="prefActorDropdown">Actor:</label>
+                        <select id="prefActorDropdown" class="dropdowns"></select>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="minPrefActorDropdown">Minimum Actor:</label>
+                                <select id="minPrefActorDropdown" class="dropdowns"></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="maxPrefActorDropdown">Maximum Actor:</label>
+                                <select id="maxPrefActorDropdown" class="dropdowns"></select>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-4">
+                                <label for="resetActorPreferencesButton">Reset Actor Preferences:</label>
+                                <button type="button" id="resetActorPreferencesButton" class="btn btn-secondary">Reset</button>
+                            </div>
+                        </div>
+                </div>
+                <div id="prefActionContainer" class="m-3">
+                    <label for="prefActionDropdown">Action:</label>
+                    <select id="prefActionDropdown" class="dropdowns"></select>
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="minPrefActionDropdown">Minimum Action:</label>
+                            <select id="minPrefActionDropdown" class="dropdowns"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="maxPrefActionDropdown">Maximum Action:</label>
+                            <select id="maxPrefActionDropdown" class="dropdowns"></select>
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-md-4">
+                            <label for="resetActionPreferencesButton">Reset Action Preferences:</label>
+                            <button type="button" id="resetActionPreferencesButton" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="prefPurposeContainer" class="m-3">
+                    <label for="prefPurposeDropdown">Purpose:</label>
+                    <select id="prefPurposeDropdown" class="dropdowns"></select>
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="minPrefPurposeDropdown">Minimum Purpose:</label>
+                            <select id="minPrefPurposeDropdown" class="dropdowns"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="maxPrefPurposeDropdown">Maximum Purpose:</label>
+                            <select id="maxPrefPurposeDropdown" class="dropdowns"></select>
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-md-4">
+                            <label for="resetPurposePreferencesButton">Reset Purpose Preferences:</label>
+                            <button type="button" id="resetPurposePreferencesButton" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</fieldset>
+
+<script>
+
+    $(document).ready(function () {
+
+
+        function fillPreferencesDropdown(dropdownId, data, triggerElement, reset=false) {
+
+            // Ensure triggerElement is provided and is a valid jQuery object
+            const dropdown = triggerElement
+                ? $(triggerElement).closest(".form-card").find("#" + dropdownId)
+                : $('.form-card #' + dropdownId);
+        
+            if (!dropdown.length) {
+                console.error("Dropdown not found:", dropdownId);
+                return;
+            }
+        
+            const currentValue = dropdown.val();
+            console.log('Current value:', currentValue);
+        
+            dropdown.empty();
+        
+            // Recursive function to populate dropdown with indentation for nested children
+            function populateDropdown(data, parent = "") {
+                if (!Array.isArray(data)) {
+                    console.error("Data is not an array:", data);
+                    return;
+                }
+        
+                // Sort data alphabetically by label at each level
+                data.sort((a, b) => a.label.localeCompare(b.label));
+        
+                for (const item of data) {
+                    // Construct display text with the full path
+                    let txt = parent ? `${parent} -> ${item.label}` : item.label;
+
+                        dropdown.append($('<option>', {
+                            value: item.uri,
+                            text: txt
+                        }));   
+
+                    // Continue with children (even if not directly valid, we still display the path)
+                    if (item.children && item.children.length > 0) {
+                        populateDropdown(item.children, txt);
+                    }   
+                }
+            }
+        
+            // Start populating the dropdown
+            populateDropdown(data);
+
+            if (reset === true){
+                dropdown.prop('selectedIndex', -1);
+            } else {
+                // Check if the current value exists in the new options and restore it
+                if (dropdown.find(`option[value="${currentValue}"]`).length > 0) {
+                    dropdown.val(currentValue);
+                } else {
+                    // Optionally reset if the value is no longer valid
+                    dropdown.prop('selectedIndex', -1);
+                }
+            }   
+        }
+
+         // Function to find an object and its children by its URI
+        function findObjectAndChildren(data, targetUri) {
+            for (const item of data) {
+                // Check if the current item's URI matches
+                if (item.uri === targetUri) {
+                    return item; // Found the object, return it
+                }
+
+                // If children exist, search recursively
+                if (item.children && item.children.length > 0) {
+                   const found = findObjectAndChildren(item.children, targetUri);
+                    if (found) {
+                        return found; // Return if found in children
+                    }
+                }
+            }
+            return null; // Return null if not found
+        }
+
+        //Find the object and its parents
+        function findObjectAndParents(data, targetUri, parents = []) {
+            for (const item of data) {
+                // If the current item's URI matches the target URI
+                if (item.uri === targetUri) {
+                    // Return the object and its parent hierarchy
+                    return {
+                        object: item,
+                        parents: parents.reverse() // Reverse to get the parents in the correct order
+                    };
+                }
+                // If the current item has children, recursively search in the children
+                if (item.children && item.children.length > 0) {
+                    const found = findObjectAndParents(item.children, targetUri, [...parents, item]);
+                    if (found) {
+                        return found; // If found, return the object and its parents
+                    }
+                }
+            }
+            return null; // Return null if the target object is not found
+        }
+
+
+        // Function to rebuild a nested array from the parent objects only
+
+        function rebuildNestedArray(parents, object) {
+
+            let nestedStructure = null;
+
+            // Clear the children array of the object
+            object = {...object, children: []};
+
+            //check if parents is null or empty
+            if (!parents || parents.length === 0) {
+                console.log('No parents found');
+                nestedStructure = {...object, children: []};
+            } else {
+                // Build the nested structure using only the parent objects
+                for (let i = 0; i < parents.length; i++) {
+                    const parent = parents[i];
+                    if (i === 0) {
+                        // Start with the first parent object and include the target object as its child
+                        nestedStructure = { ...parent, children: [object] };
+                    } else {
+                        // Add the nested structure as a child of the next parent
+                        nestedStructure = { ...parent, children: [nestedStructure]}
+                    }
+                }
+            }
+            return nestedStructure
+        }
+
+
+        //when the min pref actor is changed do something
+        $(document).on('change', '#minPrefActorDropdown', function() {
+            console.log('Dropdown changed to:', $(this).val());
+
+            const maxOptions = findObjectAndParents({{ actors|safe }}, $(this).val());
+            console.log('max options', maxOptions);
+            maxOptionsNested = rebuildNestedArray(maxOptions.parents, maxOptions.object);
+
+            // If maxOptions is not already an array, make it an array
+            const maxOptionsArray = Array.isArray(maxOptionsNested) ? maxOptionsNested : [maxOptionsNested];
+            console.log('max options array', maxOptionsArray);
+
+            fillPreferencesDropdown('maxPrefActorDropdown', maxOptionsArray, this);
+        });
+
+
+        //when the max pref actor is changed do something
+        $(document).on('change', '#maxPrefActorDropdown', function() {
+            console.log('Dropdown changed to:', $(this).val());
+
+            const minOptions = findObjectAndChildren({{ actors|safe }}, $(this).val())
+            console.log('min options', minOptions);
+            const minOptionsArray = Array.isArray(minOptions) ? minOptions : [minOptions];
+            console.log('min options array', minOptionsArray);
+
+            fillPreferencesDropdown('minPrefActorDropdown', minOptionsArray, this);
+        });
+
+        $(document).on('click', '#resetActorPreferencesButton', function() {
+            console.log('reset actor preferences');
+            fillPreferencesDropdown('minPrefActorDropdown', {{ actors|safe }}, this, reset=true);
+            fillPreferencesDropdown('maxPrefActorDropdown', {{ actors|safe }}, this, reset=true);
+        });
+
+
+
+        //when the min pref action is changed do something
+        $(document).on('change', '#minPrefActionDropdown', function() {
+            console.log('Dropdown changed to:', $(this).val());
+
+            const maxOptions = findObjectAndParents({{ actions|safe }}, $(this).val());
+
+            const maxOptionsNested = rebuildNestedArray(maxOptions.parents, maxOptions.object);
+            // If maxOptions is not already an array, make it an array
+            const maxOptionsArray = Array.isArray(maxOptionsNested) ? maxOptionsNested : [maxOptionsNested];
+            console.log('max options array', maxOptionsArray);
+
+            fillPreferencesDropdown('maxPrefActionDropdown', maxOptionsArray, this);
+        });
+
+
+        //when the max pref actor is changed do something
+        $(document).on('change', '#maxPrefActionDropdown', function() {
+            console.log('Dropdown changed to:', $(this).val());
+
+            const minOptions = findObjectAndChildren({{ actions|safe }}, $(this).val())
+            const minOptionsArray = Array.isArray(minOptions) ? minOptions : [minOptions];
+
+            fillPreferencesDropdown('minPrefActionDropdown', minOptionsArray, this);
+        });
+
+        $(document).on('click', '#resetActionPreferencesButton', function() {
+            console.log('reset action preferences');
+            fillPreferencesDropdown('minPrefActionDropdown', {{ actions|safe }}, this, reset=true);
+            fillPreferencesDropdown('maxPrefActionDropdown', {{ actions|safe }}, this, reset=true);
+        });
+
+            
+
+        //when the min pref action is changed do something
+        $(document).on('change', '#minPrefPurposeDropdown', function() {
+            console.log('Dropdown changed to:', $(this).val());
+
+            const maxOptions = findObjectAndParents({{ purposes|safe }}, $(this).val());
+
+            const maxOptionsNested = rebuildNestedArray(maxOptions.parents, maxOptions.object);
+            // If maxOptions is not already an array, make it an array
+            const maxOptionsArray = Array.isArray(maxOptionsNested) ? maxOptionsNested : [maxOptionsNested];
+            console.log('max options array', maxOptionsArray);
+
+            fillPreferencesDropdown('maxPrefPurposeDropdown', maxOptionsArray, this);
+        });
+
+
+        //when the max pref actor is changed do something
+        $(document).on('change', '#maxPrefPurposeDropdown', function() {
+            console.log('Dropdown changed to:', $(this).val());
+
+            const minOptions = findObjectAndChildren({{ purposes|safe }}, $(this).val())
+            const minOptionsArray = Array.isArray(minOptions) ? minOptions : [minOptions];
+
+            fillPreferencesDropdown('minPrefPurposeDropdown', minOptionsArray, this);
+        });
+
+        $(document).on('click', '#resetPurposePreferencesButton', function() {
+            console.log('reset purpose preferences');
+            fillPreferencesDropdown('minPrefPurposeDropdown', {{ purposes|safe }}, this, reset=true);
+            fillPreferencesDropdown('maxPrefPurposeDropdown', {{ purposes|safe }}, this, reset=true);
+        });
+
+});
+        
+</script>

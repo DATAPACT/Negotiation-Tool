@@ -1,0 +1,147 @@
+{% extends 'base_template_organization.html' %}
+{% load static %}
+{% block title %} List of configured/sent consents (or rules) {% endblock %}
+{% block content %}
+    <main id="main">
+        <section id="faq" class="faq">
+
+            <div class="container" data-aos="fade-up">
+
+
+<div class="row">
+ <header class="section-header">
+          <p>List of the configured (and sent) consent (and or additional constraints)</p>
+        </header>
+            <div class="col-lg-2">
+                  {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong id="message_success"></strong>
+
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                    </div>
+                    {% endfor %}
+            </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-header">
+                            <h2>List of configured/sent consents (with additional use-case specific rules)</h2>
+                        </div>
+                        <table class="table table-responsive">
+                            <tr>
+
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Send to Selected User</th>
+
+                                <th></th><th></th>
+                            </tr>
+                            {% for consentform in consentforms %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'view_consent_form'  consentform.id  %}">
+                                            {{ consentform.consent_request_form_title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ consentform.consent_request_sent_status }}</td>
+                                    <td>{{ consentform.created_at }}</td>
+                                    <td>
+
+                                        {% if consentform.consent_request_sent_status == "SENT" %}
+                                            <i style="color:red;">Already sent</i>
+                                        {% else %}
+
+                                            <input type="hidden" name="consentformname" id="consentformname"
+                                                   value="{{ consentform.id }}">
+                                            <select name="usertosend{{ consentform.id }}"
+                                                    id="usertosend{{ consentform.id }}"
+                                                    class="sendmultiformclass form-control" multiple="multiple">
+                                                {% for user in users %}
+                                                    <option value="{{ user.id }}">{{ user.id }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button id="submitbtn{{ consentform.id }}"
+                                                    class="submitbtn btn btn-success">Send to Selected User
+                                            </button>
+                                        {% endif %}
+
+                                    </td>
+                                    <td>
+                                        {% if consentform.consent_request_sent_status == "SENT" %}
+                                            <i style="color:red;">Deletion not allowed.</i>
+                                        {% else %}
+                                            <a href="{% url 'deleteconsentrequestform' consentform.id %}"
+                                               class="btn btn-danger">Delete</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+            </div>
+
+        </section>
+    </main><!-- End #main -->
+    <script>
+        $(document).ready(function () {
+
+
+            $(".submitbtn").click(function (event) {
+                event.preventDefault();
+                var button_id = $(this).attr('id');
+                var closest_select = $("#" + button_id).prevAll('select.sendmultiformclass').attr('id');
+
+                var selected_users = $("#" + closest_select).val();
+                if (selected_users.length < 1) {
+                    alert("Please select atleast one user to send the request");
+                    return false;
+                }
+                var consnt_form_name = $("#consentformname").val();
+                var saveddata = {
+                    "consentform": consnt_form_name,
+                    "selected_users": selected_users
+                }
+                console.log("########################");
+                console.log(saveddata);
+                console.log("########################");
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                    },
+                    url: '{% url 'send_consent_to_selected_user' %}',
+                    contentType: 'application/json',
+                    data: JSON.stringify(saveddata),
+                    success: function (result) {
+                        console.log('Success:', result);
+                        alert(result.message);
+                        location.reload(true);
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+
+
+            });
+            $('.sendmultiformclass').multiselect({
+                columns: 3,
+                placeholder: 'Select users to send the request',
+                search: true,
+                searchOptions: {
+                    'default': 'Search users'
+                },
+                maxHeight: 100,
+                selectGroup: true,//
+                selectAll: true
+            });
+        });
+    </script>
+{% endblock %}
+```

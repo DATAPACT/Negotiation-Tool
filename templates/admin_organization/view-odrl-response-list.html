@@ -1,0 +1,62 @@
+{% extends 'base_template_organization.html' %}
+{% load static %}
+{% block title %} View ODRL Responses {% endblock %}
+{% block content %}
+    <main id="main">
+        <section id="faq" class="faq">
+
+            <div class="container" data-aos="fade-up">
+
+
+<div class="row">
+ <header class="section-header">
+          <p>List of the Consent Responses in ODRL</p>
+        </header>
+            <div class="col-lg-2">
+                  {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong id="message_success"></strong>
+
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                    </div>
+                    {% endfor %}
+            </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-header">
+                            <h2>List of configured/sent consents (with additional use-case specific rules)</h2>
+                        </div>
+                        <table class="table table-responsive">
+                            <tr>
+
+                                <th>Consented By</th>
+                                <th>Consent Status</th>
+                                <th>Consent Form</th>
+
+                                <th></th>
+                            </tr>
+                            {% for odrl_response in odrl_responses %}
+                                <tr>
+                                <td>{{ odrl_response.consented_by_user }}</td>
+                                <td>{{ odrl_response.consentrequestsendtouserformid.consent_answer_status }}</td>
+                                <td>{{ odrl_response.consentrequestsendtouserformid.consent_requestform.consent_request_form_title }}</td>
+                                <td>
+                                    <a href="{% url 'view_responses_controller_processor_odrl_single' odrl_response.id %}" class="btn btn-primary">View ODRL</a>
+                                </td>
+                            {% endfor %}
+
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+            </div>
+
+        </section>
+    </main><!-- End #main -->
+
+{% endblock %}
+```

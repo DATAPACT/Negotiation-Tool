@@ -1,0 +1,253 @@
+{% extends 'base_template_users.html' %}
+{% load static %}
+{% block title %} {{ consent_request.consent_requestform.consent_request_form_title }}{% endblock %}
+{% block content %}
+<main id="main">
+    <section id="faq" class="faq">
+
+        <div class="container" data-aos="fade-up">
+
+            <header class="section-header">
+                <p>{{ consent_request.consent_requestform.consent_request_form_title }}</p>
+            </header>
+
+
+            <div class="row justify-content-center">
+
+                <div class="col-md-12"> <!-- Adjust the column size as needed -->
+                    <table class="table table-responsive">
+                        <tr>
+                            <td colspan="2">
+                                <h3>Consent Request Details</h3>
+
+                            </td>
+                        </tr>
+                        <input type="hidden" id="consent_answer_status" value="{{ consent_request.id }}">
+                        <tr>
+                            <td><b>Requested data to be used</b></td>
+                            <td>{{ consent_request.consent_requestform.consent_data }}
+                                <input type="hidden" id="consent_data"
+                                       value="{{ consent_request.consent_requestform.consent_data }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Data processing operations that will be applied on the requested data</b></td>
+                            <td>
+                                {{ consent_request.consent_requestform.consent_operations }}
+                                <input type="hidden" id="consent_operations"
+                                       value="{{ consent_request.consent_requestform.consent_operations }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Duration from when the requested data (or processing operations) will start and
+                                end</b></td>
+                            <td><b>Start Date:</b> {{ consent_request.consent_requestform.consent_date_start }}
+                                <input type="hidden" id="consent_date_start"
+                                       value="{{ consent_request.consent_requestform.consent_date_start }}">
+                                <br/><b>End Date:</b> {{ consent_request.consent_requestform.consent_date_end }}
+                                <input type="hidden" id="consent_date_end"
+                                       value="{{ consent_request.consent_requestform.consent_date_end }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Data processing purpose</b></td>
+                            <td>{{ consent_request.consent_requestform.consent_purpose }}
+                                <input type="hidden" id="consent_purpose"
+                                       value="{{ consent_request.consent_requestform.consent_purpose }}"></td>
+                        </tr>
+                        <tr>
+                            <td><b>The request is made by</b></td>
+                            <td>
+                                {{ consent_request.consent_requestform.consent_requested_by }}
+                                <input type="hidden" id="consent_requested_by"
+                                       value="{{ consent_request.consent_requestform.consent_requested_by.id }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                {% if consent_request.consent_answer_status == "RESPONDED" %}
+                                    {% if consent_request.consent_given_status == "Given" %}
+                                        <div class="form-check justify-content-center">
+                                        <input class="form-check-input" type="checkbox" checked value=""
+                                               id="consentyesno">
+                                        <label class="form-check-label" for="consentyesno">
+                                            <b style="color: green">Do you consent to the above consent request?</b>
+                                        </label>
+                                    {% else %}
+                                        <div class="form-check justify-content-center">
+                                        <input class="form-check-input" type="checkbox" value="" id="consentyesno">
+                                        <label class="form-check-label" for="consentyesno">
+                                            <b style="color: green">Do you consent to the above consent request?</b>
+                                        </label>
+                                    {% endif %}
+
+
+                                </div>
+                                {% else %}
+                                    <div class="form-check justify-content-center">
+                                        <input class="form-check-input" type="checkbox" value="" id="consentyesno">
+                                        <label class="form-check-label" for="consentyesno">
+                                            <b style="color: green">Do you consent to the above consent request?</b>
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <h3>Custom Restrictions</h3>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            {% if has_custom_restrictions %}
+                                <td colspan="2">
+                                <div id="customrestrictioncheckbox">
+
+                                {% for crs in custom_restrictions %}
+                                {% if consent_request.consent_answer_status == "RESPONDED" %}
+                                    {% if consent_request.consent_given_status == "Given" %}
+                                         {% if crs.2 == "Prohibition" %}
+                                            <div class="form-check justify-content-center">
+                                                <input class="form-check-input customrestrictions"
+                                                       type="checkbox"
+                                                       value="{{ crs.1 }}"
+                                                       id="customrestrictions{{ forloop.counter }}">
+                                                <label class="form-check-label"
+                                                       for="customrestrictions{{ forloop.counter }}">
+                                                    <i>{{ crs.0 }}</i>
+                                                </label>
+                                            </div>
+                                            {% else %}
+                                            <div class="form-check justify-content-center">
+                                                <input class="form-check-input customrestrictions"
+                                                       type="checkbox"
+                                                       checked
+                                                       value="{{ crs.1 }}"
+                                                       id="customrestrictions{{ forloop.counter }}">
+                                                <label class="form-check-label"
+                                                       for="customrestrictions{{ forloop.counter }}">
+                                                    <i>{{ crs.0 }}</i>
+                                                </label>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                            {% else %}
+
+                                <div class="form-check justify-content-center">
+                                    <input class="form-check-input customrestrictions"
+                                           type="checkbox"
+                                           value="{{ crs.1 }}"
+                                           id="customrestrictions{{ forloop.counter }}">
+                                    <label class="form-check-label"
+                                           for="customrestrictions{{ forloop.counter }}">
+                                        <i>{{ crs.0 }}</i>
+                                    </label>
+                                </div>
+                            {% endif %}
+
+                            {% endfor %}
+                            </div>
+
+                            </td>
+                            {% else %}
+                            <td colspan="2">No custom restrictions.</td>
+                            {% endif %}
+
+                            <td colspan="2"></td>
+
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                {% if consent_request.consent_answer_status == "RESPONDED" and consent_request.consent_given_status == "Given" %}
+                                    <button class="btn btn-danger" id="consentsubmitbutton">Revoke Given
+                                        Permissions/Consent
+                                    </button>
+                                {% elif consent_request.consent_answer_status == "REVOKED" %}
+                                {% elif consent_request.consent_answer_status == "REQUESTED" %}
+                                    <button class="btn btn-primary" id="consentsubmitbutton">Give
+                                        Permissions/Consent
+                                    </button>
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</main><!-- End #main -->
+<script>
+    $(document).ready(function () {
+
+        function get_data() {
+            var consent_form_data = {};
+            var additional_constraints = [];
+            var consentwithadditioalconstraintsresponse = {};
+            var consent_requestform_id = $("#consent_answer_status").val();
+
+            consent_form_data["consent_data"] = $("#consent_data").val();
+            consent_form_data["consent_operations"] = $("#consent_operations").val();
+            consent_form_data["consent_date_start"] = $("#consent_date_start").val();
+            consent_form_data["consent_date_end"] = $("#consent_date_end").val();
+            consent_form_data["consent_purpose"] = $("#consent_purpose").val();
+            consent_form_data["consent_requested_by"] = $("#consent_requested_by").val();
+            consent_form_data["consentgivenstatus"] = $("#consentyesno").is(":checked") ? "Given" : "NotGiven";
+
+            var totalcheckboxes = $("#customrestrictioncheckbox input[type='checkbox']").length;
+            for (var i = 1; i <= totalcheckboxes; i++) {
+                var checkboxval = $("#customrestrictions" + i).val();
+                var jsonString = checkboxval.replace(/'/g, '"');
+                var jsonData = JSON.parse(jsonString);
+                if ($("#customrestrictions" + i).is(":checked")) {
+                    jsonData["permission_status"] = "Permission";
+
+                } else {
+                    jsonData["permission_status"] = "Prohibition";
+                }
+                additional_constraints.push(jsonData);
+            }
+
+            consentwithadditioalconstraintsresponse["consent"] = consent_form_data;
+            consentwithadditioalconstraintsresponse["additional_constraints"] = additional_constraints;
+
+            return {
+                "consentwithadditioalconstraintsresponse": consentwithadditioalconstraintsresponse,
+                "consent_requestform_id": consent_requestform_id,
+                "data_processor_controller_id": $("#consent_requested_by").val()
+            }
+
+
+        }
+
+        function submit_data(data, ajaxurl) {
+            $.ajax({
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                },
+                url: ajaxurl,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+                    window.location.href = '{% url 'view_consent_request_user' %}'
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+        $('#consentsubmitbutton').click(function (event) {
+            var datasubmit = get_data();
+            submit_data(datasubmit, '{% url 'save_user_consent_response' %}');
+        });
+
+
+
+    });
+</script>
+{% endblock %}
+```

@@ -1,0 +1,47 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+# Define namespaces
+@prefix ex: <http://example.org/datasets/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Dataset 1: COVID-19 Statistics
+ex:covid19Stats rdf:type ex:Dataset ;
+    dct:title "COVID-19 Statistics Dataset" ;
+    dct:description "Dataset containing COVID-19 statistics from various countries." ;
+    dct:publisher "World Health Organization" ;
+    dct:issued "2024-02-01"^^xsd:date ;
+    dct:license <http://creativecommons.org/licenses/by/4.0/> .
+
+# Dataset 2: Climate Change Data
+ex:climateChangeData rdf:type ex:Dataset ;
+    dct:title "Climate Change Data" ;
+    dct:description "Dataset with climate-related data for research and analysis." ;
+    dct:publisher "Intergovernmental Panel on Climate Change" ;
+    dct:issued "2024-02-02"^^xsd:date ;
+    dct:license <http://opensource.org/licenses/MIT> .
+
+# Dataset 3: Economic Indicators
+ex:economicIndicators rdf:type ex:Dataset ;
+    dct:title "Economic Indicators Dataset" ;
+    dct:description "Dataset containing economic indicators and financial data." ;
+    dct:publisher "International Monetary Fund" ;
+    dct:issued "2024-02-03"^^xsd:date ;
+    dct:license <http://www.gnu.org/licenses/gpl-3.0.html> .
+
+# Dataset 4: Biodiversity Records
+ex:biodiversityRecords rdf:type ex:Dataset ;
+    dct:title "Biodiversity Records Dataset" ;
+    dct:description "Dataset with records of plant and animal biodiversity." ;
+    dct:publisher "Convention on Biological Diversity" ;
+    dct:issued "2024-02-04"^^xsd:date ;
+    dct:license <http://creativecommons.org/licenses/by/4.0/> .
+
+# Dataset 5: Social Media Analytics
+ex:socialMediaAnalytics rdf:type ex:Dataset ;
+    dct:title "Social Media Analytics Dataset" ;
+    dct:description "Dataset containing analytics data from social media platforms." ;
+    dct:publisher "Example Analytics Company" ;
+    dct:issued "2024-02-05"^^xsd:date ;
+    dct:license <http://opensource.org/licenses/MIT> .

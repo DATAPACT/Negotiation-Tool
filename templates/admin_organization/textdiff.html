@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Diff Tool</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .diff-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .diff-table th, .diff-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .diff-table .diff_header {
+            background-color: #f1f1f1;
+        }
+        .diff-table .diff_next {
+            background-color: #e6e6e6;
+        }
+        .diff-table .diff_add {
+            background-color: #d4edda;
+        }
+        .diff-table .diff_chg {
+            background-color: #ffeeba;
+        }
+        .diff-table .diff_sub {
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Diff Tool</h1>
+    <textarea id="text1" rows="10" cols="50" placeholder="Enter first text here..."></textarea>
+    <textarea id="text2" rows="10" cols="50" placeholder="Enter second text here..."></textarea>
+    <button id="compare">Compare</button>
+    <div id="result"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#compare').click(function() {
+                var text1 = $('#text1').val();
+                var text2 = $('#text2').val();
+                $.ajax({
+                    url: '{% url "get_text_diff" %}',
+                    type: 'POST',
+                    data: {
+                        'text1': text1,
+                        'text2': text2,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        $('#result').html(data.diff);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

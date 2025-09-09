@@ -1,0 +1,32 @@
+{% extends 'base_template_organization.html' %}
+{%load static %}
+{% block title %} Configure Consent/Privacy Preference Request {% endblock %}
+{% block content %}
+  <main id="main">
+    <section id="faq" class="faq">
+
+      <div class="container" data-aos="fade-up">
+
+        <header class="section-header">
+          <p>Configure the consent/privacy preference request form</p>
+        </header>
+
+        <div class="row">
+            <div class="col-lg-12">
+                In order to configure the consent/privacy preference request form, you need to provide the following information:
+                <ol>
+                    <li>Upload the ontology. <a href="{% url 'uploadontology' %}">Click here</a></li>
+                    <li>Upload the consent/privacy preference request form.</li>
+                </ol>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+ </main><!-- End #main -->
+{% endblock %}
+```

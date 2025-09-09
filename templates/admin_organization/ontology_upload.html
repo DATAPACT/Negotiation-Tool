@@ -1,0 +1,76 @@
+{% extends 'base_template_organization.html' %}
+{% load static %}
+{% block title %} Semantic Model Upload{% endblock %}
+{% block content %}
+    <main id="main">
+        <section id="faq" class="faq">
+
+            <div class="container" data-aos="fade-up">
+
+                <header class="section-header">
+                    <p>Upload Your Ontology</p>
+                </header>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <strong style="color: green">Success: </strong>
+                            {% else %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong style="color: red">Error: </strong>
+                            {% endif %}
+                        {{ message }}
+                        </div>
+                        {% endfor %}
+                        </div>
+                        <div class="col-lg-12">
+
+                            <h3 style="color: red">
+                                <i>Note: Upload ontology in RDF format. </i>
+                            </h3> </label>
+                            <form method="POST" action="{% url 'uploadontology' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="name" class="form-control" name="name" id="name"
+                                           aria-describedby="nameHelp" required>
+                                    <div id="nameHelp" class="form-text">Enter the name for your ontology (min 4 and max
+                                        60 characters).
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="ontologytype" class="form-label">Ontology Type</label>
+                                    <select id="ontologytype" name="ontologytype"
+                                            class="form-select form-select-lg mb-3" aria-label=".form-select-lg"
+                                            aria-describedby="ontologytypeHelp">
+                                        <option value="GENERAL" selected>General Ontology</option>
+                                        <option value="DOMAIN">Domain Ontology</option>
+                                        <option value="DATA_SCHEMA">Data Schema Ontology</option>
+                                    </select>
+                                    <div id="ontologytypeHelp" class="form-text">Select the type of ontology, i.e.,
+                                        where it is going to be used.
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="ontologyfile" class="form-label">Upload Ontology</label>
+                                    <input class="form-control" type="file" id="ontologyfile" name="ontologyfile">
+                                    <div id="ontologyfileHelp" class="form-text">Upload the ontology that consists of
+                                        purposes and other rules.
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+    </main><!-- End #main -->
+{% endblock %}
+```

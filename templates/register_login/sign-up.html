@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{%load static %}
+{% block title %} Sign Up {% endblock %}
+{% block inpagecss %}
+    .login-form {
+{#      display: flex;#}
+      align-items: center;
+      justify-content: center;
+{#      height: 100vh; /* Set the height of the container to the full viewport height */#}
+    }
+{% endblock %}
+{% block content %}
+
+ <main id="main">
+    <section id="faq" class="faq">
+
+      <div class="container" data-aos="fade-up">
+
+        <header class="section-header">
+          <p>Create a user account</p>
+        </header>
+
+        <div class="row">
+            <div class="col-lg-2"></div>
+          <div class="col-lg-7">
+
+
+  <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+                  <div class="mb-4">
+                       <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username"  Required>
+                      <div id="usernameHelp" class="form-text">Enter desired username.</div>
+                  </div>
+                  {% comment %} <div class="mb-4">
+                    <label for="firstname" class="form-label">First name</label>
+                    <input type="text" class="form-control" id="firstname" name="firstname" aria-describedby="firstnameHelp" Required>
+                    <div id="firstnameHelp" class="form-text">Enter your first name.</div>
+                  </div>
+                  <div class="mb-4">
+                    <label for="lastname" class="form-label">Last name</label>
+                    <input type="text" class="form-control"  name="lastname" id="lastname" aria-describedby="lastnameHelp" Required>
+                    <div id="lastnameHelp" class="form-text">Enter your last name.</div>
+                  </div> {% endcomment %}
+                  <div class="mb-4">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp" Required>
+                    <div id="emailHelp" class="form-text">Enter your registered email address.</div>
+                  </div>
+                  <div class="mb-4">
+                    <label for="user_type" class="form-label">User type</label>
+                    <select class="form-select" id="user_type" name="user_type" aria-label="Select user type" Required>
+                      <option value="" selected disabled>Select user type</option>
+                      <option value="consumer">Consumer</option>
+                      <option value="provider">Provider</option>
+                    </select>
+                    <div id="userTypeHelp" class="form-text">Select your user type.</div>
+                  </div>
+                  <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" Required>
+                  </div>
+                  <div class="mb-4">
+                    <label for="confirmpassword" class="form-label">Confirm password</label>
+                    <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" Required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Sign Up</button>
+                   <div class="mb-3">
+                    <a href="{% url 'login' %}">Login</a>
+                  </div>
+                </form>
+
+          </div>
+
+          <div class="col-lg-3">
+<p>
+    <b>Note: </b> All fields are required.
+</p>
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-danger">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- End F.A.Q Section -->
+ </main><!-- End #main -->
+
+
+{% endblock %}
+```

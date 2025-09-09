@@ -1,0 +1,1035 @@
+{% extends 'base_template_organization.html' %}
+{% load static %}
+{% block inpagecss %}
+    * {
+    margin: 0;
+    padding: 0;
+    }
+
+    html {
+    height: 100%;
+    }
+
+    p {
+    color: grey;
+    }
+
+    #heading {
+    text-transform: uppercase;
+    color: #673AB7;
+    font-weight: normal;
+    }
+
+    #msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px;
+    }
+
+
+
+    #msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+
+    /*stacking fieldsets above each other*/
+    position: relative;
+    }
+
+    .form-card {
+    text-align: left;
+    }
+
+    /*Hide all except first fieldset*/
+    #msform fieldset:not(:first-of-type) {
+    display: none;
+    }
+
+    #msform input, #msform textarea {
+    padding: 8px 15px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    margin-bottom: 25px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2C3E50;
+    background-color: #ECEFF1;
+    font-size: 16px;
+    letter-spacing: 1px;
+    }
+
+    #msform input:focus, #msform textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: 1px solid #673AB7;
+    outline-width: 0;
+    }
+
+    /*Next Buttons*/
+    #msform .action-button {
+    width: 100px;
+    background: #673AB7;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    float: right;
+    }
+
+    #msform .action-button:hover, #msform .action-button:focus {
+    background-color: #311B92;
+    }
+
+    /*Previous Buttons*/
+    #msform .action-button-previous {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right;
+    }
+
+    #msform .action-button-previous:hover, #msform .action-button-previous:focus {
+    background-color: #000000;
+    }
+
+    /*The background card*/
+    .card {
+    z-index: 0;
+    border: none;
+    position: relative;
+    }
+
+    /*FieldSet headings*/
+    .fs-title {
+    font-size: 25px;
+    color: #673AB7;
+    margin-bottom: 15px;
+    font-weight: normal;
+    text-align: left;
+    }
+
+    .purple-text {
+    color: #673AB7;
+    font-weight: normal;
+    }
+
+    /*Step Count*/
+    .steps {
+    font-size: 25px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: right;
+    }
+
+    /*Field names*/
+    .fieldlabels {
+    color: gray;
+    text-align: left;
+    }
+
+    /*Icon progressbar*/
+    #progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey;
+    }
+
+    #progressbar .active {
+    color: #673AB7;
+    }
+
+    #progressbar li {
+    list-style-type: none;
+    font-size: 15px;
+    width: 25%;
+    float: left;
+    position: relative;
+    font-weight: 400;
+    }
+
+    /*Icons in the ProgressBar*/
+    #progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f13e";
+    }
+
+    #progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f007";
+    }
+
+    #progressbar #payment:before {
+    font-family: FontAwesome;
+    content: "\f030";
+    }
+
+    #progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c";
+    }
+
+    /*Icon ProgressBar before any progress*/
+    #progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px;
+    }
+
+    /*ProgressBar connectors*/
+    #progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1;
+    }
+
+    /*Color number of the step and the connector before it*/
+    #progressbar li.active:before, #progressbar li.active:after {
+    background: #673AB7;
+    }
+
+    /*Animated Progress Bar*/
+    .progress {
+    height: 20px;
+    }
+
+    .progress-bar {
+    background-color: #673AB7;
+    }
+
+    /*Fit image in bootstrap div*/
+    .fit-image{
+    width: 100%;
+    object-fit: cover;
+    }
+
+    .non-readonly-input{
+    background-color: white; /* Change the background color as an example */
+    }
+
+{% endblock %}
+{% block title %} Configure Consent/Privacy or Contract Preference Request {% endblock %}
+{% block content %}
+    <main id="main">
+        <section id="faq" class="faq">
+
+            <div class="container" data-aos="fade-up">
+
+                <header class="section-header"><br/>
+                    {#          <p>Configure the consent/contract/privacy preference request form</p>#}
+                </header>
+
+
+                <div class="row justify-content-center">
+                    {% if isNone %}
+                        <div class="col-md-12">
+                            <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                                <h2 id="heading">Configure the consent/privacy preference request form</h2>
+                                <p>Fill all form field to go to next step</p>
+
+                                <form id="msform">
+                                    <!-- progressbar -->
+                                    <ul id="progressbar">
+                                        <li class="active" id="account"><strong>Ontology</strong></li>
+                                        <li id="personal"><strong>Context & Data</strong></li>
+                                        <li id="payment"><strong>Consent</strong></li>
+                                        <li id="payment"><strong>Use-case Constraints</strong></li>
+                                        <li id="confirm"><strong>Finish</strong></li>
+                                    </ul>
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                             role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <br>
+                                    <!-- fieldsets step 1-->
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <div class="row">
+                                                <div class="col-7">
+                                                    <h2 class="fs-title">Ontology Selection</h2>
+                                                </div>
+                                                <div class="col-5">
+                                                    <h2 class="steps">Step 1 - 5</h2>
+                                                </div>
+                                            </div>
+
+                                            <label class="fieldlabels">Data and Context Information Ontology: *</label>
+                                            <select class="form-select fieldlabels" aria-label="Select Ontology"
+                                                    id="selectdatacontextontology" required>
+                                                <option selected>Select Ontology</option>
+                                                {% for ontology in datacontextontologies %}
+                                                    <option value="{{ ontology.file }}">{{ ontology.name|upper }}</option>
+                                                {% endfor %}
+                                            </select>
+
+                                            <div id="selectconsentontologyholder">
+                                                <label class="fieldlabels">Consent Ontology with Purpose and Data
+                                                    Processing Operations: *</label>
+                                                <select class="form-select fieldlabels" aria-label="Select Ontology"
+                                                        id="selectconsentontology" required>
+                                                    <option selected>Select Ontology</option>
+                                                    {% for ontology in consentontologies %}
+                                                        <option value="{{ ontology.file }}">{{ ontology.name|upper }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div id="selectprivacyusecaseontologyholder">
+                                                <label class="fieldlabels">Use case specific privacy constraints
+                                                    ontology: *</label>
+                                                <select class="form-select fieldlabels" aria-label="Select Ontology"
+                                                        id="selectprivacyusecaseontology" required>
+                                                    <option selected>Select Ontology</option>
+                                                    {% for ontology in usecaseprivacyontologies %}
+                                                        <option value="{{ ontology.file }}">{{ ontology.name|upper }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <input type="button" id="step1-next" name="next" class="next action-button"
+                                               value="Next"/>
+
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <div class="row">
+                                                <div class="col-7">
+                                                    <h2 class="fs-title addinfo">Select data processing context and data
+                                                        you want to collect</h2>
+                                                </div>
+                                                <div class="col-5">
+                                                    <h2 class="steps">Step 2 - 5</h2>
+                                                </div>
+                                            </div>
+                                            <label class="fieldlabels">Select data that you want to collect from data
+                                                subject: *</label>
+                                            <select id='selectList' multiple='multiple' class="form-group">
+                                            </select>
+                                            <br/>
+                                            <label class="fieldlabels">Context:<br/><small>How/where data will be used
+                                                or processed?</small> *</label>
+                                            <select class="form-select fieldlabels" aria-label="Select Context"
+                                                    id="selectcontext" required>
+                                                <option selected>Select Context</option>
+                                            </select>
+                                            <label class="fieldlabels">Purpose:<br/><small>The data processing
+                                                purpose?</small> *</label>
+                                            <select class="form-select fieldlabels" aria-label="Select Context"
+                                                    id="selectpurpose" required>
+                                                <option selected>Select Purpose</option>
+                                            </select>
+                                        </div>
+                                        <input type="button" name="next" id="step2-next" class="next action-button"
+                                               value="Next"/>
+                                        <input type="button" name="previous" class="previous action-button-previous"
+                                               id="step2-previous"
+                                               value="Previous"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <div class="row">
+                                                <div class="col-7">
+                                                    <h2 class="fs-title addinfo"></h2>
+                                                </div>
+                                                <div class="col-5">
+                                                    <h2 class="steps">Step 3 - 5</h2>
+                                                </div>
+                                            </div>
+                                            <div class="consent-form">
+
+                                            </div> <!-- consent form -->
+                                        </div>
+                                        <input type="button" name="next" id="step3-next" class="next action-button"
+                                               value="Next"/>
+                                        <input type="button" name="previous" class="previous action-button-previous"
+                                               value="Previous"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <div class="row">
+                                                <div class="col-7">
+                                                    <h2 class="fs-title">Set use case specific constraints</h2>
+                                                </div>
+                                                <div class="col-5">
+                                                    <h2 class="steps">Step 4 - 5</h2>
+                                                </div>
+                                            </div>
+                                            <div class="card" style="width: 100%; border: 1px solid grey">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Result Based Restrictions</h5>
+                                                    <h6 class="card-subtitle mb-2 text-muted"><b>Explanation: </b>Say you have selected Condition 1 to be A, Condition 2 to be B,
+                                                        and Condition 3 to be C with an option to allow for Sharing (not processing) for an end result Calorie burn, then the conditions will be read (and applied) as follows. <br/>
+                                                        If conditions A, B, and C are met, I allow sharing the (calculated) result.</h6>
+                                                    <table class="table" id="resultbasedrestrictions">
+                                                        <thead>
+                                                        <tr>
+
+                                                            <th scope="col">Condition(s)</th>
+                                                            <th scope="col">Allow/Deny</th>
+                                                            <th scope="col">Processing/Sharing</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td ><table id="conditions"></table></td>
+                                                            <td><input type="checkbox" id="allowdeny"></td>
+                                                            <td><input type="checkbox" id="processingsharing"></td>
+                                                            <td> <input type="button" name="Submitconditions" class="action-button" value="Add"/></td>
+                                                        </tr>
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="card" style="width: 100%; border: 1px solid grey">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Result Based Restrictions</h5>
+                                                    <h6 class="card-subtitle mb-2 text-muted">The following restrictions
+                                                        will be applied to the processed data's end result.</h6>
+                                                    <p class="card-text">Some quick example text to build on the card
+                                                        title and make up the bulk of the card's content.</p>
+                                                    <a href="#" class="card-link">Card link</a>
+                                                    <a href="#" class="card-link">Another link</a>
+                                                </div>
+                                            </div>
+                                            <div class="card" style="width: 100%; border: 1px solid grey">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Result Based Restrictions</h5>
+                                                    <h6 class="card-subtitle mb-2 text-muted">The following restrictions
+                                                        will be applied to the processed data's end result.</h6>
+                                                    <p class="card-text">Some quick example text to build on the card
+                                                        title and make up the bulk of the card's content.</p>
+                                                    <a href="#" class="card-link">Card link</a>
+                                                    <a href="#" class="card-link">Another link</a>
+                                                </div>
+                                            </div>
+                                            <div class="card" style="width: 100%; border: 1px solid grey">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Result Based Restrictions</h5>
+                                                    <h6 class="card-subtitle mb-2 text-muted">The following restrictions
+                                                        will be applied to the processed data's end result.</h6>
+                                                    <p class="card-text">Some quick example text to build on the card
+                                                        title and make up the bulk of the card's content.</p>
+                                                    <a href="#" class="card-link">Card link</a>
+                                                    <a href="#" class="card-link">Another link</a>
+                                                </div>
+                                            </div>
+                                            <div class="custom-constraints" id="custom-constraints">
+
+                                            </div> <!-- consent form -->
+                                        </div>
+                                        <input type="button" name="next" class="next action-button" value="Submit"/>
+                                        <input type="button" name="previous"  id="step4-previous" class="previous action-button-previous"
+                                               value="Previous"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <div class="row">
+                                                <div class="col-7">
+                                                    <h2 class="fs-title">Finish:</h2>
+                                                </div>
+                                                <div class="col-5">
+                                                    <h2 class="steps">Step 5 - 5</h2>
+                                                </div>
+                                            </div>
+                                            <br><br>
+                                            <h2 class="purple-text text-center"><strong>SUCCESS !</strong></h2>
+                                            <br>
+                                            <div class="row justify-content-center">
+                                                <div class="col-3">
+                                                    <img src="https://i.imgur.com/GwStPmg.png" class="fit-image">
+                                                </div>
+                                            </div>
+                                            <br><br>
+                                            <div class="row justify-content-center">
+                                                <div class="col-7 text-center">
+                                                    <h5 class="purple-text text-center">You Have Successfully Signed
+                                                        Up</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p>Please upload purpose ontology</p>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            </div>
+
+        </section>
+    </main><!-- End #main -->
+    <script>
+        $(document).ready(function () {
+            $("#selectprivacyusecaseontologyholder").hide();
+            $("#selectconsentontologyholder").hide();
+            $("#step1-next").hide();
+            $("#selectdatacontextontology").on('change', function (event) {
+                event.preventDefault();
+                var value = $(this).val();
+                if ($('#selectdatacontextontology option:selected').length > 0 && (value != 'Select Ontology')) {
+                    // Option is selected
+                    console.log('Context selected');
+                    $("#selectconsentontologyholder").show();
+                } else {
+                    $("#selectconsentontologyholder").hide();
+                    $("#selectprivacyusecaseontologyholder").hide();
+                }
+            });
+
+            $("#selectconsentontology").on('change', function (event) {
+                event.preventDefault();
+                var value = $(this).val();
+                if (($('#selectconsentontology option:selected').length > 0 && (value != 'Select Ontology')) && !$('#selectdatacontextontologyholder').is(':hidden')) {
+                    // Option is selected
+                    console.log('Consent ontology selected');
+                    $("#selectprivacyusecaseontologyholder").show();
+                } else {
+                    $("#selectprivacyusecaseontologyholder").hide();
+                }
+            });
+            $("#selectprivacyusecaseontology").on('change', function (event) {
+                event.preventDefault();
+                var value = $(this).val();
+                if (($('#selectprivacyusecaseontology option:selected').length > 0 && (value != 'Select Ontology'))
+                    && !$('#selectdatacontextontologyholder').is(':hidden')
+                    && !$('#selectconsentontologyholder').is(':hidden')) {
+                    // Option is selected
+                    console.log('Custom privacy ontology selected');
+                    $("#step1-next").show();
+                } else {
+                    $("#step1-next").hide();
+                }
+            });
+
+//form multi-step
+            var current_fs, next_fs, previous_fs; //fieldsets
+            var opacity;
+            var current = 1;
+            var steps = $("fieldset").length;
+
+            setProgressBar(current);
+
+            function showStep(current_fs, next_fs) {
+                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+                //show the next fieldset
+                next_fs.show();
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        next_fs.css({'opacity': opacity});
+                    },
+                    duration: 500
+                });
+                setProgressBar(++current);
+            }
+
+            function setOptgroupSelectListOptions(class_name, jsonData, type = "purpose") {
+                var selectList = $('#' + class_name);
+                selectList.empty();
+                var optgroupgeneral;
+                if (type == "processing") {
+                    optgroupgeneral = $('<optgroup>', {label: "Processing Operations"}).appendTo(selectList);
+                } else {
+                    optgroupgeneral = $('<optgroup>', {label: "Others"}).appendTo(selectList);
+                }
+
+
+                $.each(jsonData.data.children, function (index, child) {
+
+                    if (child.children && child.children.length > 0) {
+                        var optgroup = $('<optgroup>', {label: child.node_name}).appendTo(selectList);
+                        $.each(child.children, function (subIndex, subChild) {
+                            var subOption = $('<option>', {
+                                value: subChild.node_name.toLowerCase(),
+                                text: subChild.node_name
+                            });
+                            optgroup.append(subOption);
+                        });
+                    } else {
+                        var option = $('<option>', {
+                            value: child.node_name.toLowerCase(),
+                            text: child.node_name
+                        });
+                        optgroupgeneral.append(option);
+                    }
+                });
+            }
+
+            $(".next").click(function () {
+
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
+
+                var currentID = $(this).attr('id');
+                var prediction = "None"
+                if (currentID == "step1-next") {
+                    $.ajax({
+                        url: '{% url 'get_ontology_data_ajax' %}',
+                        data: {'selected_option': $('#selectdatacontextontology option:selected').val()},
+                        type: 'GET',
+                        async: false,
+                        cache: false,
+                        timeout: 30000,
+                        dataType: 'json',
+                        success: function (jsonData) {
+
+                            console.log("jsonData");
+                            console.log(jsonData.data);
+                            console.log(jsonData.context);
+
+                            setOptgroupSelectListOptions("selectList", jsonData);
+
+                            //context select list
+                            var contextselectListContext = $('#selectcontext');
+                            contextselectListContext.empty();
+                            contextselectListContext.append($("<option>", {
+                                value: "selectcontext",
+                                text: "Select Context"
+                            }));
+                            $.each(jsonData.context, function (index, value) {
+                                console.log("Context in");
+                                contextselectListContext.append($("<option>", {
+                                    value: value,
+                                    text: value.toUpperCase()
+                                }));
+                            });
+
+                            console.log(selectList);
+
+                            $('#selectList').multiselect({
+                                columns: 3,
+                                placeholder: 'Select Data',
+                                search: true,
+                                searchOptions: {
+                                    'default': 'Search Data'
+                                },
+                                maxHeight: 100,
+                                selectGroup: true,//
+                                selectAll: true
+                            });
+
+
+                        }
+
+                    });
+                    $.ajax({
+                        url: '{% url 'get_purpose_processing_data_ajax' %}',
+                        data: JSON.stringify({
+                            'selectedOntology': $('#selectconsentontology').val(),
+                            'type': 'purpose'
+                        }),
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                        },
+                        async: true,
+                        cache: false,
+                        timeout: 40000,
+                        contentType: 'application/json',
+                        success: function (consentontologyajaxdata) {
+
+                            // Handle data from the second request
+                            console.log('Data from the second request:', consentontologyajaxdata);
+                            setOptgroupSelectListOptions("selectpurpose", consentontologyajaxdata);
+
+                            // You can continue with additional requests or processing if needed
+                        },
+                        error: function (consentontologyajaxdataerror) {
+                            console.error('Error in the second request:', consentontologyajaxdataerror);
+                        }
+                    });
+
+                    showStep(current_fs, next_fs);
+                }
+
+                if (currentID == "step2-next") {
+                    var selectedContextData = $('#selectcontext').val();
+                    var selectedPurposeData = $('#selectpurpose').val();
+                    var hasselectedContext = $('#selectList').val().length;
+                    if (hasselectedContext == 0) {
+                        alert("Please select the data you want to collect (or process)");
+                        return false;
+                    }
+
+                    var selectedValuesByOptgroup = {};
+                    var totalOptionsByOptgroup = {};
+                    var optgroups = $('#selectList optgroup');
+                    //
+                    optgroups.each(function () {
+                        var optgroupLabel = $(this).attr('label');
+                        var optionsCount = $(this).find('option').length;
+
+                        // Store total options count per optgroup
+                        totalOptionsByOptgroup[optgroupLabel] = optionsCount;
+                    });
+
+                    $('#selectList option:selected').each(function () {
+                        var optgroupLabel = $(this).closest('optgroup').attr('label');
+
+                        var optionValue = $(this).val();
+
+                        if (!selectedValuesByOptgroup[optgroupLabel]) {
+                            selectedValuesByOptgroup[optgroupLabel] = {
+                                options: [],
+                                count: 0
+                            };
+                        }
+                        selectedValuesByOptgroup[optgroupLabel].options.push(optionValue);
+                        selectedValuesByOptgroup[optgroupLabel].count++;
+                    });
+
+                    var finaldata = [];
+                    for (var optgroupLabel in selectedValuesByOptgroup) {
+                        if (optgroupLabel != "Others") { // if not others
+                            if (totalOptionsByOptgroup[optgroupLabel] == selectedValuesByOptgroup[optgroupLabel].count) {
+                                finaldata.push(optgroupLabel.toLowerCase());
+                            } else {
+                                $.each(selectedValuesByOptgroup[optgroupLabel].options, function (index, value) {
+                                    finaldata.push(value);
+                                });
+                            }
+                        } else {
+                            $.each(selectedValuesByOptgroup[optgroupLabel].options, function (index, value) {
+                                finaldata.push(value);
+                            });
+                        }
+                    }
+
+                    if (selectedContextData == "selectcontext") {
+                        alert("Please select a context");
+                        return false;
+                    }
+
+                    if (selectedPurposeData == "selectpurpose") {
+                        alert("Please select a purpose");
+                        return false;
+                    }
+
+                    var ontology_data = $('#selectontology').val();
+
+                    $.ajax({
+                        url: '{% url 'predict_pii_data' %}',
+                        data: JSON.stringify({
+                            'selectedData': finaldata,
+                            'selectedContext': selectedContextData,
+                            'selectedOntology': $('#selectdatacontextontology').val()
+                        }),
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                        },
+                        async: false,
+                        cache: false,
+                        timeout: 30000,
+                        contentType: 'application/json',
+                        success: function (data) {  // Handle the successful result returned from the server
+                            if (data["prediction"].includes("CollectedPersonalData") || data["prediction"].includes("DerivedPersonalData")) {
+                                $(".addinfo").text("Since Personally Identifiable Data is being collected, consent is required. Set the following Consent form.");
+                                $(".consent-form").empty();
+                                $(".consent-form").append(
+                                    '<div class="mb-3">' +
+                                    '<label for="consentrequestedBy" class="form-label">Data Requested By</label>' +
+                                    '<input type="text" class="form-control" id="consentrequestedBy" name="consentrequestedBy" value="{{ datarequestedby.id }}" readonly=True aria-describedby="consentrequestedByHelp">' +
+                                    '<div id="consentrequestedByHelp" class="form-text">Data controller/processor requesting consent.</div>' +
+                                    '</div>' +
+                                    '<div class="mb-3">' +
+                                    '<label for="consentData" class="form-label">Data</label>' +
+                                    '<input type="text" class="form-control" id="consentData" readonly=True aria-describedby="consentDataHelp">' +
+                                    '<div id="consentDataHelp" class="form-text">Data that will be shared/used for data processing operations.</div>' +
+                                    '</div>' +
+                                    '<div class="mb-3">' +
+                                    '<label for="consentDataProcessingContext" class="form-label">Data Processing Context</label>' +
+                                    '<input type="text" class="form-control" id="consentDataProcessingContext" readonly=True aria-describedby="consentDataProcessingContextHelp">' +
+                                    '<div id="consentDataProcessingContextHelp" class="form-text">Context in which data processing operations is performed.</div>' +
+                                    '</div>' +
+                                    '<div class="mb-3">' +
+                                    '<label for="consentDataPurpose" class="form-label">Purpose</label>' +
+                                    '<input type="text" class="form-control" id="consentDataPurpose" readonly=True aria-describedby="consentDataPurposeHelp">' +
+                                    '<div id="consentDataPurposeHelp" class="form-text">Data processing purpose.</div>' +
+                                    '</div>' +
+                                    '<div class="mb-3">' +
+                                    '<label for="consentDataProcessingOperations" class="form-label">Data Processing Operations</label>' +
+                                    '<select class="form-select fieldlabels" multiple="multiple" aria-label="Select Context"  id="consentDataProcessingOperations" aria-describedby="consentDataProcessingOperationsHelp" required>' +
+                                    '<option selected>Select Data Processing Operations</option>' +
+                                    '<select>' +
+                                    '<div id="consentDataProcessingOperationsHelp" class="form-text">Data processing operations that will be applied (or performed) on the data.</div>' +
+                                    '</div>' +
+                                    '<div class="mb-3">' +
+                                    '<label for="consentDataStart" class="form-label">Select Start Date for Collection/Processing Data</label>' +
+                                    '<input type="text" class="form-control" id="consentDataStart"  aria-describedby="consentDataStartHelp">' +
+                                    '<div id="consentDataStartHelp" class="form-text">When are you going to start data collection/processing?</div>' +
+                                    '</div>' +
+                                    '<div class="mb-3" id="consentDataDurationholder">' +
+                                    '<label for="consentDataDuration" class="form-label">Enter Collection/Processing Duration (months)</label>' +
+                                    '<input type="number" min="3" max="60" class="form-control" id="consentDataDuration" aria-describedby="consentDataDurationHelp">' +
+                                    '<div id="consentDataDurationHelp" class="form-text">For how long you would like to collect/process the data? Minimum duration is 3 months and maximum is 60.</div>' +
+                                    '</div>' +
+                                    '<div class="mb-3">' +
+                                    '<label for="consentDataEnd" class="form-label">Collection/Processing Duration (months)</label>' +
+                                    '<input type="text" readonly class="form-control" id="consentDataEnd" readonly=True aria-describedby="consentDataEndHelp">' +
+                                    '<div id="consentDataEndHelp" class="form-text">The date when the data collection/processing will stop.</div>' +
+                                    '</div>'
+                                );
+
+                                $('input[type=text]:not([readonly])').css("background-color", "white");
+                                $('input[type=select]:not([readonly])').css("background-color", "white");
+                                $('input[type=number]:not([readonly])').css("background-color", "white");
+                                $("#consentData").empty();
+                                $("#consentData").val(finaldata);
+                                $("#consentDataProcessingContext").empty();
+                                $("#consentDataProcessingContext").val(selectedContextData);
+                                $("#consentDataPurpose").empty();
+                                $("#consentDataPurpose").val($("#selectpurpose").val());
+
+                                $.ajax({
+                                    url: '{% url 'get_purpose_processing_data_ajax' %}',
+                                    data: JSON.stringify({
+                                        'selectedOntology': $('#selectconsentontology').val(),
+                                        'type': 'processing'
+                                    }),
+                                    type: 'POST',
+                                    headers: {
+                                        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                                    },
+                                    async: true,
+                                    cache: false,
+                                    timeout: 40000,
+                                    contentType: 'application/json',
+                                    success: function (consentontologyajaxdata) {
+
+                                        // Handle data from the second request
+                                        setOptgroupSelectListOptions("consentDataProcessingOperations", consentontologyajaxdata, "processing");
+
+                                        $('#consentDataProcessingOperations').multiselect({
+                                            columns: 3,
+                                            placeholder: 'Select Data',
+                                            search: true,
+                                            searchOptions: {
+                                                'default': 'Search Data'
+                                            },
+                                            maxHeight: 100,
+                                            selectGroup: true,//
+                                            selectAll: true
+                                        });
+
+                                        // You can continue with additional requests or processing if needed
+                                    },
+                                    error: function (consentontologyajaxdataerror) {
+                                        console.error('Error in the second request:', consentontologyajaxdataerror);
+                                    }
+                                });
+                                $("#consentDataDurationholder").hide();
+                                $("#consentDataStart").change(function () {
+                                    var value = $(this).val();
+                                    if (value.length > 0) {
+                                        $("#consentDataDurationholder").show();
+                                    } else {
+                                        $("#consentDataDurationholder").hide();
+                                    }
+                                });
+                                // Set the default date to today
+                                var today = new Date();
+                                $('#consentDataStart').datepicker({
+                                    format: 'yyyy-mm-dd',
+                                    autoclose: true,
+                                    startDate: today // Set the start date to today
+                                });
+                                $('#consentDataDuration').on('input', function () {
+                                    // Remove any leading zeros and non-numeric characters
+                                    $(this).val($(this).val().replace(/^0+|\D/g, ''));
+
+                                    // Calculate the end date
+                                    if (parseInt($(this).val(), 10)) {
+                                        var originalDateStr = $('#consentDataStart').val();
+                                        var originalDate = new Date(originalDateStr);
+                                        var monthsToAdd = parseInt($(this).val(), 10);
+                                        originalDate.setMonth(originalDate.getMonth() + monthsToAdd);
+                                        var formattedDate = $.datepicker.formatDate("yy-mm-dd", originalDate);
+                                        $('#consentDataEnd').val(formattedDate);
+                                    }
+                                });
+
+                                showStep(current_fs, next_fs);
+                            } else {
+                                $(".consent-form").empty();
+                                $("#consentData").empty();
+                                $("#consentDataProcessingContext").empty();
+                                $(".addinfo").text("Consent not required, Click next to set up use case specific constraints");
+
+                                showStep(current_fs, next_fs);
+                            }
+
+                        }
+                    });
+
+                }
+
+                if (currentID == "step3-next") {
+                    if ($(".consent-form").children().length > 0) {
+                        if ($("#consentDataProcessingOperations").val().length <= 0) {
+                            alert("Select Data Processing Operations");
+                            return false;
+                        }
+                        if ($('#consentDataEnd').val().length <= 0) {
+                            alert("Enter the Collection/Processing Duration (months)");
+                            return false;
+                        }
+                        $.ajax({
+
+                            url: '{% url 'ajax_use_case_ontology_classes' %}',
+                            data: {'selected_option': $('#selectdatacontextontology option:selected').val()},
+                            type: 'GET',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                            },
+                            async: true,
+                            cache: false,
+                            timeout: 40000,
+                            contentType: 'application/json',
+                            success: function (consentontologyajaxdata) {
+                                console.log("deneme bir ki")
+                                console.log(consentontologyajaxdata)
+                                var dropdownList;
+                                $.each(consentontologyajaxdata['ontology_classes'], function(key, items) {
+                                    var label = $("<label>").text(key).attr("for", "dropdown-" + key);
+                                    var dropdown = $("<select>");
+                                    var tr = $("<tr>");
+                                    var td = $("<select>");
+                                    $.each(items, function(index, item) {
+                                    dropdown.append($("<option>").text(item));
+                                    });
+
+
+                                    var labelCell = $("<td>").text(key);
+                                    var dropdown = $("<select>");
+                                    $.each(items, function(index, item) {
+                                        dropdown.append($("<option>").text(item));
+                                    });
+                                    var dropdownCell = $("<td>").append(dropdown);
+
+                                    var newRow = $("<tr>").append(labelCell, dropdownCell);
+                                    $("#conditions").append(newRow)
+                                });
+
+                            },
+                            error: function (consentontologyajaxdataerror) {
+                                console.error('Error in the second request:', consentontologyajaxdataerror);
+                            }
+                        });
+
+                        showStep(current_fs, next_fs);
+                    } else {
+                        //continue to seup use case specific constraints
+                        showStep(current_fs, next_fs);
+                    }
+                }
+
+
+            });
+
+            $(".previous").click(function () {
+                var currentPrevID = $(this).attr('id');
+
+                current_fs = $(this).parent();
+                previous_fs = $(this).parent().prev();
+
+                if (currentPrevID == "step2-previous") {
+                    //clear all the selected data
+                    $(".ms-options-wrap button span").text("Select data");
+                    $(".ms-options-wrap").removeClass('ms-has-selections');
+                    $('[id^="ms-opt-"]').prop("checked", false);
+                    $(".optgroup li[data-search-term]").removeClass("selected");
+                    $(".ms-selectall").text("Select all");
+                    {#$("#selectcontext").empty();#}
+                }
+                if (currentPrevID == "step4-previous") {
+                    //clear all the selected data
+                    $(".ms-options-wrap button span").text("Select data");
+                    $(".ms-options-wrap").removeClass('ms-has-selections');
+                    $('[id^="ms-opt-"]').prop("checked", false);
+                    $(".optgroup li[data-search-term]").removeClass("selected");
+                    $(".ms-selectall").text("Select all");
+                    {#$("#selectcontext").empty();#}
+
+                }
+                //Remove class active
+                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+                //show the previous fieldset
+                previous_fs.show();
+
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        previous_fs.css({'opacity': opacity});
+                    },
+                    duration: 500
+                });
+                setProgressBar(--current);
+            });
+
+            function setProgressBar(curStep) {
+                var percent = parseFloat(100 / steps) * curStep;
+                percent = percent.toFixed();
+                $(".progress-bar")
+                    .css("width", percent + "%")
+            }
+
+            $(".submit").click(function () {
+                return false;
+            })
+
+
+        });
+    </script>
+{% endblock %}
+```

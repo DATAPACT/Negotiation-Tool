@@ -1,0 +1,2429 @@
+{% extends 'base_template_organization.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %} Configure Consent/Privacy or Contract Preference Request {% endblock %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style-negotiation.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style-policy.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <main id="main">
+        <section id="faq" class="faq">
+            <div class="container" data-aos="fade-up">
+                <header class="section-header"><br/>
+                    {#          <p>Configure the consent/contract/privacy preference request form</p>#}
+                </header>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="switchPreferences">
+                    <label class="form-check-label" for="switchPreferences">Use Preferences and Recommender Agent Records</label>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <!-- Grid View Table -->
+                        <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                            <h2 id="heading">Negotiations in Progress</h2>
+                            <table id = "negotiations-table" class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Negotiation ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Date Started</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                     {% if negotiations|length == 0 %}
+                                        <tr class="negotiation-row">
+                                            <td colspan="5" style="text-align: center;">No negotiations yet started</td>
+                                        </tr>
+                                    {% else %}
+                                        {% for negotiation in negotiations %}
+                                            <tr class="negotiation-row" data-negotiation-id="{{ negotiation.id }}">
+                                                <td>{{ negotiation.id }}</td>
+                                                <td>{{ negotiation.title }}</td>
+                                                <td>{{ negotiation.created_at|date_format}}</td>
+                                                <td>{{ negotiation.negotiation_status }}</td>
+                                                <td>
+
+
+                                                    <!-- JavaScript logic for buttons -->
+                                                    {% if user_type == 'provider' %}
+                                                        {% if negotiation.negotiation_status == 'requested' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                            <input type="button" class="styled-button styled-button-offer" value="Offer">
+                                                            <input type="button" class="styled-button styled-button-agree" value="Agree">
+                                                        {% elif negotiation.negotiation_status == 'accepted' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                            <input type="button" class="styled-button styled-button-agree" value="Agree">
+                                                        {% elif negotiation.negotiation_status == 'agreed' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                        {% elif negotiation.negotiation_status == 'offered' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                        {% elif negotiation.negotiation_status == 'verified' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                            <input type="button" class="styled-button styled-button-finalize" value="Sign-Finalize">
+                                                        {% endif %}
+                                                    {% elif user_type == 'consumer' %}
+                                                        {% if negotiation.negotiation_status == 'requested' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                        {% elif negotiation.negotiation_status == 'agreed' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                            <input type="button" class="styled-button styled-button-verify" value="Sign-Verify">
+                                                        {% elif negotiation.negotiation_status == 'offered' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                            <input type="button" class="styled-button styled-button-accept" value="Accept">
+                                                            <input type="button" class="styled-button createRequestBtn styled-button-request" value="Request" data-negotiation-id="{{ negotiation.id }}">
+                                                        {% elif negotiation.negotiation_status == 'accepted' or negotiation.negotiation_status == 'verified' %}
+                                                            <input type="button" class="styled-button styled-button-terminate" value="Terminate">
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <!-- Grid View Table -->
+                        <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                            <h2 id="heading">Finished Negotiations</h2>
+                            <table id = "finished-negotiations-table" class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Negotiation ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Date Started</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for negotiation in negotiations %}
+                                            <tr class="negotiation-row" data-negotiation-id="{{ negotiation.id }}">
+                                                <td>{{ negotiation.id }}</td>
+                                                <td>{{ negotiation.title }}</td>
+                                                <td>{{ negotiation.created_at|date_format}}</td>
+                                                <td>{{ negotiation.negotiation_status }}</td>
+                                                <td>buttons</td>
+                                            </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% if user_type == 'consumer' %}
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                            <h2 id="heading">Available Offers</h2>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Data Provider</th>
+                                    <th scope="col">Resource Name</th>
+                                    <th scope="col">Created At</th>
+                                    <th scope="col">Actions</th> <!-- New column for buttons -->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for offer in offers %}
+                                    <tr>
+                                        <td>{{ offer.provider_name }}</td>
+                                        <td>{{ offer.title }}</td>
+                                        <td>{{ offer.created_at|date_format}}</td>
+                                        <td><input  type="button" name= "request" value="Create Request" class="createRequestBtn" data-offer-id="{{ offer.id }}"></td> <!-- Button for each row -->
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                        <h2 id="heading" class="text-center">REQUEST NEW DATASET</h2>
+                        <div class="container">
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Dataset File (only JSON files accepted):</label>
+                                <div class="col-sm-9">
+                                    <input type="file" id="datasetFile" class="form-control" accept=".json">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="d-flex justify-content-end">
+                                    <input type="button" name="request" value="Create Request" class="styled-button createNewRequestBtn">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+    <div id="modal_history" class="sign-modal">
+
+    </div>
+        <!-- Signature Modal -->
+    <div id="signatureModal" class="sign-modal">
+        <div class="sign-modal-content">
+            <span class="sign-close">&times;</span>
+            <div class="modal-title">Sign Here</div>
+            <canvas id="signatureCanvas" width="400" height="200"></canvas>
+            <div>
+                <input type="button" id="clearSignatureBtn" value="Clear" class="btn">
+                <input type="button" id="saveSignatureBtn" value="Save" class="btn">
+            </div>
+        </div>
+    </div>
+    <div id="modal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+                <div id="detailsdiv" class="row justify-content-center">
+
+                    {% if not isNone %}
+                        <div class="col-md-12">
+                            <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                                <form id="msform">
+                                    <ul id="progressbar">
+                                        <li class="active" id="resource"><strong>Resource</strong></li>
+                                        <li id="dpw"><strong>DPW</strong></li>
+                                        <li id="odrl"><strong>ODRL</strong></li>
+                                        <li id="nl"><strong>NLP</strong></li>
+                                        <li id="np" style="display: none;"><strong>Preferences</strong></li>
+                                        <!--<li id="confirm"><strong>Finish</strong></li>-->
+                                    </ul>
+                                    <br>
+
+                                    <fieldset id="fieldset-resource" >
+                                    <div class="form-card">
+
+                                        <div class="col-md-12">
+                                            <label for="title" class="fieldlabels">Title</label>
+                                            <input type="text" id="title" name="title" placeholder="Your title." readonly/>
+
+                                            <label for="price" class="fieldlabels">Price</label>
+                                            <input type="text" id="price" name="price" placeholder="Your Price." required/>
+
+                                            <label for="uri" class="fieldlabels">URI</label>
+                                            <input type="text" id="uri" name="uri" placeholder="Your URI." readonly/>
+
+                                            <label for="policy-url" class="fieldlabels">Policy URL</label>
+                                            <input type="text" id="policy-url" name="policy-url" placeholder="Your Policy URL." readonly/>
+
+                                            <div class="section-title">Environmental Cost of Generation</div>
+
+                                            <label for="energy-consumption" class="fieldlabels">Energy Consumption</label>
+                                            <input type="text" id="energy-consumption" name="energy-consumption" placeholder="Energy Consumption in kWh" required/>
+
+                                            <label for="carbon-emission" class="fieldlabels">Carbon Emission</label>
+                                            <input type="text" id="carbon-emission" name="carbon-emission" placeholder="Carbon Emission in kilograms" required/>
+
+                                            <div class="section-title">Environmental Cost of Serving</div>
+
+                                            <label for="generating-cost" class="fieldlabels">Energy Consumption</label>
+                                            <input type="text" id="generating-cost" name="generating-cost" placeholder="Generating Cost in kWh" required/>
+
+                                            <label for="serving-cost" class="fieldlabels">Carbon Emission</label>
+                                            <input type="text" id="serving-cost" name="serving-cost" placeholder="Serving Cost in kilograms" required/>
+
+                                            <label for="description" class="fieldlabels">Description</label>
+                                            <textarea id="description" name="description" placeholder="Description will come here." style="height:100px" readonly></textarea>
+
+                                            <label for="type-of-data" class="fieldlabels">Type of Data</label>
+                                            <input type="text" id="type-of-data" name="type-of-data" placeholder="Type of Data." readonly/>
+
+                                            <label for="data-format" class="fieldlabels">Data Format</label>
+                                            <input type="text" id="data-format" name="data-format" placeholder="Data Format." required/>
+
+                                            <label for="data-size" class="fieldlabels">Data Size</label>
+                                            <input type="text" id="data-size" name="data-size" placeholder="Data Size." required/>
+
+                                            <label for="validity-period" class="fieldlabels">Validity Period</label>
+                                            <input type="text" id="validity-period" name="validity-period" placeholder="Validity Period." required/>
+
+                                            <label for="tags" class="fieldlabels">Tags/Keywords</label>
+                                            <input type="text" id="tags" name="tags" placeholder="Tags/Keywords." readonly/>
+
+                                        </div>
+                                    </div>
+{#                                        <input type="button" name="next" id="step1-next" class="next action-button" value="Next"/>#}
+{#                                        <input type="button" name="previous" id="step1-previous" class="previous action-button-previous" value="Previous"/>#}
+                                </fieldset>
+                                    <fieldset id="fieldset-dpw">
+                                        <div class="form-card">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h1>Data Processing Workflow</h1>
+                                                    <input type="button" name="next" id="download-dpw" class ="styled-button" value="Download DPW" style="float: left;"/>
+                                                    <input type="button" name="next" id="upload-dpw" class ="styled-button" value="Upload New DPW" style="float: left;"/>
+                                                    <input type="file" id="dpwFileInput" accept=".json" style="display: none;" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <textarea id= "dpwInput" rows="10" placeholder="Enter your text here..." class="fieldlabels" readonly></textarea>
+                                            </div>
+                                            <select style="display: none" id="data_processing_workflow_object" name="data_processing_workflow_object" multiple>
+                                            </select>
+
+                                        </div>
+                                    </fieldset>
+
+                                    {% include 'policy_editor/policy_editor.html' %}  
+                                                                     
+                                    <fieldset id="fieldset-nl">
+                                    <div class="form-card">
+                                        <input type="button" class="last-changes-button" value="Last Changes">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h1>Natural Language Interface</h1>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <textarea id="nlpInput" rows="10" placeholder="Enter your text here..." class="fieldlabels"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div id="text-diff" class="diff-modal">
+                                        <div class="diff-modal-content">
+                                            <span class="diff-close" >&times;</span>
+                                            <div id="result"></div>
+                                        </div>
+                                    </div>
+
+                                    </fieldset>
+
+                                    {% include 'preferences/preferences.html' %}  
+ 
+                                    <div style="text-align: center;">
+                                        <input type="button" name="next" id="save-details" class="action-button" value="Save as Draft" style="width: 150px; float: left;"/>
+                                        <input type="button" name="next" id="recommend-me" value="Recommend Me" style="width: 150px; background: #673AB7; color: white; font-weight: bold; display: none"/>
+                                        <input type="button" name="next" id="revert" value="Revert" style="width: 150px; float: center; display: none"/>
+                                        <input type="button" name="next" id="submit-details" class="action-button" value="Send" style="width: 150px; float: right;"/>
+                                    </div>
+                                </form>
+
+                            </div>
+                        <input type="text" id="negotiation-id-text" hidden="hidden" value=""/>
+                        <input type="text" id="user-id-text" hidden="hidden" value="{{ user_id }}"/>
+                        <input type="text" id="user-role-text" hidden="hidden" value="{{ user_type }}"/>
+
+                        </div>
+                    {% else %}
+                        <p>Please upload required ontologies: <b style="color: red"> (i) Domain Ontology; and (ii) Data Schema Ontology</b>.</p>
+                    {% endif %}
+                </div>
+        </div>
+    </div>
+            </div>
+    <!-- Loading spinner -->
+    <div id="loading-spinner" style="display: none;">
+        <!-- Your loading spinner HTML/CSS -->
+        Loading...
+    </div>
+        </section>
+    <div id="messageBox" style="display:none;"></div>
+    </main>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Include DataTables CSS and JS -->
+
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF autoTable plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+
+
+    <script>
+        var saveddata = [];
+        var global_policy_type = null;
+        var global_provider_id = null;
+        var global_consumer_id = null;
+        var global_policy_id = null;
+
+
+        $(document).ready(function () {
+
+            function applyFormActionsConfig($form) {
+
+                $form.find('.removeRow').click(function () {
+                    $(this).parent().remove();
+                });
+                $form.find('.remove-form-button').click(function() {
+                    var formCard = $(this).closest('.form-card');
+                    if (formCard.length > 0) {
+                        formCard.remove();
+                    }
+                });
+                    // Add new constraint row within the form
+                $form.find('#addConstraintRow').click(function () {
+                    let newRow;
+                    if ($form.find('#constraintsContainer').find('.constraintRow').length > 0) {
+                        newRow = $form.find('#constraintsContainer .constraintRow:first').clone();
+                        newRow.find('input[type="text"]').val('');
+                        newRow.find('select').val('');
+                        newRow.css('display', 'flex');
+                        newRow.appendTo($form.find('#constraintsContainer'));
+                    } else {
+                        newRow = document.createElement('div');
+                        newRow.classList.add('constraintRow');
+                        const label = document.createElement('label');
+                        label.setAttribute('for', 'constraintDropdown');
+                        label.innerText = "Constraint:";
+                        const select = document.createElement('select');
+                        select.setAttribute('id', 'constraintDropdown');
+                        select.classList.add('constraintDropdown');
+                        newRow.append(label);
+                        newRow.append(select);
+                        const label2 = document.createElement('label');
+                        label2.setAttribute('for', 'operatorDropdown');
+                        const select2 = document.createElement('select');
+                        select2.setAttribute('id', 'operatorDropdown');
+                        select2.classList.add('operatorDropdown');
+                        newRow.append(label2);
+                        newRow.append(select2);
+                        const label3 = document.createElement('label');
+                        label3.setAttribute('for', 'constraintValue');
+                        const text = document.createElement('input');
+                        text.setAttribute('id', 'constraintValue');
+                        text.classList.add('constraintValue');
+                        text.placeholder = "Value e.g., '2024-12-12', 'http://example.org/'";
+                        newRow.append(label3);
+                        newRow.append(text);
+                        const button = document.createElement('button');
+                        button.classList.add('removeRow');
+                        button.innerText = "Remove";
+                        newRow.append(button);
+                        $form.find('#constraintsContainer').append(newRow);
+                        fillDropdown('constraintDropdown', {{ constraints|safe }});
+                        fillDropdown('operatorDropdown', {{ operators|safe }});
+                    }
+    
+                    // Apply the remove click action to the new row
+                    applyFormActionsConfig($(newRow));
+                });
+            }
+
+            //console.log('actors', {{ actors|safe }})
+
+            // Function to fill dropdown
+            function fillDropdown(dropdownInput, data, $scope = $(document)) {
+
+                let dropdown;
+
+                if (typeof dropdownInput === 'string') {
+                    // If string, treat it as an ID
+                    dropdown = $scope.find('#' + dropdownInput);
+                } else if (dropdownInput instanceof jQuery) {
+                    // If it's a jQuery object, use it directly
+                    dropdown = dropdownInput;
+                } else if (dropdownInput instanceof Element) {
+                    // If it's a raw DOM element, wrap in jQuery
+                    dropdown = $(dropdownInput);
+                } else {
+                    console.error('Invalid dropdown input:', dropdownInput);
+                    return;
+                }
+
+                dropdown.empty();
+
+                dropdown.append($('<option>', {
+                    value: '',
+                    text: 'Select an option'
+                }));
+
+                // Recursive function to populate the dropdown with indentation for nested children
+                function populateDropdown(data, parent = "", level = 0) {
+
+                    // Ensure that 'data' is an array before trying to sort it
+                    if (!Array.isArray(data)) {
+                        console.error("Data is not an array:", data);
+                        return;
+                    }
+                    // Sort data alphabetically by label at each level
+                    data.sort((a, b) => a.label.localeCompare(b.label));
+
+
+                    data.forEach(item => {
+
+                        // Construct display text with indentation based on hierarchy level
+                        //var displayText = (level > 0 ? '-'.repeat(level * 4) : '') + item.label;
+                        let txt = "";
+                        if (parent =="")
+                        {
+                            txt = item.label
+                        }
+                        else
+                        {
+                            txt = parent + " -> " + item.label
+                        }
+                        dropdown.append($('<option>', {
+                            value: item.uri,
+                            text: txt
+                        }));
+
+
+                        // Recursively handle children if present
+                        if (item.children && item.children.length > 0) {
+                            populateDropdown(item.children, txt, level + 1); // Increment level for children
+                        }
+                    });
+                }
+
+                // Start populating the dropdown
+                populateDropdown(data,"", 0);
+
+                // Set the dropdown's selected index to none
+                dropdown.prop('selectedIndex', -1);
+
+            }
+
+            function addRefinementRow(newForm, parent_value, entity, type, operator, value) {
+
+                _clearAdditionalRefinementRows(entity);
+                _clearRefinementRows(entity);
+    
+    
+                //setTimeout(function() {
+                //    console.log("World");
+                //}, 1000);
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url 'ajax_get_properties_from_properties_file' %}',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                    },
+                    data: JSON.stringify({
+                        uri: parent_value
+                    }),
+                    success: function (response) {
+                            var refinementDropdown = $('#refinement' + entity + 'Dropdown');
+                            refinementDropdown.empty();
+                            $.each(response.fields, function (index, field) {
+                                refinementDropdown.append($('<option>', {
+                                    value: field.uri,
+                                    text: field.label
+                                }));
+                            });
+    
+                            let newRow = $(`.refinement${entity}Row:first`).clone();
+    
+                            // Set the values for the cloned element
+                            newRow.find(`select.refinement${entity}Dropdown`).val(type);
+                            newRow.find(`select.operatorRefinement${entity}Dropdown`).val(operator);
+                            newRow.find('input[type="text"]').val(value);
+
+                            console.log('value', value);
+    
+                            if (typeof value === 'string' && value.trim() !== '') {
+                                newRow.css({
+                                    'display': 'flex', // Overwrite the display property to make it visible
+                                    'justify-content': 'space-between',
+                                    'align-items': 'center',
+                                    'margin-bottom': '10px',
+                                    'visibility': 'visible' // Ensure the row itself is visible
+                                });
+                                {#newRow.appendTo();#}
+                                c = newForm.find('#refinement' + entity + 'Container');
+                                c.append(newRow);
+                            }
+                    },
+                    error: function (error) {
+                        console.error('Error fetching column names:', error);
+                    }
+                });
+            }
+    
+            function loadJsonDataConfig($fieldset, data) {
+                console.log('loadJsonDataConfig data', data);
+                var $originalForm = $fieldset.find('.form-card').first();
+                //var $originalForm = $('.form-card').first();
+                var $newForm = $originalForm.clone();
+    
+                $newForm.css('display', '');
+    
+                $newForm.appendTo('.col-lg-12');
+                _actions_for_dropdown_form("Actor", $newForm);
+                _actions_for_dropdown_form("Action", $newForm);
+                _actions_for_dropdown_form("Purpose", $newForm);
+                _actions_for_dropdown_form("Target", $newForm);
+                // Populate HTML components within the duplicated form
+                $newForm.find('#ruleDropdown').val(data.rule);
+                
+                $newForm.find('#ActorDropdown').val(data.actor);
+                _fillRefinementDropdownForm(data.actor, 'Actor', $newForm);
+                
+                $newForm.find('#ActionDropdown').val(data.action);
+                _fillRefinementDropdownForm(data.action, 'Action', $newForm);
+                
+                
+                // This code added to deal with the display of non-default targets whenin update
+                console.log("We are updating the form target dropdown if required");
+                inList=false
+                var target_dropdown=$newForm.find('#TargetDropdown')
+                var target_options=$newForm.find('#TargetDropdown option')
+                console.log("The target_options length is " + target_options.length)
+                for (let j=0; j < target_options.length; j++){
+                    console.log("The next dropdown value is " + target_options[j].text);
+                    if ( data.target == target_options[j].text){
+                        inList=true;
+                        console.log("Dropdown match found");
+                    }
+                }
+                if ( inList == false){
+                    console.log("No dropdown match found, update the dropdown options");
+                    var objOption = document.createElement("option");
+                    objOption.text = data.target;
+                    objOption.value = data.target;
+
+                    target_dropdown.append(objOption);
+                }	
+                
+                $newForm.find('#TargetDropdown').val(data.target);
+                $newForm.find('#TargetDropdown').prop("disabled", true); 
+                _fillRefinementDropdownForm(data.target, 'Target', $newForm);
+                console.log('target value', data.target);
+                
+                $('#Target2Dropdown').val(data.target);
+    
+                $newForm.find('#PurposeDropdown').val(data.purpose);
+                _fillRefinementDropdownForm(data.purpose, 'Purpose', $newForm);
+                $newForm.find('#queryTextbox').val(data.query);
+    
+                // Clear existing rows before loading new data
+                $newForm.find('.constraintRow:gt(0)').remove();
+                $newForm.find('.refinementActorRow:gt(0)').remove();
+                $newForm.find('.refinementActionRow:gt(0)').remove();
+                $newForm.find('.refinementPurposeRow:gt(0)').remove();
+                $newForm.find('.refinementTargetRow:gt(0)').remove();
+    
+                applyFormActionsConfig($newForm);
+    
+                if (Object.keys(data).length > 0)
+                {
+                    //console.log(data)
+                    // Load constraints
+                    console.log('data.constraints', data.constraints)
+                    data.constraints.forEach(function (constraint) {
+
+                        //fill type and operator dropdowns
+
+                        console.log('constraint', constraint)
+                        var newConstraintRow = $('<div class="constraintRow" style="display: flex;">');
+
+                        var constraintSelect = $('<select class="constraintDropdown">');
+                        var operatorSelect = $('<select class="operatorDropdown">');
+                        var valueInput = $('<input type="text" class="constraintValue">');
+                        var removeButton = $('<input class="removeRow" type="button" value="Remove"/>').click(function () {
+                            $(this).parent().remove();
+                        });
+
+                        // Append elements to the row
+                        newConstraintRow.append(
+                            $('<label for="constraintDropdown">Constraint:</label>'),
+                            constraintSelect,
+                            operatorSelect,
+                            valueInput,
+                            removeButton
+                        );
+
+                        // Fill dropdowns BEFORE setting selected values
+                        console.log('constraints', {{ constraints|safe }});
+                        fillDropdown(constraintSelect, {{ constraints|safe }});
+                        fillDropdown(operatorSelect, {{ operators|safe }});
+
+                        // Now set the selected values
+                        constraintSelect.val(constraint.type);
+                        operatorSelect.val(constraint.operator);
+                        valueInput.val(constraint.value);
+
+
+                        $newForm.find('#constraintsContainer').append(newConstraintRow);
+                    });
+    
+                    // Function to add refinement row with delay
+                    function addRefinementRowWithDelay($form, entity, entityName, type, operator, value, index) {
+                        //setTimeout(function () {
+                            addRefinementRow($form, entity, entityName, type, operator, value);
+                        }
+                    //}
+    
+                    // Load actor refinements synchronously with delay
+                    data.actorrefinements.forEach(function (refinement, index) {
+                        addRefinementRowWithDelay($newForm, data.actor, 'Actor', refinement.type, refinement.operator, refinement.value, index);
+                    });
+    
+                    // Load action refinements synchronously with delay
+                    var actionRefinementsLength = data.actionrefinements.length;
+                    data.actionrefinements.forEach(function (refinement, index) {
+                        addRefinementRowWithDelay($newForm, data.action, 'Action', refinement.type, refinement.operator, refinement.value, index + actionRefinementsLength);
+                    });
+    
+                    // Load purpose refinements synchronously with delay
+                    var purposeRefinementsLength = data.purposerefinements.length;
+                    data.purposerefinements.forEach(function (refinement, index) {
+                        addRefinementRowWithDelay($newForm, data.purpose, 'Purpose', refinement.type, refinement.operator, refinement.value, index + actionRefinementsLength);
+                    });
+    
+                    // Load target refinements synchronously with delay
+                    var targetRefinementsLength = data.targetrefinements.length;
+                    data.targetrefinements.forEach(function (refinement, index) {
+                        addRefinementRowWithDelay($newForm, data.target, 'Target', refinement.type, refinement.operator, refinement.value, index + actionRefinementsLength + purposeRefinementsLength);
+                    });
+                }
+    
+            } 
+
+            // Function to find an object and its children by its URI
+            function findObjectAndChildren(data, targetUri) {
+                for (const item of data) {
+                    // Check if the current item's URI matches
+                    if (item.uri === targetUri) {
+                        return item; // Found the object, return it
+                    }
+
+                    // If children exist, search recursively
+                    if (item.children && item.children.length > 0) {
+                    const found = findObjectAndChildren(item.children, targetUri);
+                        if (found) {
+                            return found; // Return if found in children
+                        }
+                    }
+                }
+                return null; // Return null if not found
+            }
+
+            //Find the object and its parents
+            function findObjectAndParents(data, targetUri, parents = []) {
+                for (const item of data) {
+                    // If the current item's URI matches the target URI
+                    if (item.uri === targetUri) {
+                        // Return the object and its parent hierarchy
+                        return {
+                            object: item,
+                            parents: parents.reverse() // Reverse to get the parents in the correct order
+                        };
+                    }
+                    // If the current item has children, recursively search in the children
+                    if (item.children && item.children.length > 0) {
+                        const found = findObjectAndParents(item.children, targetUri, [...parents, item]);
+                        if (found) {
+                            return found; // If found, return the object and its parents
+                        }
+                    }
+                }
+                return null; // Return null if the target object is not found
+            }
+
+
+            // Function to rebuild a nested array from the parent objects only
+
+            function rebuildNestedArray(parents, object) {
+
+                let nestedStructure = null;
+
+                // Clear the children array of the object
+                object = {...object, children: []};
+
+                //check if parents is null or empty
+                if (!parents || parents.length === 0) {
+                    console.log('No parents found');
+                    nestedStructure = {...object, children: []};
+                } else {
+                    // Build the nested structure using only the parent objects
+                    for (let i = 0; i < parents.length; i++) {
+                        const parent = parents[i];
+                        if (i === 0) {
+                            // Start with the first parent object and include the target object as its child
+                            nestedStructure = { ...parent, children: [object] };
+                        } else {
+                            // Add the nested structure as a child of the next parent
+                            nestedStructure = { ...parent, children: [nestedStructure]}
+                        }
+                    }
+                }
+                return nestedStructure
+            }
+
+            fillDropdown('prefRuleDropdown',   {{ rules|safe }} );
+            fillDropdown('prefActionDropdown', {{ actions|safe }} );
+            fillDropdown('prefPurposeDropdown', {{ purposes|safe }} );
+            fillDropdown('prefActorDropdown', {{ actors|safe }} );
+
+            fillDropdown('minPrefActorDropdown', {{ actors|safe }} );
+            fillDropdown('maxPrefActorDropdown', {{ actors|safe }} );
+            fillDropdown('minPrefActionDropdown', {{ actions|safe }} );
+            fillDropdown('maxPrefActionDropdown', {{ actions|safe }} );
+            fillDropdown('minPrefPurposeDropdown', {{ purposes|safe }} );
+            fillDropdown('maxPrefPurposeDropdown', {{ purposes|safe }} );
+
+            function loadPreferencesData($fieldset, data, preferences, price) {
+
+                console.log('loadPreferencesData preferences', preferences);
+                console.log('loadPreferencesData price', price);
+
+                console.log('type of preferences', typeof preferences);
+
+                var priceLower = preferences?.find(p => p.key === "price")?.lower_value || null;
+                var priceUpper = preferences?.find(p => p.key === "price")?.upper_value || null;
+
+                // Clear price fields first
+                $fieldset.find('#default-price').val('');
+                $fieldset.find('#min-price').val('');
+                $fieldset.find('#max-price').val('');
+
+                $fieldset.find('#default-price').val(price);
+                $fieldset.find('#default-price').prop("disabled", true); 
+
+                if(priceLower){
+                    $fieldset.find('#min-price').val(priceLower);
+                }
+                if(priceUpper){
+                    $fieldset.find('#max-price').val(priceUpper);
+                }   
+
+                var $originalForm = $fieldset.find('#preferencesFormCard');
+                console.log($originalForm)
+                console.log('loadPreferencesData data', data)
+                //var $originalForm = $('.form-card').first();
+                var $newForm = $originalForm.clone();
+    
+                $newForm.css('display', '');
+    
+                $newForm.appendTo('#preferencesFormCardContainer');
+
+                // Populate HTML components within the duplicated form
+
+                $newForm.find('#prefRuleDropdown').val(data.rule);
+                $newForm.find('#prefRuleDropdown').prop("disabled", true); 
+
+                $newForm.find('#prefActorDropdown').val(data.actor);
+                $newForm.find('#prefActorDropdown').prop("disabled", true); 
+
+                $newForm.find('#prefActionDropdown').val(data.action);
+                $newForm.find('#prefActionDropdown').prop("disabled", true); 
+
+                $newForm.find('#prefPurposeDropdown').val(data.purpose);   
+                $newForm.find('#prefPurposeDropdown').prop("disabled", true); 
+
+                var actorLower = preferences.find(p => p.key === "actor")?.lower_value || null;
+                var actorUpper = preferences.find(p => p.key === "actor")?.upper_value || null;
+
+                var actionLower = preferences.find(p => p.key === "action")?.lower_value || null;
+                var actionUpper = preferences.find(p => p.key === "action")?.upper_value || null;
+
+                var purposeLower = preferences.find(p => p.key === "purpose")?.lower_value || null;
+                var purposeUpper = preferences.find(p => p.key === "purpose")?.upper_value || null;
+
+
+                if(actorLower){
+                    var maxOptions = findObjectAndParents({{ actors|safe }}, actorLower);
+                    var maxOptionsNested = rebuildNestedArray(maxOptions.parents, maxOptions.object);
+                    var maxOptionsArray = Array.isArray(maxOptionsNested) ? maxOptionsNested : [maxOptionsNested];
+                    fillDropdown('maxPrefActorDropdown', maxOptionsArray, $newForm);
+                    $newForm.find('#minPrefActorDropdown').val(actorLower);
+                } 
+                if(actorUpper){
+                    var minOptions = findObjectAndChildren({{ actors|safe }}, actorUpper)
+                    var minOptionsArray = Array.isArray(minOptions) ? minOptions : [minOptions];
+                    console.log('minOptionsArray', minOptionsArray);
+                    fillDropdown('minPrefActorDropdown', minOptionsArray, $newForm);
+                    $newForm.find('#maxPrefActorDropdown').val(actorUpper);
+                    if(actorLower){
+                        $newForm.find('#minPrefActorDropdown').val(actorLower);
+                    }
+                }
+                if(actionLower){
+                    var maxOptions = findObjectAndParents({{ actions|safe }}, actionLower);
+                    var maxOptionsNested = rebuildNestedArray(maxOptions.parents, maxOptions.object);
+                    var maxOptionsArray = Array.isArray(maxOptionsNested) ? maxOptionsNested : [maxOptionsNested];
+                    fillDropdown('maxPrefActionDropdown', maxOptionsArray, $newForm);
+                    $newForm.find('#minPrefActionDropdown').val(actionLower);
+                }
+                if(actionUpper){
+                    var minOptions = findObjectAndChildren({{ actions|safe }}, actionUpper)
+                    var minOptionsArray = Array.isArray(minOptions) ? minOptions : [minOptions];
+                    console.log('minOptionsArray', minOptionsArray);
+                    fillDropdown('minPrefActionDropdown', minOptionsArray, $newForm);
+                    $newForm.find('#maxPrefActionDropdown').val(actionUpper);
+                    if(actionLower){
+                        $newForm.find('#minPrefActionDropdown').val(actionLower);
+                    }
+                }
+                if(purposeLower){
+                    var maxOptions = findObjectAndParents({{ purposes|safe }}, purposeLower);
+                    var maxOptionsNested = rebuildNestedArray(maxOptions.parents, maxOptions.object);
+                    var maxOptionsArray = Array.isArray(maxOptionsNested) ? maxOptionsNested : [maxOptionsNested];
+                    fillDropdown('maxPrefPurposeDropdown', maxOptionsArray, $newForm);
+                    $newForm.find('#minPrefPurposeDropdown').val(purposeLower);
+                }
+                if(purposeUpper){
+                    var minOptions = findObjectAndChildren({{ purposes|safe }}, purposeUpper)
+                    var minOptionsArray = Array.isArray(minOptions) ? minOptions : [minOptions];
+                    console.log('minOptionsArray', minOptionsArray);
+                    fillDropdown('minPrefPurposeDropdown', minOptionsArray, $newForm);
+                    $newForm.find('#maxPrefPurposeDropdown').val(purposeUpper);
+                    if(purposeLower){
+                        $newForm.find('#minPrefPurposeDropdown').val(purposeLower);
+                    }
+                }
+            }
+
+            // Get the modal
+            var modal = document.getElementById("modal");
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+                makeAllInputsEditable();
+            }
+
+            $('.last-changes-button').click(function () {
+                document.getElementById('text-diff').style.display = 'block';
+            });
+            $('.diff-close').click(function () {
+                document.getElementById('text-diff').style.display = 'none';
+            });
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    makeAllInputsEditable();
+                }
+                if (event.target == document.getElementById('text-diff')) {
+                    document.getElementById('text-diff').style.display = 'none';
+                }
+            }
+
+
+
+            updateNegotiationsTable();
+            updateFinishedNegotiationsTable();
+
+            function getValue(selector) {
+                var value = $(selector).val();
+                return (value === undefined || value === null) ?"" : value;
+            }
+
+            function prepare_odrl_data()
+            {
+                var saveddata = []; // Initialize saveddata array to store data from all forms
+
+                // Iterate over each form with class .form-card
+                $('.form-card').each(function () {
+                    var form = $(this);
+                    if (form.find('#ruleDropdown').val())
+                    {
+                        var data = {
+                            rule: form.find('#ruleDropdown').val(),
+                            actor: form.find('#ActorDropdown').val(),
+                            action: form.find('#ActionDropdown').val(),
+                            target: form.find('#TargetDropdown').val(),
+                            purpose: form.find('#PurposeDropdown').val(),
+                            query: form.find('#queryTextbox').val(),
+                            constraints: [],
+                            actorrefinements: [],
+                            actionrefinements: [],
+                            purposerefinements: [],
+                            targetrefinements: []
+                        };
+
+                        // Gather constraints data
+                        form.find('.constraintRow').each(function () {
+                            var constraint = {
+                                type: $(this).find('.constraintDropdown').val(),
+                                operator: $(this).find('.operatorDropdown').val(),
+                                value: $(this).find('.constraintValue').val()
+                            };
+                            data.constraints.push(constraint);
+                        });
+
+                        // Gather actor refinements data
+                        form.find('.refinementActorRow').each(function () {
+                            var refinement = {
+                                type: $(this).find('.refinementActorDropdown').val(),
+                                operator: $(this).find('.operatorRefinementActorDropdown').val(),
+                                value: $(this).find('.refinementActorValue').val()
+                            };
+                            data.actorrefinements.push(refinement);
+                        });
+
+                        // Gather action refinements data
+                        form.find('.refinementActionRow').each(function () {
+                            var refinement = {
+                                type: $(this).find('.refinementActionDropdown').val(),
+                                operator: $(this).find('.operatorRefinementActionDropdown').val(),
+                                value: $(this).find('.refinementActionValue').val()
+                            };
+                            data.actionrefinements.push(refinement);
+                        });
+
+                        // Gather purpose refinements data
+                        form.find('.refinementPurposeRow').each(function () {
+                            var refinement = {
+                                type: $(this).find('.refinementPurposeDropdown').val(),
+                                operator: $(this).find('.operatorRefinementPurposeDropdown').val(),
+                                value: $(this).find('.refinementPurposeValue').val()
+                            };
+                            data.purposerefinements.push(refinement);
+                        });
+
+                        // Gather target refinements data
+                        form.find('.refinementTargetRow').each(function () {
+                            var refinement = {
+                                type: $(this).find('.refinementTargetDropdown').val(),
+                                operator: $(this).find('.operatorRefinementTargetDropdown').val(),
+                                value: $(this).find('.refinementTargetValue').val()
+                            };
+                            data.targetrefinements.push(refinement);
+                        });
+
+                        // Push collected data into saveddata array
+                        saveddata.push(data);
+                    }
+                });
+                console.log('saved data', saveddata)
+                return saveddata;
+            }
+
+            function prepare_preferences_data()
+            {
+                var savedPreferencesData = []; // Initialize saveddata array to store data from all forms
+
+                // Iterate over each form with class .form-card
+                $('.form-card').each(function () {
+                    var form = $(this);
+    
+                    if (form.find('#prefRuleDropdown').val())
+                    {
+                        var data = {
+                            minPrefActor: form.find('#minPrefActorDropdown').val(),
+                            maxPrefActor: form.find('#maxPrefActorDropdown').val(),
+                            minPrefAction: form.find('#minPrefActionDropdown').val(),
+                            maxPrefAction: form.find('#maxPrefActionDropdown').val(),
+                            minPrefPurpose: form.find('#minPrefPurposeDropdown').val(),
+                            maxPrefPurpose: form.find('#maxPrefPurposeDropdown').val(),
+                        };
+
+                        // Check if price inputs exist outside the card, and add them
+                        var minPrice = $('#min-price').val();
+                        var maxPrice = $('#max-price').val();
+
+                        if (minPrice || maxPrice) {
+                            data.minPrefPrice = parseFloat(minPrice) || 0;
+                            data.maxPrefPrice = parseFloat(maxPrice) || 0;
+                        }
+
+                        // Push collected data into saveddata array
+                        savedPreferencesData.push(data);
+                    }
+
+                });
+                console.log('saved preferences data', savedPreferencesData)
+                return savedPreferencesData;
+            }
+
+            // Function to handle button click
+            $('#submit-details').click(function () {
+                // Get JSON data from the form
+                var jsonData = getFormData();
+                var preferences = prepare_preferences_data()
+                // Example headers with negotiation_id and type
+                var headers = {
+                    'negotiationid': $('#negotiation-id-text').val(),
+                    'policyid': global_policy_id,
+                    'type': global_policy_type,
+                    'X-CSRFToken': '{{ csrf_token }}'
+                };
+
+                // AJAX request to send JSON data to backend endpoint
+                $.ajax({
+                    url: "{% url 'datacontrollercreatepolicy' %}",
+                    type: 'POST',
+                    headers: headers,
+                    contentType: 'application/json',
+                    data: JSON.stringify(jsonData),
+                    success: function (response) {
+                        // Handle success response from backend
+                        console.log('Policy creation successful:', response);
+                        // Reload the negotiations table
+                        updateNegotiationsTable();
+                        updateFinishedNegotiationsTable();
+                        modal.style.display = "none";
+                        makeAllInputsEditable();
+                        createRecommenderAgentRecord(response.negotiation_id, global_policy_id, preferences);
+                        },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error('Error creating policy:', error);
+                        // Optionally, you can show an error message
+                    }
+                });
+            });
+
+            // Function to handle button click
+            $('#save-details').click(function () {
+
+                //var saveddata = prepare_preferences_data();
+
+                console.log('offer id from save-details button', global_policy_id)
+
+                // Get JSON data from the form
+                var jsonData = getFormData();
+                var preferences = prepare_preferences_data()
+                console.log('preferences from prepare_preferences_data', preferences);
+                console.log('jsonData from getFormData()', jsonData);
+
+                if ($('#user-role-text').val() == 'consumer' && jsonData.negotiation_id)
+                    {
+                        if (jsonData.type == "request")
+                            jsonData.type = "offer";
+                        else
+                            jsonData.type = "request";
+                    }
+                // Example headers with user_id
+                var headers = {
+                    'user_id': $('#user-id-text').val(),
+                    'X-CSRFToken': '{{ csrf_token }}'
+                };
+                console.log('headers', headers);
+                // AJAX request to send JSON data to backend endpoint
+                $.ajax({
+                    url: "{% url 'datacontrollerupdatepolicy' %}",
+                    type: 'POST',
+                    headers: headers,
+                    contentType: 'application/json',
+                    data: JSON.stringify(jsonData),
+                    success: function (response) {
+                        // Handle success response from backend
+                        console.log('Request update successful:', response);
+                        // Reload the negotiations table
+                        updateNegotiationsTable();
+                        updateFinishedNegotiationsTable();
+                        modal.style.display = "none";
+                        makeAllInputsEditable();
+                        createRecommenderAgentRecord(response.negotiation_id, global_policy_id, preferences)
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error('Error updating request:', error);
+                        // Optionally, you can show an error message
+                    }
+                });
+            });
+
+            function createRecommenderAgentRecord(negotiationId, offerId, preferences){
+
+                var payload = {
+                    negotiation_id: negotiationId,
+                    original_offer_id: offerId,
+                    preferences: preferences
+                }
+
+                console.log('payload for createRecommenderAgentRecord', payload);
+
+                //datacontrollercreateagentrecord
+                // Example headers with user_id
+                var headers = {
+                    'user_id': $('#user-id-text').val(),
+                    'X-CSRFToken': '{{ csrf_token }}',
+                };
+                console.log('headers', headers);
+                // AJAX request to send JSON data to backend endpoint
+                $.ajax({
+                    url: "{% url 'datacontrollercreateagentrecord' %}",
+                    type: 'POST',
+                    headers: headers,
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function (response) {
+                        // Handle success response from backend
+                        console.log('Agent record creation successful:', response);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error('Error creating agent record:', error);
+                        // Optionally, you can show an error message
+                    }
+                });
+
+            }
+
+            async function getRecommenderAgentRecord(negotiationId) {
+                const headers = {
+                    'user_id': $('#user-id-text').val(),
+                    'X-CSRFToken': '{{ csrf_token }}',
+                };
+            
+                const endpointUrl = 'getagentrecord?negotiation_id=' + negotiationId;
+            
+                try {
+                    const recommender_agent_record = await new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: endpointUrl,
+                            method: 'GET',
+                            headers: headers,
+                            success: function (data) {
+                                console.log('response from getRecommenderAgentRecord data:', data);
+                                resolve(data);
+                            },
+                            error: function (error) {
+                                console.log('Error:', error);
+                                reject(error);
+                            }
+                        });
+                    });
+            
+                    return recommender_agent_record;
+                } catch (err) {
+                    console.error('Failed to get recommender agent record:', err);
+                    return null;
+                }
+            }
+
+
+            function updateNegotiationsTable() {
+                $.ajax({
+                    url: "{% url 'datacontrollergetnegotiations' %}", 
+                    type: 'GET',
+                    success: function (data) {
+                        // Clear existing table rows
+                        $('#negotiations-table .negotiation-row').remove();
+
+                        if (data.negotiations.length === 0) {
+                            // Append "No negotiations yet started" row
+                            var noNegotiationsRow = `<tr class="negotiation-row">
+                                                        <td colspan="5" style="text-align: center;">No negotiations yet started</td>
+                                                     </tr>`;
+                            $('#negotiations-table').append(noNegotiationsRow);
+                        } else {
+                            // Append new rows
+                            data.negotiations.forEach(function (negotiation) {
+                                if (negotiation.negotiation_status !== 'draft' && $('#user-role-text').val() == 'provider' && negotiation.negotiation_status !== 'finalized') {
+                                    var newRow = `<tr class="negotiation-row" data-negotiation-id="${negotiation._id}">
+                                                <td>${negotiation._id}</td>
+                                                <td>${negotiation.title}</td>
+                                                <td>${negotiation.created_at.replace('T', ' ').split(".")[0]}</td>
+                                                <td>${negotiation.negotiation_status}</td>
+                                                <td>${renderButtons(negotiation)}</td>
+                                              </tr>`;
+                                    $('#negotiations-table').append(newRow);
+                                }
+                                else if ($('#user-role-text').val() == 'consumer' && negotiation.negotiation_status !== 'finalized') {
+                                    var newRow = `<tr class="negotiation-row" data-negotiation-id="${negotiation._id}">
+                                                <td>${negotiation._id}</td>
+                                                <td>${negotiation.title}</td>
+                                                <td>${negotiation.created_at.replace('T', ' ').split(".")[0]}</td>
+                                                <td>${negotiation.negotiation_status}</td>
+                                                <td>${renderButtons(negotiation)}</td>
+                                              </tr>`;
+                                    $('#negotiations-table').append(newRow);
+                                }
+                            });
+                        }
+                        bindNegotiationRowClickEvent();
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching negotiations:', error);
+                    }
+                });
+            }
+
+            function updateFinishedNegotiationsTable(){
+                $.ajax({
+                    url: "{% url 'datacontrollergetnegotiations' %}", 
+                    type: 'GET',
+                    success: function (data) {
+                        
+                        // Destroy DataTable if already initialized
+                        if ($.fn.DataTable.isDataTable('#finished-negotiations-table')) {
+                            $('#finished-negotiations-table').DataTable().destroy();
+                        }
+
+                        // Clear all rows
+                        $('#finished-negotiations-table tbody').empty();
+
+                        // Append new rows
+                        data.negotiations.forEach(function (negotiation) {
+                            if(negotiation.negotiation_status == 'finalized'){
+                                var newRow = `<tr class="negotiation-row" data-negotiation-id="${negotiation._id}">
+                                        <td>${negotiation._id}</td>
+                                        <td>${negotiation.title}</td>
+                                        <td>${negotiation.created_at.replace('T', ' ').split(".")[0]}</td>
+                                        <td>${negotiation.negotiation_status}</td>
+                                        <td>${renderButtons(negotiation)}</td>
+                                        </tr>`;
+                                $('#finished-negotiations-table').append(newRow);
+                            }
+                          
+                        });
+                        bindNegotiationRowClickEvent();
+
+                        // Re-initialize DataTable
+                        $('#finished-negotiations-table').DataTable({
+                            pageLength: 5,
+                            lengthMenu: [1, 2, 3, 5, 10, 25, 50],
+                            order: [[2, 'desc']] // sort by date descending
+                        });
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching negotiations:', error);
+                    }
+                });
+            }
+
+
+
+            function renderButtons(negotiation) {
+                // Generate button HTML based on negotiation status and user role
+                // Adjust the logic as per your conditions
+                var buttons = '';
+                var user_role = '{{ user_type }}';
+                //console.log(user_role)
+                if (negotiation.negotiation_status == 'finalized') {
+                    buttons += '<input type="button" class="styled-button styled-button-download-json" value="Download JSON">';
+                    buttons += '<input type="button" class="styled-button styled-button-download-pdf" value="Download PDF">';
+                } else {
+                    if (user_role == 'provider') {
+                        if (negotiation.negotiation_status == 'requested') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                            buttons += '<input type="button" class="styled-button styled-button-offer" value="Offer">';
+                            buttons += '<input type="button" class="styled-button styled-button-agree" value="Agree">';
+                        } else if (negotiation.negotiation_status == 'accepted') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                            buttons += '<input type="button" class="styled-button styled-button-agree" value="Agree">';
+                        } else if (negotiation.negotiation_status == 'agreed') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                        } else if (negotiation.negotiation_status == 'offered') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                        } else if (negotiation.negotiation_status == 'verified') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                            buttons += '<input type="button" class="styled-button styled-button-finalize" value="Sign-Finalize">';
+                        }
+                    } else if (user_role == 'consumer') {
+                        if (negotiation.negotiation_status == 'requested') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                        } else if (negotiation.negotiation_status == 'agreed') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                            buttons += '<input type="button" class="styled-button styled-button-verify" value="Sign-Verify">';
+                        } else if (negotiation.negotiation_status == 'offered') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                            buttons += '<input type="button" class="styled-button styled-button-accept" value="Accept">';
+                            buttons += '<input type="button" class="styled-button createRequestBtn styled-button-request" value="Request" data-negotiation-id="${negotiation.id}">';
+                        } else if (negotiation.negotiation_status == 'draft') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                            buttons += '<input type="button" class="styled-button createRequestBtn styled-button-request" value="Request" data-negotiation-id="${negotiation.id}">';
+                        } else if (negotiation.negotiation_status == 'accepted' || negotiation.negotiation_status == 'verified') {
+                            buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
+                        }
+                    }
+                }
+                return buttons;
+            }
+            updateNegotiationsTable();
+            updateFinishedNegotiationsTable()
+            setInterval(updateNegotiationsTable, 10000);
+            $('#progressbar li').on('click', function () {
+                $('#progressbar li').removeClass('active');
+                $(this).addClass('active');
+
+                var fieldsetId = '#fieldset-' + $(this).attr('id');
+                $('fieldset').removeClass('active');
+                $(fieldsetId).addClass('active');
+
+                $("fieldset").each(function () {
+                    $(this).css({
+                        'display': 'none',
+                        'position': 'relative',
+                        'opacity': 0
+                    });
+                });
+
+                // Show the specific fieldset
+                $(fieldsetId).show().animate({opacity: 1}, 500);
+
+
+                console.log($(fieldsetId).children('div'))
+
+            });
+            function bindNegotiationRowClickEvent() {
+                console.log('bindNegotiationRowClickEvent called');
+                $('.negotiation-row').on('click', function (event) {
+                    var $target = $(event.target);
+                    // Check if the target is within the first two columns
+                    if ($target.is('td:nth-child(1), td:nth-child(2)') || $target.closest('td:nth-child(1), td:nth-child(2)').length > 0) {
+                        var negotiationId = $(this).data('negotiation-id');
+                        $('#negotiation-id-text').val(negotiationId);
+                        global_policy_type = null;
+                        $('#negotiation-id').text(negotiationId);
+                        $('#loading-spinner').show();
+                        makeAllInputsReadOnly();
+                        var endpointUrl = 'negotiationlastpolicy?negotiation_id=' + negotiationId;
+                        $.ajax({
+                            url: endpointUrl,
+                            method: 'GET',
+                            success: function (data) {
+                                populateFormChanges(data);
+                                global_provider_id = data.provider_id;
+                                global_consumer_id = data.consumer_id;
+                                global_policy_id = data._id
+                                $('#modal').show();
+                                $('#loading-spinner').hide();
+                            },
+                            error: function (error) {
+                                console.log('Error:', error);
+                                $('#loading-spinner').hide();
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Initial binding
+            bindNegotiationRowClickEvent();
+
+            $('.createRequestBtn').click(function () {
+                console.log('click request button')
+                // Get the offer details from the clicked row
+                var negotiationId = $(this).data('negotiation-id');
+                var offerId = $(this).data('offer-id');
+                console.log('negotiation id from request button', negotiationId);
+                console.log('offer id from request button', offerId);
+                var endpointUrl;
+
+                if (negotiationId) {
+                    endpointUrl = 'negotiationlastpolicy?negotiation_id=' + negotiationId;
+                    console.log('negotiationId endpointUrl from createRequestBtn', endpointUrl);
+                    global_policy_type = "request";
+                } else if (offerId) {
+                    endpointUrl = 'offer?offer_id=' + offerId;
+                    console.log('offerId endpointUrl from createRequestBtn', endpointUrl);
+                    global_policy_type = "offer";
+                } else {
+                    console.log('Error: No negotiation-id or offer-id provided.');
+                    console.log(this);
+                    return;
+                }
+
+                $('#negotiation-id-text').val("");
+
+                $('#loading-spinner').show();
+                makeAllInputsEditable();
+
+                $.ajax({
+                    url: endpointUrl,
+                    method: 'GET',
+                    success: function (data) {
+                        console.log('response from createRequestBtn ajax call:', data);
+                        global_policy_id = offerId;
+                        if (offerId && negotiationId) {
+                            global_provider_id = data.provider_id;
+                            global_consumer_id = $('#user-id-text').val(); // or any specific logic if necessary
+                        } else if (negotiationId) {
+                            global_provider_id = data.provider_id;
+                            global_consumer_id = null;  // or any specific logic if necessary
+                        } else if (offerId) {
+                            global_provider_id = data.provider_id;
+                            global_consumer_id = null; // or any specific logic if necessary
+                        } else {
+                            // Handle case when neither offerId nor negotiationId is present, if necessary
+                            global_provider_id = null; // or any specific logic if necessary
+                            global_consumer_id = null; // or any specific logic if necessary
+                        }
+                        console.log('createRequestBtn')
+                        populateFormChanges(data);
+                        $('#modal').show();
+                        $('#loading-spinner').hide();
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                        $('#loading-spinner').hide();
+                    }
+                });
+            });
+
+            $('.createNewRequestBtn').click(function () {
+                console.log('Click new request button');
+
+                let file = $("#datasetFile")[0].files[0];
+
+                if (!file) {
+                    alert("Please select a JSON file to upload.");
+                    return;
+                }
+
+                if (!file.name.endsWith(".json")) {
+                    alert("Invalid file type. Please upload a .json file.");
+                    return;
+                }
+
+                let reader = new FileReader();
+                let offerId;
+                reader.onload = function (e) {
+                    let content = e.target.result;
+                    let fileContent;
+
+                    try {
+                        // Parse the JSON file into a JS object
+                        fileContent = JSON.parse(content);
+                        console.log("Parsed JSON object:", fileContent);
+                    } catch (err) {
+                        console.error("Invalid JSON:", err.message);
+                        alert("Invalid JSON file. Please check the file content.");
+                        return;
+                    }
+
+                    // Show spinner / prepare UI
+                    $('#loading-spinner').show();
+                    makeAllInputsEditable();
+
+                    // Send JSON object directly to the backend
+                    $.ajax({
+                        url: "{% url 'datacontrollercreatepolicyfromupload' %}",
+                        method: 'POST',
+                        contentType: 'application/json',
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                        data: JSON.stringify(fileContent), // JS object → JSON string
+                        success: function (data) {
+                            console.log('Response from server:', data);
+                            $('#loading-spinner').hide();
+
+                            offerId = data.offer_id;
+                            console.log('offerId from createNewRequestBtn', offerId);
+                            endpointUrl = 'offer?offer_id=' + offerId;
+                            global_policy_type = "offer";
+
+                            $.ajax({
+                                url: endpointUrl,
+                                method: 'GET',
+                                success: function (data) {
+                                    console.log('response from createRequestBtn ajax call:', data);
+                                    global_policy_id = offerId;
+                                    global_provider_id = data.provider_id;
+                                    global_consumer_id = data.consumer_id;
+                                    populateFormChanges(data);
+                                    $('#modal').show();
+                                    $('#loading-spinner').hide();
+                                },
+                                error: function (error) {
+                                    console.log('Error:', error);
+                                    $('#loading-spinner').hide();
+                                }
+                            });
+                                    },
+                        error: function (error) {
+                            console.error('Error:', error);
+                            $('#loading-spinner').hide();
+                        }
+                    });
+                };
+
+                reader.readAsText(file);
+            });
+
+
+
+
+
+            $('.createRequestBtn111').click(function () {
+                // Get the offer details from the clicked row
+                var offerId = $(this).data('offer-id');
+                var endpointUrl = 'offer?offer_id=' + offerId;
+                $('#negotiation-id-text').val("")
+                global_policy_type = "request"
+                $('#loading-spinner').show();
+                makeAllInputsEditable()
+                $.ajax({
+                    url: endpointUrl,
+                    method: 'GET',
+                    success: function (data) {
+                        global_provider_id = data.provider_id;
+                        global_consumer_id = null;
+                        populateFormChanges(data)
+                        $('#modal').show();
+                        $('#loading-spinner').hide();
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                        $('#loading-spinner').hide();
+                    }
+                });
+            });
+
+
+            function makeAllInputsReadOnly() {
+                $("input").each(function() {
+                    if ($(this).attr('type') === 'button' || $(this).attr('type') === 'submit' || $(this).attr('type') === 'reset') {
+                        $(this).attr('disabled', true);
+                    } else {
+                        $(this).attr('readonly', true);
+                    }
+                });
+                $("textarea").each(function() {
+                    $(this).attr('readonly', true);
+                });
+                $("select").each(function() {
+                    $(this).attr('disabled', true);
+                });
+            }
+
+            function makeAllInputsEditable() {
+                $("input").each(function() {
+                    const inputId = $(this).attr('id');
+                    if (inputId === 'title' || inputId ==='uri' || inputId === 'policy-url' || inputId === "description" || inputId === "type-of-data" || inputId === "tags") {
+                        return; 
+                    }
+                    if ($(this).attr('type') === 'button' || $(this).attr('type') === 'submit' || $(this).attr('type') === 'reset') {
+                        $(this).removeAttr('disabled');
+                    } else {
+                        $(this).removeAttr('readonly');
+                    }
+                });
+                $("textarea").each(function() {
+                    const textareaId = $(this).attr('id');
+                    if (textareaId === "description") {
+                        return; // skip description
+                    }
+                    $(this).removeAttr('readonly');
+                });
+                $("select").each(function() {
+                    $(this).removeAttr('disabled');
+                });
+            }
+
+
+
+            // Function to handle button click
+            function handleButtonClick(obj, event, action) {
+                const button = obj;
+                const negotiationRow = $(button).closest('.negotiation-row');
+                const negotiationId = negotiationRow.data('negotiation-id');
+                window.console.log(negotiationId)
+
+                $('#negotiation-id-text').val(negotiationId);
+                const userId = 'user123';  // Replace with actual user ID from your context
+                $('#loading-spinner').show();
+                switch (action) {
+                    case 'offer':
+                        policyNegotiation(negotiationId, userId, action);
+                        break;
+                    case 'request':
+                        policyNegotiation(negotiationId, userId, action);
+                        break;
+                    case 'agree':
+                        agreeNegotiation("provider", "agree", negotiationId, userId);
+                        break;
+                    case 'terminate':
+                        terminateNegotiation("negotiation", "terminate", negotiationId, userId);
+                        break;
+                    case 'finalize':
+                    case 'verify':
+                        openSignatureModal(action, negotiationId, userId);
+                        break;
+                    case 'accept':
+                        acceptNegotiation("consumer", "accept", negotiationId, userId);
+                        break;
+                    case 'download-json':
+                        console.log('Download JSON button clicked');
+                        console.log('negotiationId:', negotiationId);
+                        downloadNegotiationJson(negotiationId);
+                        break;
+                    case 'download-pdf':
+                        downloadNegotiationPdf(negotiationId);
+                        break;
+                }
+                updateNegotiationsTable();
+                updateFinishedNegotiationsTable()
+                $('#loading-spinner').hide();
+            }
+
+            function downloadNegotiationJson(negotiationId) {
+                endpointUrl = 'negotiationlastpolicy?negotiation_id=' + negotiationId;
+                console.log('downloadNegotiationJson endpointUrl', endpointUrl);
+                
+                $.ajax({
+                    url: endpointUrl,
+                    method: 'GET',
+                    success: function (data) {
+                        console.log('response from downloadNegotiationJson ajax call:', data);
+                        if ('changes' in data) {
+                            delete data.changes;
+                        }
+                        // Convert data to JSON string
+                        const jsonString = JSON.stringify(data, null, 2); // pretty print
+                        console.log('jsonString', jsonString);
+
+                        // Create a Blob with MIME type application/json
+                        const blob = new Blob([jsonString], { type: "application/json" });
+
+                        // Create a temporary download link
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `negotiation_${negotiationId}.json`;
+
+                        // Append and click the link to trigger download
+                        document.body.appendChild(a);
+                        a.click();
+
+                        // Clean up
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                        alert('Failed to download the negotiation data.');
+                    }
+                });
+            }
+
+            async function downloadNegotiationPdf(negotiationId) {
+                const endpointUrl = 'negotiationlastpolicy?negotiation_id=' + negotiationId;
+                console.log('downloadNegotiationPdf endpointUrl', endpointUrl);
+
+                $.ajax({
+                    url: endpointUrl,
+                    method: 'GET',
+                    success: async function (data) {
+                        if ('changes' in data) delete data.changes;
+
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF();
+
+                        const policy = data.last_policy;
+
+                        doc.setFontSize(14);
+                        doc.text(`Negotiation Report`, 14, 15);
+                        doc.setFontSize(10);
+                        doc.text(`Negotiation ID: ${policy.negotiation_id}`, 14, 22);
+                        doc.text(`Title: ${policy.title}`, 14, 28);
+                        doc.text(`Type: ${policy.type}`, 14, 34);
+                        doc.text(`Consumer ID: ${policy.consumer_id}`, 14, 40);
+                        doc.text(`Provider ID: ${policy.provider_id}`, 14, 46);
+
+
+                        // Resource Description Object
+                        const r = policy.resource_description_object;
+                        if (r) {
+                            doc.addPage();
+                            doc.setFontSize(12);
+                            doc.text("Resource Description", 14, 15);
+                            doc.setFontSize(10);
+
+                            const tableData = Object.entries(r).map(([key, value]) => {
+                                const text = typeof value === 'object' && value !== null
+                                    ? JSON.stringify(value)
+                                    : (value ?? '');
+                                return [key, text];
+                            });
+
+                            doc.autoTable({
+                                startY: 20,
+                                theme: 'grid',
+                                head: [['Field', 'Value']],
+                                body: tableData
+                            });
+                        }
+
+                        // ODRL Policy (flattened via .data)
+                        const odrlData = policy.odrl_policy?.data;
+                        if (Array.isArray(odrlData) && odrlData.length > 0) {
+                            odrlData.forEach((rule, idx) => {
+                                const ruleType = rule.rule?.split('/').pop(); // e.g., Permission
+                                doc.addPage();
+                                doc.setFontSize(12);
+                                doc.text(`ODRL Rule ${idx + 1}`, 14, 15);
+                                doc.text(`${ruleType}`, 14, 22);
+                                doc.setFontSize(10);
+
+                                const body = Object.entries(rule).map(([key, val]) => {
+                                    if (typeof val === 'object') val = JSON.stringify(val);
+                                    return [key, val];
+                                });
+
+                                doc.autoTable({
+                                    startY: 24,
+                                    theme: 'grid',
+                                    head: [['Field', 'Value']],
+                                    body
+                                });
+                            });
+                        }
+
+                                                 // Natural Language Document
+                        doc.addPage();
+                        doc.setFontSize(12);
+                        doc.text("Natural Language Document:", 14, 15);
+                        doc.setFontSize(10);
+
+                        const marginTop = 22;
+                        const lineHeight = 6;
+                        const pageHeight = doc.internal.pageSize.getHeight();
+                        const bottomMargin = 10;
+
+                        const splitText = doc.splitTextToSize(policy.natural_language_document, 180);
+                        let y = marginTop;
+
+                        splitText.forEach(line => {
+                            if (y + lineHeight > pageHeight - bottomMargin) {
+                                doc.addPage();
+                                y = 15; // reset to top of next page
+                            }
+                            doc.text(line, 14, y);
+                            y += lineHeight;
+                        });
+
+                        doc.save(`negotiation_${negotiationId}.pdf`);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                        alert('Failed to download the negotiation PDF.');
+                    }
+                });
+            }
+            // Open the modal and set the action for the signature
+            function openSignatureModal(action, negotiationId, userId) {
+                $('#signatureModal').data('action', action);
+                $('#signatureModal').data('negotiationId', negotiationId);
+                $('#signatureModal').data('userId', userId);
+                $('#signatureModal').css('display', 'flex');
+            }
+
+            // Close the modal
+            $('.sign-close').click(function() {
+                $('#signatureModal').css('display', 'none');
+            });
+            function closeSignatureModal() {
+                $('#signatureModal').css('display', 'none');
+            }
+            // Clear the canvas
+            $('#clearSignatureBtn').click(function() {
+                var canvas = document.getElementById('signatureCanvas');
+                var context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
+            });
+
+            // Submit the signature
+            $('#saveSignatureBtn').click(function() {
+                var canvas = document.getElementById('signatureCanvas');
+                var signatureData = canvas.toDataURL('image/png');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'datacontrollersavesignature' %}",
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    data: { signature: signatureData },
+                    success: function(data) {
+                        console.log('Signature saved:', data);
+                        closeSignatureModal();
+
+                        // Execute the relevant function based on the action
+                        const action = $('#signatureModal').data('action');
+                        const negotiationId = $('#signatureModal').data('negotiationId');
+                        const userId = $('#signatureModal').data('userId');
+
+                        if (action === 'finalize') {
+                            finalizeNegotiation("provider", "finalize", negotiationId, userId);
+                        } else if (action === 'verify') {
+                            verifyNegotiation("consumer", "verify", negotiationId, userId);
+                        }
+                        var canvas = document.getElementById('signatureCanvas');
+                        var context = canvas.getContext('2d');
+                        context.clearRect(0, 0, canvas.width, canvas.height);
+                    },
+                    error: function(error) {
+                        console.error('Error saving signature:', error);
+                    }
+                });
+            });
+
+            // Drawing on the canvas
+            var canvas = document.getElementById('signatureCanvas');
+            var context = canvas.getContext('2d');
+            var drawing = false;
+
+            canvas.addEventListener('mousedown', function(e) {
+                drawing = true;
+                context.beginPath();
+                context.moveTo(e.offsetX, e.offsetY);
+            });
+
+            canvas.addEventListener('mousemove', function(e) {
+                if (drawing) {
+                    context.lineTo(e.offsetX, e.offsetY);
+                    context.stroke();
+                }
+            });
+
+            canvas.addEventListener('mouseup', function() {
+                drawing = false;
+            });
+
+            canvas.addEventListener('mouseout', function() {
+                drawing = false;
+            });
+
+            bind_click_events();
+            function bind_click_events() {
+                // Bind click events for buttons
+                $('#negotiations-table').on('click', '.styled-button-request', function (event) {
+                    console.log('bind_click_events click request button')
+                    handleButtonClick(this, event, 'request');
+                });
+
+                $('#negotiations-table').on('click', '.styled-button-terminate', function (event) {
+                    handleButtonClick(this, event, 'terminate');
+                });
+
+                $('#negotiations-table').on('click', '.styled-button-offer', function (event) {
+                    handleButtonClick(this, event, 'offer');
+                });
+
+                $('#negotiations-table').on('click', '.styled-button-agree', function (event) {
+                    handleButtonClick(this, event, 'agree');
+                });
+
+                $('#negotiations-table').on('click', '.styled-button-finalize', function (event) {
+                    handleButtonClick(this, event, 'finalize');
+                });
+
+                $('#negotiations-table').on('click', '.styled-button-verify', function (event) {
+                    handleButtonClick(this, event, 'verify');
+                });
+
+                $('#negotiations-table').on('click', '.styled-button-accept', function (event) {
+                    handleButtonClick(this, event, 'accept');
+                });
+
+                $('#finished-negotiations-table').on('click', '.styled-button-download-json', function (event) {
+                    handleButtonClick(this, event, 'download-json');
+                });
+
+                $('#finished-negotiations-table').on('click', '.styled-button-download-pdf', function (event) {
+                    handleButtonClick(this, event, 'download-pdf');
+                });
+            }
+
+
+            // Function to update negotiation
+            async function updateNegotiation(party, action, negotiationId) {
+                const url = `updatenegotiation`;
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token for CSRF protection
+                        },
+                        body: JSON.stringify({ party, action, negotiationId }) // Include party, action, and negotiationId in the body
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    {#displayMessageBox(result);#}
+                } catch (error) {
+                    console.error('Error updating negotiation:', error);
+                    displayMessageBox({ error: error.message });
+                }
+            }
+
+            // Function to get CSRF token from cookies
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+
+            // Function to display message box
+            function displayMessageBox(message) {
+                const messageBox = document.getElementById('messageBox');
+                messageBox.textContent = JSON.stringify(message, null, 2);
+                messageBox.style.display = 'block';
+            }
+
+            // Function to fetch negotiation
+            async function fetchNegotiation(negotiationId, userId) {
+                //the negotiation url doesn't take variables
+                //this function doesn't seem to be used
+                const url = `/negotiation/${negotiationId}`;
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'user_id': userId
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const negotiation = await response.json();
+                    updateNegotiationFields(negotiation);
+                } catch (error) {
+                    console.error('Error fetching negotiation:', error);
+                }
+            }
+
+            // Function to update negotiation fields
+            function updateNegotiationFields(negotiation) {
+                $('#negotiation-id-text').val(negotiation.id);
+                $('#negotiation-status').val(negotiation.status);
+                // Update other fields as needed
+            }
+            // Function to offer/request negotiation
+            function policyNegotiation(negotiationId, userId, type) {
+                console.log('policy negotiation')
+                $('#negotiation-id-text').val(negotiationId)
+                global_policy_type = type;
+                $('#loading-spinner').show();
+                makeAllInputsEditable();
+                var endpointUrl = 'negotiationlastpolicy?negotiation_id=' + negotiationId;
+                $.ajax({
+                    url: endpointUrl,
+                    method: 'GET',
+                    success: function(data) {
+                        console.log('response from negotiation last policy', data);
+                        if (data.last_policy)
+                        {
+                            data_temp = data.last_policy;
+                        }
+                        global_provider_id = data_temp.provider_id;
+                        global_consumer_id = data_temp.consumer_id;
+                        global_policy_id = data_temp._id
+                        populateFormChanges(data);
+                        $('#modal').show();
+                        $('#loading-spinner').hide();
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                        $('#loading-spinner').hide();
+                    }
+                });
+            }
+
+            // Function to agree negotiation
+            function agreeNegotiation(party, action, negotiationId, userId) {
+                updateNegotiation(party, action, negotiationId, userId);
+            }
+
+            // Function to terminate negotiation
+            function terminateNegotiation(party, action, negotiationId, userId) {
+                updateNegotiation(party, action, negotiationId, userId);
+            }
+
+            // Function to finalize negotiation
+            function finalizeNegotiation(party, action, negotiationId, userId) {
+                updateNegotiation(party, action, negotiationId, userId);
+            }
+
+            // Function to verify negotiation
+            function verifyNegotiation(party, action, negotiationId, userId) {
+                updateNegotiation(party, action, negotiationId, userId);
+            }
+
+            // Function to accept negotiation
+            function acceptNegotiation(party, action, negotiationId, userId) {
+                updateNegotiation(party, action, negotiationId, userId);
+            }
+
+            function getFormData() {
+                // Assuming getValue() retrieves the selected values from the multi-select checkbox
+                var selectedValues = [];  // Array to hold selected values
+
+                // Example assuming data_processing_workflow_object is the id of the multi-select checkbox
+                $('#data_processing_workflow_object option').each(function() {
+                    selectedValues.push($(this).val());
+                });
+
+                console.log('_id in frm, from global_policy_id', global_policy_id);
+                var frm = {
+                    resource_description_object: {
+                        title: getValue('#title'),
+                        price: getValue('#price'),
+                        uri: getValue('#uri'),
+                        policy_url: getValue('#policy-url'),
+                        environmental_cost_of_generation: {
+                            additionalProp1: getValue('#energy-consumption'),
+                            additionalProp2: getValue('#carbon-emission')
+                        },
+                        environmental_cost_of_serving: {
+                            additionalProp1: getValue('#generating-cost'),
+                            additionalProp2: getValue('#serving-cost')
+                        },
+                        description: getValue('#description'),
+                        type_of_data: getValue('#type-of-data'),
+                        data_format: getValue('#data-format'),
+                        data_size: getValue('#data-size'),
+                        tags: getValue('#tags')
+                    },
+                    _id: global_policy_id,
+                    validity_period: getValue('#validity-period'),
+                    odrl_policy: prepare_odrl_data(),
+                    data_processing_workflow_object: JSON.parse(getValue('#dpwInput')),
+                    natural_language_document: getValue('#nlpInput'),
+                    type: global_policy_type,
+                    provider_id: global_provider_id,
+                    consumer_id: global_consumer_id,
+                    negotiation_id: getValue('#negotiation-id-text'),
+                    title: getValue('#title'),
+                };
+                console.log('frm', frm);
+                console.log('negotiation_id', frm.negotiation_id);
+                console.log('frm._id', frm._id);
+                return frm;
+            }
+
+            async function populateFormChanges(data) {
+                console.log('policy data', data)
+                unmarkChanged();
+                if (data.last_policy)
+                {
+                    changes = data.changes;
+                    data = data.last_policy;
+                }
+                else
+                {
+                    changes = {};
+                }
+                try {
+                    $("#fieldset-odrl").find('.form-card:gt(0)').remove();
+                    var jsonData = data.odrl_policy.data;
+                    console.log('jsonData', jsonData);
+                    if (Array.isArray(jsonData)) {
+                        // Iterate over each dictionary in the array with a delay
+                        jsonData.forEach(function (data, index) {
+                                loadJsonDataConfig($("#fieldset-odrl"), data);
+                        });
+                    } else {
+                        console.log('JSON data is not an array.');
+                    }
+                } catch (error) {
+                    alert('PopulateFormChanges error: ' + error);
+                }
+                try {
+                    $("#fieldset-np").find('.form-card:gt(1)').remove();
+                
+                    const jsonData = data?.odrl_policy?.data || [];
+                    const negotiationId = data?.negotiation_id;
+                    console.log('negotiationId', negotiationId);
+                    const price = data?.resource_description_object?.price ?? null;
+                    console.log('price', price);
+                
+                    let preferences = [];
+                
+                    if (negotiationId) {
+                        const recommender_agent_record = await getRecommenderAgentRecord(negotiationId);
+                        preferences = recommender_agent_record?.preferences || [];
+                    } else {
+                        console.warn('negotiation_id is missing');
+                    }
+                
+                    if (Array.isArray(jsonData)) {
+                        jsonData.forEach(function (policyItem, index) {
+                            loadPreferencesData($("#fieldset-np"), policyItem, preferences, price);
+                        });
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('No policy to populate preferences');
+                }
+
+
+                function unmarkChanged() {
+                    // Reset color and title for all fields marked by `markChanged`
+                    $('input, textarea, select').each(function() {
+                        if ($(this).attr('title')?.startsWith('Previous value:')) {
+                            $(this).css('color', '').attr('title', '');
+                        }
+                    });
+                }
+
+                function markChanged(selector, changeKey) {
+                    const keys = changeKey.split('.');
+                    let changeCheck = changes;
+                    handleChanges(changes);
+                    for (const key of keys) {
+                        if (changeCheck[key]) {
+                            changeCheck = changeCheck[key];
+                        } else {
+                            return;
+                        }
+                    }
+
+                    $(selector).css('color', 'red');
+                    $(selector).attr('title', `Previous value: ${changeCheck.from}`);
+                }
+
+                function handleChanges(changes) {
+                    // Check if there's a change for #nlpInput
+                    //console.log(changes)
+                    if (changes['natural_language_document']) {
+                        const text1 = changes['natural_language_document'].from;
+                        const text2 = changes['natural_language_document'].to;
+
+                        // Make the button visible
+                        $('.last-changes-button').show();
+
+                        // Call the AJAX request
+                        $.ajax({
+                            url: '{% url "get_text_diff" %}',
+                            type: 'POST',
+                            data: {
+                                'text1': text1,
+                                'text2': text2,
+                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                            },
+                            success: function(data) {
+                                $('#result').html(data.diff);
+                            }
+                        });
+                    }
+
+                }
+
+                $('#title').val(data.resource_description_object.title);
+                markChanged('#title', 'resource_description_object.title');
+
+                $('#price').val(data.resource_description_object.price);
+                markChanged('#price', 'resource_description_object.price');
+
+                $('#uri').val(data.resource_description_object.uri);
+                markChanged('#uri', 'resource_description_object.uri');
+
+                $('#policy-url').val(data.resource_description_object.policy_url);
+                markChanged('#policy-url', 'resource_description_object.policy_url');
+
+                if (data.resource_description_object.environmental_cost_of_generation) {
+                    $('#energy-consumption').val(data.resource_description_object.environmental_cost_of_generation.additionalProp1);
+                    markChanged('#energy-consumption', 'resource_description_object.environmental_cost_of_generation.additionalProp1');
+
+                    $('#carbon-emission').val(data.resource_description_object.environmental_cost_of_generation.additionalProp2);
+                    markChanged('#carbon-emission', 'resource_description_object.environmental_cost_of_generation.additionalProp2');
+                }
+
+                if (data.resource_description_object.environmental_cost_of_serving) {
+                    $('#generating-cost').val(data.resource_description_object.environmental_cost_of_serving.additionalProp1);
+                    markChanged('#generating-cost', 'resource_description_object.environmental_cost_of_serving.additionalProp1');
+
+                    $('#serving-cost').val(data.resource_description_object.environmental_cost_of_serving.additionalProp2);
+                    markChanged('#serving-cost', 'resource_description_object.environmental_cost_of_serving.additionalProp2');
+                }
+
+                $('#description').val(data.resource_description_object.description);
+                markChanged('#description', 'resource_description_object.description');
+
+                $('#type-of-data').val(data.resource_description_object.type_of_data);
+                markChanged('#type-of-data', 'resource_description_object.type_of_data');
+
+                $('#data-format').val(data.resource_description_object.data_format);
+                markChanged('#data-format', 'resource_description_object.data_format');
+
+                $('#data-size').val(data.resource_description_object.data_size);
+                markChanged('#data-size', 'resource_description_object.data_size');
+
+                $('#validity-period').val(data.validity_period);
+                markChanged('#validity-period', 'validity_period');
+
+                $('#tags').val(data.resource_description_object.tags);
+                markChanged('#tags', 'resource_description_object.tags');
+
+                // Populate JSON inputs
+                $('#odrlInput').val(JSON.stringify(data.odrl_policy, null, 2));
+                markChanged('#odrlInput', 'odrl_policy');
+
+                $('#nlpInput').val(data.natural_language_document);
+                markChanged('#nlpInput', 'natural_language_document');
+
+                $('#dpwInput').val(JSON.stringify(data.data_processing_workflow_object, null, 2));
+                $('#dpwInput').prop('readonly', true);
+                markChanged('#dpwInput', 'data_processing_workflow_object');
+
+                // Example for selecting options dynamically (if needed)
+                // var selectElement = $('#data_processing_workflow_object');
+                // selectElement.empty();
+                // $.each(data.data_processing_workflow_object, function(index, optionValue) {
+                //     selectElement.append($('<option></option>').attr('value', optionValue).text(optionValue).prop('selected', true));
+                // });
+            }
+
+            function populateForm(data) {
+                try {
+                    $("#fieldset-odrl").find('.form-card:gt(0)').remove();
+                    var jsonData = data.last_policy.odrl_policy.data;
+                    if (Array.isArray(jsonData)) {
+                        // Iterate over each dictionary in the array with a delay
+                        jsonData.forEach(function (data, index) {
+                                loadJsonDataConfig($("#fieldset-odrl"), data);
+                        });
+                    } else {
+                        //alert('JSON data is not an array.');
+                    }
+                } catch (error) {
+                    alert('populateForm error: ' + error);
+                    console.log(error)
+                }
+
+                $('#title').val(data.resource_description_object.title);
+                $('#price').val(data.resource_description_object.price);
+                $('#uri').val(data.resource_description_object.uri);
+                $('#policy-url').val(data.resource_description_object.policy_url);
+
+                if (data.resource_description_object.environmental_cost_of_generation) {
+                    $('#energy-consumption').val(data.resource_description_object.environmental_cost_of_generation.additionalProp1);
+                    $('#carbon-emission').val(data.resource_description_object.environmental_cost_of_generation.additionalProp2);
+                }
+
+                if (data.resource_description_object.environmental_cost_of_serving) {
+                    $('#generating-cost').val(data.resource_description_object.environmental_cost_of_serving.additionalProp1);
+                    $('#serving-cost').val(data.resource_description_object.environmental_cost_of_serving.additionalProp2);
+                }
+
+                $('#description').val(data.resource_description_object.description);
+                $('#type-of-data').val(data.resource_description_object.type_of_data);
+                $('#data-format').val(data.resource_description_object.data_format);
+                $('#data-size').val(data.resource_description_object.data_size);
+                $('#validity-period').val(data.validity_period); // Assuming validity_period is at the top level
+                $('#tags').val(data.resource_description_object.tags);
+
+                // Populate JSON inputs
+                $('#odrlInput').val(JSON.stringify(data.odrl_policy, null, 2));
+                $('#nlpInput').val(data.natural_language_document);
+                $('#dpwInput').val(JSON.stringify(data.data_processing_workflow_object, null, 2));
+            }
+
+        
+
+            $('#fieldset-dpw').on('click', '#download-dpw', function (event) {
+                const text = $('#dpwInput').val();
+
+                try {
+                    JSON.parse(text); // just to verify it's valid JSON
+                } catch (e) {
+                    alert('The content is not valid JSON and cannot be downloaded.');
+                    return;
+                }
+
+                const blob = new Blob([text], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'data_processing_workflow.json'; // JSON filename
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                URL.revokeObjectURL(url);
+            });
+
+
+            $('#fieldset-dpw').on('click', '#upload-dpw', function () {
+                dpwFileInput.click(); // trigger hidden file input
+                window.console.log('Upload DPW button clicked');
+            });
+
+            // Handle file selection
+            $("#dpwFileInput").on("change", function (event) {
+                window.console.log('File input changed:', event.target.files);
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const json = JSON.parse(e.target.result); // validate and parse JSON
+                        const prettyJson = JSON.stringify(json, null, 2);
+                        console.log('Parsed JSON:', json); // for debugging
+                        $('#dpwInput').val(prettyJson); // populate textarea
+                        $('#dpwInput').prop('readonly', true); // keep it readonly
+
+                        alert('DPW JSON uploaded successfully.');
+                    } catch (error) {
+                        alert('Invalid JSON file. Please upload a valid .json file.');
+                    }
+                };
+                reader.readAsText(file);
+
+                // Reset the file input so it can re-trigger on the same file if needed
+                $(this).val('');
+            });
+
+            $('#switchPreferences').on('change', function () {
+                if (this.checked) {
+                    $('#np').show(); // Show Preferences tab
+                    $('#recommend-me').show();
+                    $('#revert').show();
+                } else {
+                    $('#np').hide(); // Hide Preferences tab
+                    $('#recommend-me').hide();
+                    $('#revert').hide();
+                }
+            });
+
+
+            const selectedNegotiationId = "{{ selected_negotiation_id|default:'' }}";
+            if (selectedNegotiationId) {
+
+                console.log("Auto-selecting negotiation:", selectedNegotiationId);
+
+                const endpointUrl = 'negotiationlastpolicy?negotiation_id=' + selectedNegotiationId;
+                global_policy_type = "request";
+
+                $('#negotiation-id-text').val(selectedNegotiationId)
+
+                $('#loading-spinner').show();
+                makeAllInputsEditable();
+
+                $.ajax({
+                    url: endpointUrl,
+                    method: 'GET',
+                    success: function (data) {
+                        console.log('response from auto-select negotiation ajax call:', data);
+                        global_policy_id = data.last_policy._id;
+                        global_provider_id = data.last_policy.provider_id;
+                        global_consumer_id = data.last_policy.consumer_id;
+
+                        populateFormChanges(data);
+                        $('#modal').show();
+                        $('#loading-spinner').hide();
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                        $('#loading-spinner').hide();
+                    }
+                });
+
+            }
+
+
+
+        });
+
+    </script>
+
+{% endblock %}
+```

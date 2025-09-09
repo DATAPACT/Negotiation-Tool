@@ -1,0 +1,128 @@
+{% extends 'base_template_users.html' %}
+{% load static %}
+{% block title %} {{ consent_request.consent_requestform.consent_request_form_title }}{% endblock %}
+{% block content %}
+    <main id="main">
+        <section id="faq" class="faq">
+
+            <div class="container" data-aos="fade-up">
+
+                <header class="section-header">
+                    <p>{{ consent_request.consent_requestform.consent_request_form_title }}</p>
+                </header>
+
+
+                <div class="row justify-content-center">
+
+                    <div class="col-md-12"> <!-- Adjust the column size as needed -->
+                        <table class="table table-responsive">
+                            <tr>
+                                <td colspan="2">
+                                    <h3>Consent Request Details</h3>
+
+                                </td>
+                            </tr>
+                            <input type="hidden" id="consent_answer_status" value="{{ consent_request.id }}">
+                            <tr>
+                                <td><b>Requested data to be used</b></td>
+                                <td>{{ consent_request.consent_requestform.consent_data }}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Data processing operations that will be applied on the requested data</b></td>
+                                <td>
+                                    {{ consent_request.consent_requestform.consent_operations }}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Duration from when the requested data (or processing operations) will start and
+                                    end</b></td>
+                                <td><b>Start Date:</b> {{ consent_request.consent_requestform.consent_date_start }}
+
+                                    <br/><b>End Date:</b> {{ consent_request.consent_requestform.consent_date_end }}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Data processing purpose</b></td>
+                                <td>{{ consent_request.consent_requestform.consent_purpose }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>The request is made by</b></td>
+                                <td>
+                                    {{ consent_request.consent_requestform.consent_requested_by }}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Consent status</b></td>
+                                <td>
+                                    {% if consent_request.consent_answer_status == "REVOKED" %}
+                                        {{ consent_request.consent_given_status }}
+                                        <b style="color: red">({{ consent_request.consent_answer_status }})</b>
+                                    {% else %}
+                                        {{ consent_request.consent_given_status }} <b style="color: red">({{ consent_request.consent_answer_status }})</b>
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    <h3>Custom Restrictions</h3>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                {% if has_custom_restrictions %}
+                                    <td colspan="2">
+                                        <div id="customrestrictioncheckbox">
+                                            <ul>
+                                            {% for crs in custom_restrictions %}
+                                                <li><b>{{ crs.0  }}</b></li>
+                                                <ul>
+
+                                                        <li>{{ crs.2 }}</li>
+
+                                                </ul>
+
+
+
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+
+                                    </td>
+                                {% else %}
+                                    <td colspan="2">No custom restrictions.</td>
+                                {% endif %}
+
+
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    {% if consent_request.consent_answer_status == "RESPONDED" and consent_request.consent_given_status == "Given" %}
+                                        <button class="btn btn-danger" id="consentsubmitbutton">Revoke Given
+                                            Permissions/Consent
+                                        </button>
+                                    {% elif consent_request.consent_answer_status == "REVOKED" %}
+                                    {% elif consent_request.consent_answer_status == "REQUESTED" %}
+                                        <button class="btn btn-primary" id="consentsubmitbutton">Give
+                                            Permissions/Consent
+                                        </button>
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->
+{% endblock %}
+```

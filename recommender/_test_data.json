@@ -1,0 +1,42 @@
+{
+  "preference": {
+    "dataset": {
+        "name" : "test1",
+        "items" : ["name", "age", "job", "education", "sex", "height", "weight", "phone", "address"]
+    },
+    "upper_dataset_items" : ["age", "job", "education", "sex", "height", "weight"],
+    "lower_dataset_items" : ["age", "sex", "height", "weight"],
+    "upper_duration" : 180,
+    "lower_duration" : 90,
+    "upper_price" : 80,
+    "lower_price" : 5,
+    "upper_action" : "share",
+    "lower_action" : "display",
+    "upper_purpose" : "ResearchAndDevepment",
+    "lower_purpose" : "AcademicResearch",
+    "upper_party" : "None",
+    "lower_party" : "None"
+},
+  "previous_offer": {
+    "dataset": {
+        "name" : "test1",
+        "items" : ["age", "education", "sex", "height", "weight"]
+    },
+    "duration": 120,
+    "price": 50,
+    "action": "display",
+    "purpose": "NonCommercialReasearch",
+    "party": "None"
+  },
+  "previous_request": {
+    "dataset": {
+        "name" : "test1",
+        "items" : ["age", "Job", "education", "sex", "height", "weight"]
+    },
+    "duration": 180,
+    "price": 30,
+    "action": "display",
+    "purpose": "NonCommercialReasearch",
+    "party": "None"
+  }
+}

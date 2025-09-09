@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %} Login {% endblock %}
+{% block inpagecss %}
+    .login-form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* Set the height of the container to the full viewport height */
+    }
+{% endblock %}
+{% block content %}
+    <main id="main">
+    <section id="faq" class="faq">
+
+      <div class="container" data-aos="fade-up">
+
+        <header class="section-header">
+          <p>Sign In</p>
+        </header>
+
+        <div class="row">
+          <div class="col-lg-8">
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                  <div class="mb-4">
+                    <label for="username" class="form-label">Email</label>
+                    <input type="username" class="form-control" name="username" id="username" aria-describedby="usernameHelp">
+                    <div id="usernameHelp" class="form-text">Enter your registered email.</div>
+                  </div>
+                  <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="password">
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Login</button>
+                   <div class="mb-3">
+                    <a href="{% url 'register' %}">Register</a>
+                  </div>
+                </form>
+
+          </div>
+        <div class="col-lg-2"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- End F.A.Q Section -->
+ </main><!-- End #main -->
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-danger">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+{% endblock %}
+```

@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://test.org/onto.owl#"
+     xml:base="http://test.org/onto.owl"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#has_difficulty_level -->
+
+    <owl:ObjectProperty rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#has_difficulty_level">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#has_exercise_type -->
+
+    <owl:ObjectProperty rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#has_exercise_type"/>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#is_associated_with -->
+
+    <owl:ObjectProperty rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#is_associated_with"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#has_date_time -->
+
+    <owl:DatatypeProperty rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#has_date_time">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#has_value -->
+
+    <owl:DatatypeProperty rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#has_value">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- https://w3id.org/dpv#Processing -->
+
+    <owl:Class rdf:about="https://w3id.org/dpv#Processing"/>
+    
+
+
+    <!-- https://w3id.org/dpv#Purpose -->
+
+    <owl:Class rdf:about="https://w3id.org/dpv#Purpose"/>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#CalculateCalorieBurned -->
+
+    <owl:Class rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#CalculateCalorieBurned">
+        <rdfs:subClassOf rdf:resource="https://w3id.org/dpv#Processing"/>
+    </owl:Class>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#CalculateMean -->
+
+    <owl:Class rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#CalculateMean">
+        <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-privacyui-vocab#StatisticalAnalysis"/>
+    </owl:Class>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#CalculateMedian -->
+
+    <owl:Class rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#CalculateMedian">
+        <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-privacyui-vocab#StatisticalAnalysis"/>
+    </owl:Class>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#EstimateFitnessLevel -->
+
+    <owl:Class rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#EstimateFitnessLevel">
+        <rdfs:subClassOf rdf:resource="https://w3id.org/dpv#Purpose"/>
+    </owl:Class>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#LeaderBoard -->
+
+    <owl:Class rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#LeaderBoard">
+        <rdfs:subClassOf rdf:resource="https://w3id.org/dpv#Purpose"/>
+    </owl:Class>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#ShareCalorieBurnedResult -->
+
+    <owl:Class rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#ShareCalorieBurnedResult">
+        <rdfs:subClassOf rdf:resource="https://w3id.org/dpv#Processing"/>
+    </owl:Class>
+    
+
+
+    <!-- https://www.upcast-project.eu/upcast-privacyui-vocab#StatisticalAnalysis -->
+
+    <owl:Class rdf:about="https://www.upcast-project.eu/upcast-privacyui-vocab#StatisticalAnalysis">
+        <rdfs:subClassOf rdf:resource="https://w3id.org/dpv#Processing"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

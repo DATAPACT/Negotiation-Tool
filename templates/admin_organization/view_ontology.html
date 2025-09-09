@@ -1,0 +1,58 @@
+{% extends 'base_template_organization.html' %}
+{%load static %}
+{% block title %} Semantic Model Upload{% endblock %}
+{% block content %}
+  <main id="main">
+    <section id="faq" class="faq">
+
+      <div class="container" data-aos="fade-up">
+
+        <header class="section-header">
+          <p>View Uploaded Ontology</p>
+        </header>
+
+        <div class="row">
+            <div class="col-lg-12">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Name</th>
+                          <th scope="col">Type of Ontology</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for ontology in ontologies %}
+                        <tr>
+                          <th scope="row">{{ ontology.name }}</th>
+                            <td>
+                                {% if ontology.ontology_type == "GENERAL" %}
+                              General Ontology
+
+                                {% elif ontology.ontology_type == "DOMAIN" %}
+                                    Domain Ontology
+                                {% elif ontology.ontology_type == "DATA_SCHEMA" %}
+                                    Data Schema Ontology
+                                    {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                          <td>
+                              <a href="{% url 'deleteontology' ontology.id %}" class="btn btn-danger">Delete</a>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+ </main><!-- End #main -->
+{% endblock %}
+```

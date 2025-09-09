@@ -1,0 +1,10 @@
+{% autoescape off %}
+
+ Welcome to Privacy Preference UI - UPCAST Project!
+ Hi {{ name }}!
+
+ Please confirm your email by clicking on the following link.
+
+Link: http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+ {% endautoescape %}
