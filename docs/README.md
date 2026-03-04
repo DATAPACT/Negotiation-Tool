@@ -63,4 +63,7 @@ docker compose up
 
 | What | How | Values |
 | --- | --- | --- |
-| 1) Engagement and satisfaction with negotiation support 2) Effectiveness of the policy comparison functionality |	1) Questionnaire for pilots who integrated/tested the negotiation tool 2) Experiments with pilots, given a number of policies (>=5), variations are automatically generated, and pairs of data provider/ data requester policies are shown to the pilots, who are asked to express whether there is a conflict between the provider and the requester policies. 	| 1) Questionnaire for pilots who integrated/tested the negotiation tool 2) High agreement (>80%) between the pilot's assessment of the two policies and the automatically detected conflict. |
+| 1) Engagement and satisfaction with negotiation support |	1) Questionnaire for pilots who integrated/tested the negotiation tool 	| 1) ≥5/7 Likert scale rating in user satisfaction with the negotiation support |
+
+Progress towards KPIs:
+* 04/03/2026: 1) minor interface improvements
