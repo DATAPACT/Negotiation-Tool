@@ -47,10 +47,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-e+dfmqm))kmz9k*e4dt(0=)(=uxc0z9hzmfar1-pif#1r=npin")
+SECRET_KEY = "django-insecure-e+dfmqm))kmz9k*e4dt(0=)(=uxc0z9hzmfar1-pif#1r=npin"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
+DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1","dips.soton.ac.uk"]
 
@@ -102,10 +102,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "privux.urls"
 SESSION_COOKIE_NAME = "negotiation_sessionid"
-SESSION_COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "Lax")
-SESSION_COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "False") == "True"
-CSRF_COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "Lax")
-CSRF_COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "False") == "True"
 
 TEMPLATES = [
     {
@@ -195,9 +191,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Allow embedding in iframes from any origin
 # X_FRAME_OPTIONS = "SAMEORIGIN"
-# frame-ancestors CSP header (set by FrameAncestorsMiddleware) takes precedence in modern browsers.
-# SAMEORIGIN is the safe fallback for older browsers that don't support CSP.
-X_FRAME_OPTIONS = "SAMEORIGIN"
+X_FRAME_OPTIONS = "ALLOWALL"
 
 AUTH_USER_MODEL = "custom_accounts.User"
 
