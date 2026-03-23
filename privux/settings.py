@@ -19,6 +19,26 @@ load_dotenv()
 API_BASE_URL = os.environ.get("API_BASE_URL")
 DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
 
+KEYCLOAK_ISSUER = os.environ.get("KEYCLOAK_ISSUER", "")
+if not KEYCLOAK_ISSUER:
+    import warnings
+    warnings.warn(
+        "KEYCLOAK_ISSUER is not set. SSO login will fail. "
+        "Set KEYCLOAK_ISSUER=https://<your-keycloak>/realms/<realm> in your environment.",
+        stacklevel=2,
+    )
+KEYCLOAK_CLIENT_ID = os.environ.get("KEYCLOAK_CLIENT_ID", "")
+
+_frame_ancestors_env = os.environ.get("FRAME_ANCESTORS", "")
+if not _frame_ancestors_env:
+    import warnings
+    warnings.warn(
+        "FRAME_ANCESTORS is not set. SSO iframe embedding will not work. "
+        "Set FRAME_ANCESTORS in your .env (local) or environment (production).",
+        stacklevel=2,
+    )
+FRAME_ANCESTORS = _frame_ancestors_env.split() if _frame_ancestors_env else []
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,10 +47,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-e+dfmqm))kmz9k*e4dt(0=)(=uxc0z9hzmfar1-pif#1r=npin"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-e+dfmqm))kmz9k*e4dt(0=)(=uxc0z9hzmfar1-pif#1r=npin")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1","dips.soton.ac.uk"]
 
@@ -77,10 +97,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # user custom
     "custom_accounts.redirect_user_middleware.UserRedirectMiddleware",
+    "custom_accounts.redirect_user_middleware.FrameAncestorsMiddleware",
 ]
 
 ROOT_URLCONF = "privux.urls"
 SESSION_COOKIE_NAME = "negotiation_sessionid"
+SESSION_COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "Lax")
+SESSION_COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "False") == "True"
+CSRF_COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "Lax")
+CSRF_COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "False") == "True"
 
 TEMPLATES = [
     {
@@ -93,6 +118,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "custom_accounts.context_processors.sso_config",
             ],
         },
     },
@@ -169,7 +195,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Allow embedding in iframes from any origin
 # X_FRAME_OPTIONS = "SAMEORIGIN"
-X_FRAME_OPTIONS = "ALLOWALL"
+# frame-ancestors CSP header (set by FrameAncestorsMiddleware) takes precedence in modern browsers.
+# SAMEORIGIN is the safe fallback for older browsers that don't support CSP.
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 AUTH_USER_MODEL = "custom_accounts.User"
 

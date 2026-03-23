@@ -914,9 +914,6 @@
 
 
 
-            updateNegotiationsTable();
-            updateFinishedNegotiationsTable();
-
             function getValue(selector) {
                 var value = $(selector).val();
                 return (value === undefined || value === null) ?"" : value;
@@ -1366,8 +1363,7 @@
 
             });
             function bindNegotiationRowClickEvent() {
-                console.log('bindNegotiationRowClickEvent called');
-                $('.negotiation-row').on('click', function (event) {
+                $('.negotiation-row').off('click').on('click', function (event) {
                     var $target = $(event.target);
                     // Check if the target is within the first two columns
                     if ($target.is('td:nth-child(1), td:nth-child(2)') || $target.closest('td:nth-child(1), td:nth-child(2)').length > 0) {
@@ -1397,9 +1393,6 @@
                     }
                 });
             }
-
-            // Initial binding
-            bindNegotiationRowClickEvent();
 
             $('.createRequestBtn').click(function () {
                 console.log('click request button')

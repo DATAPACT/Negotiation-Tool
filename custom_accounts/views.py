@@ -59,7 +59,15 @@ from custom_accounts.ajax_ontology import (
     process_rule,
 )
 from custom_accounts.ajax_ontology import ontology_data_to_dict_tree
+import logging
 import os
+import threading
+from datetime import datetime, timedelta
+import jwt
+from jwt import PyJWKClient
+from pymongo import MongoClient as PyMongoClient
+
+logger = logging.getLogger(__name__)
 
 # because of the custom user model
 from django.contrib.auth import get_user_model
@@ -81,10 +89,38 @@ DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
 if not DJANGO_BASE_URL:
     raise ValueError("DJANGO_BASE_URL environment variable is not set.")
 
+_jwks_client: PyJWKClient | None = None
+_jwks_lock = threading.Lock()
+_mongo_client = None
+_mongo_lock = threading.Lock()
+
+def _get_jwks_client(url: str) -> PyJWKClient:
+    global _jwks_client
+    if _jwks_client is None:
+        with _jwks_lock:
+            if _jwks_client is None:
+                _jwks_client = PyJWKClient(url, cache_keys=True)
+    return _jwks_client
+
+def _get_mongo_users():
+    global _mongo_client
+    if _mongo_client is None:
+        with _mongo_lock:
+            if _mongo_client is None:
+                mongo_user = os.environ.get("MONGO_USER", "root")
+                mongo_password = os.environ.get("MONGO_PASSWORD", "rootpassword")
+                mongo_host = os.environ.get("MONGO_HOST", "mongo")
+                mongo_port = os.environ.get("MONGO_PORT", "27017")
+                uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}"
+                _mongo_client = PyMongoClient(uri)
+    return _mongo_client["upcast"]["users"]
+
 User = get_user_model()
 
 
 def index(request):
+    if request.session.get("access_token"):
+        return redirect("datacontrollernegotiation")
     return render(request, "common/index.html")
 
 def auto_login(request):
@@ -999,6 +1035,72 @@ def get_agent_record(request):
         # Handle request exceptions
         # You can log the error or handle it as needed
         print(f'Error fetching agent record for negotiation id {negotiation_id}: {e}')
-        return None  
+        return None
+
+
+@csrf_exempt  # Security provided by Keycloak JWT signature validation, not CSRF token
+def sso_login(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        body = json.loads(request.body)
+        token = body.get("token")
+        if not token:
+            return JsonResponse({"error": "Missing token"}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    keycloak_issuer = settings.KEYCLOAK_ISSUER
+    if not keycloak_issuer:
+        return JsonResponse({"error": "SSO not configured"}, status=503)
+    jwks_url = f"{keycloak_issuer}/protocol/openid-connect/certs"
+
+    try:
+        jwks_client = _get_jwks_client(jwks_url)
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+        decode_kwargs = dict(
+            algorithms=["RS256"],
+            issuer=keycloak_issuer,
+        )
+        client_id = settings.KEYCLOAK_CLIENT_ID
+        if client_id:
+            decode_kwargs["audience"] = client_id
+        else:
+            decode_kwargs["options"] = {"verify_aud": False}
+        payload = jwt.decode(token, signing_key.key, **decode_kwargs)
+    except Exception as e:
+        logger.warning("[SSO] Token validation failed — %s: %s", type(e).__name__, e)
+        return JsonResponse({"error": "Invalid token"}, status=401)
+
+    sub = payload.get("sub")
+    if not sub:
+        return JsonResponse({"error": "Invalid token claims"}, status=401)
+
+    email = payload.get("email", "")
+    name = payload.get("name", payload.get("preferred_username", f"kc_{sub}"))
+    user_type = "provider"
+
+    # Provision user and get a correctly-signed token from the FastAPI
+    try:
+        provision_url = f"{API_BASE_URL}/user/sso-provision/"
+        provision_res = requests.post(provision_url, json={
+            "sub": sub,
+            "email": email,
+            "name": name,
+            "user_type": user_type,
+        })
+        provision_res.raise_for_status()
+        provision_data = provision_res.json()
+    except Exception as e:
+        logger.error("[SSO] Provision request failed: %s", e)
+        return JsonResponse({"error": "User provisioning failed"}, status=500)
+
+    request.session["access_token"] = provision_data["access_token"]
+    request.session["user_id"] = provision_data["user_id"]
+    request.session["user_type"] = provision_data["user_type"]
+    request.session["is_sso"] = True
+
+    return JsonResponse({"status": "ok", "redirect_url": reverse("datacontrollernegotiation")})
     
       
