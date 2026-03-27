@@ -367,6 +367,41 @@ async def register_user(user: User, master_password_input: str):
         raise HTTPException(status_code=400, detail=resp)
 
 
+# SSO Provision — called by Django after Keycloak token validation
+@router.post("/user/sso-provision/")
+async def sso_provision(
+    sub: str = Body(...),
+    email: str = Body(...),
+    name: str = Body(...),
+    user_type: str = Body(default="provider"),
+):
+    user = await users_collection.find_one({"username_email": email})
+    if user is None:
+        user_dict = {
+            "username_email": email,
+            "name": name,
+            "username": f"kc_{sub}",
+            "type": user_type,
+            "is_keycloak": True,
+        }
+        result = await users_collection.insert_one(user_dict)
+        user_dict["_id"] = result.inserted_id
+        user = user_dict
+    elif email and user.get("name") != name:
+        await users_collection.update_one({"_id": user["_id"]}, {"$set": {"name": name}})
+
+    access_token = create_access_token(
+        data={"sub": email},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_id": str(user["_id"]),
+        "user_type": user.get("type", user_type),
+    }
+
+
 # User Login
 @router.post("/user/login/")
 async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
