@@ -127,6 +127,11 @@
     float: right;
     }
 
+    .styled-button-view {
+    background: #616161; /* grey*/
+    width: 100px;
+    }
+
     .styled-button-offer {
     background: #2196F3; /* Blue */
     width: 100px;
@@ -578,19 +583,52 @@
         }
 
 
-                .last-changes-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+        #msform .agreement-operation {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            /*flex-shrink: 0;*/
         }
-        .last-changes-button:hover {
-            background-color: #0056b3;
+        #msform .agreement-operation .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 220px;
+            margin: 0;
+            float: none;
+            background: #6b39c6;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            border-radius: 6px;
+            /*box-shadow: 0 4px 12px rgba(68, 45, 129, 0.25);*/
+            border: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            flex-shrink: 0;
+            width: auto;        /* or inline-size: max-content; */
+            padding: 12px 24px;        /* adjust if needed */
+
+        }
+        #msform .agreement-operation .action-button:hover,
+        #msform .agreement-operation .action-button:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(68, 45, 129, 0.32);
+            background: #5a2ab5;
+            outline: none;
+        }
+        #msform .agreement-operation .action-button:disabled {
+            cursor: not-allowed;
+            background: #d1d5db;
+            color: #6b7280;
+            border: 1px solid #c1c7d0;
+            box-shadow: none;
+            transform: none;
+
         }
         .diff-modal {
             display: none;
@@ -610,7 +648,7 @@
             margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 99%;
         }
         .diff-close {
             color: #aaa;
@@ -623,6 +661,330 @@
             color: black;
             text-decoration: none;
             cursor: pointer;
+        }
+
+        .compare-last-changes-modal .compare-last-changes-content {
+            /*width: min(1800px, 98%);*/
+            width:  1800px;
+            max-height: 99vh;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px 36px;
+            box-shadow: 0 24px 55px rgba(38, 24, 84, 0.24);
+        }
+        .compare-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .compare-header-left {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .compare-header-right {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .compare-tab,
+        .compare-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .compare-tab {
+            background: #5a2ab5;
+            color: #fff;
+            cursor: default;
+        }
+        .compare-action {
+            background: #f5f5ff;
+            color: #3f2d7b;
+            border-color: #d6cffe;
+        }
+        .compare-action:hover {
+            background: #ece6ff;
+        }
+        .compare-action:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+        .compare-change-count {
+            font-size: 14px;
+            color: #5f5c73;
+            font-weight: 500;
+        }
+        .compare-body {
+            display: grid;
+            grid-template-columns: 2fr minmax(180px, 1fr);
+            gap: 18px;
+            width: 100%;
+        }
+        .compare-diff-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .compare-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .legend-badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            background: #f0edff;
+            color: #4b3aa2;
+        }
+        .legend-inserted {
+            background: #e3f8e7;
+            color: #1d7a2f;
+            border: 1px solid rgba(48, 134, 71, 0.25);
+        }
+        .legend-deleted {
+            background: #ffe8e8;
+            color: #c0392b;
+            border: 1px solid rgba(192, 57, 43, 0.25);
+        }
+        .legend-replaced {
+            background: #f4ecff;
+            color: #5a2ab5;
+            border: 1px solid rgba(90, 42, 181, 0.25);
+        }
+        .compare-diff-box {
+            /*border: 1px solid #d9d5ff;*/
+            border-radius: 14px;
+            padding: 22px 24px;
+            /*background: linear-gradient(145deg, #fbf9ff 0%, #ffffff 85%);*/
+            overflow-y: auto;
+            max-height: 70vh;
+            min-height: 360px;
+            line-height: 1.65;
+            font-size: 15px;
+            color: #201b43;
+            letter-spacing: 0.01em;
+            white-space: pre-wrap;
+            box-shadow: inset 0 3px 8px rgba(98, 72, 178, 0.08);
+            text-align: left;
+        }
+        .compare-diff-box:focus {
+            /*outline: 2px solid rgba(93, 68, 204, 0.55);*/
+            outline-offset: 3px;
+        }
+        .compare-diff-box .diff-segment {
+            display: inline;
+            border-radius: 4px;
+            padding: 1px 4px;
+        }
+        .compare-diff-box .diff-segment.del {
+            background: #ffe1e1;
+            color: #a62323;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(166, 35, 35, 0.45);
+            box-shadow: 0 0 0 1px rgba(166, 35, 35, 0.18);
+        }
+        .compare-diff-box .diff-segment.ins {
+            background: #dcf7de;
+            color: #1c6b32;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(28, 107, 50, 0.45);
+            box-shadow: 0 0 0 1px rgba(28, 107, 50, 0.18);
+        }
+        .compare-diff-box br.nl-extra,
+        .merge-editor br.nl-extra {
+            display: none;
+        }
+        .compare-summary-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            /*border: 1px solid #e2dfff;*/
+            /*background: #fbfaff;*/
+            border-radius: 14px;
+            padding: 18px 22px;
+            max-height: 60vh;
+            text-align: left;
+        }
+        .compare-summary-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+            /*color: #4b3aa2;*/
+        }
+        .compare-summary-empty {
+            margin: 0;
+            font-size: 14px;
+            color: #8078a6;
+        }
+        .compare-change-summary {
+            margin: 0;
+            padding-left: 20px;
+            list-style: decimal;
+            overflow-y: auto;
+            flex: 1 1 auto;
+            color: #4a4470;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        .compare-change-summary li {
+            margin-bottom: 6px;
+        }
+        .compare-summary-pane:not(.has-changes) .compare-change-summary {
+            display: none;
+        }
+        .compare-summary-pane.has-changes {
+            box-shadow: inset 0 2px 6px rgba(78, 65, 168, 0.08);
+        }
+        .compare-summary-pane.has-changes .compare-summary-empty {
+            display: none;
+        }
+        .compare-diff-loading {
+            color: #6754c7;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .compare-diff-error {
+            color: #d6455d;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .merge-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 40px 0;
+        }
+        .merge-modal-content {
+            background: #ffffff;
+            margin: 0 auto;
+            max-width: 1800px;
+            width: 98%;
+            border-radius: 18px;
+            padding: 32px 36px;
+            box-shadow: 0 28px 60px rgba(33, 25, 69, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .merge-close {
+            align-self: flex-end;
+            font-size: 30px;
+            font-weight: bold;
+            color: #5a2ab5;
+            cursor: pointer;
+        }
+        .merge-close:hover {
+            color: #32137a;
+        }
+        .merge-note {
+            margin: 0;
+            font-size: 14px;
+            color: #5f5c73;
+            text-align: center;
+        }
+        .merge-columns {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .merge-column {
+            flex: 1 1 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .merge-editor {
+            width: 100%;
+            min-height: 260px;
+            border: 1px solid #d9d5ff;
+            border-radius: 10px;
+            padding: 12px;
+            background: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+        .merge-editor:focus {
+            outline: 2px solid rgba(93, 68, 204, 0.45);
+            outline-offset: 2px;
+        }
+        .merge-editor .diff-segment {
+            display: inline;
+            border-radius: 4px;
+            padding: 1px 4px;
+        }
+        .merge-editor .diff-segment.del {
+            background: #ffe1e1;
+            color: #a62323;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(166, 35, 35, 0.45);
+            box-shadow: 0 0 0 1px rgba(166, 35, 35, 0.18);
+        }
+        .merge-editor .diff-segment.ins {
+            background: #dcf7de;
+            color: #1c6b32;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(28, 107, 50, 0.45);
+            box-shadow: 0 0 0 1px rgba(28, 107, 50, 0.18);
+        }
+        .merge-loading {
+            color: #5f5c73;
+            font-style: italic;
+            margin: 0;
+        }
+        .merge-action {
+            align-self: center;
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: #f5f5ff;
+            border: 1px solid #d6cffe;
+            font-weight: 600;
+            color: #3f2d7b;
+            cursor: pointer;
+        }
+        .merge-action:hover {
+            background: #ece6ff;
+        }
+        @media (max-width: 900px) {
+            .merge-columns {
+                grid-template-columns: 1fr;
+            }
+            .merge-modal-content {
+                max-width: 92%;
+            }
+        }
+        @media (max-width: 900px) {
+            .compare-body {
+                grid-template-columns: 1fr;
+            }
+            .compare-summary-pane {
+                max-height: 260px;
+            }
         }
         table.diff {font-family:Courier; border:medium;  border-top: 1px solid black; border-bottom: 1px solid black;}
         .diff_header {background-color:#e0e0e0}

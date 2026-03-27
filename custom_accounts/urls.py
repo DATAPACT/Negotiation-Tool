@@ -18,6 +18,7 @@ from django.urls import path
 
 urlpatterns = [
     path('get_text_diff/', views.get_text_diff, name='get_text_diff'),
+    path('compare_last_changes/', views.get_text_diffs_for_agreement, name='compare_last_changes'),
     # path("user/home", views.userhome, name="userhome"),
     path("organization/home", views.datacontrollerhome, name="datacontrollerhome"),
     path(
@@ -61,6 +62,21 @@ urlpatterns = [
         "organization/negotiationlastpolicy",
         views.get_negotiation_last_policy,
         name="datacontrollergetnegotiationlastpolicy",
+    ),
+    path(
+        "organization/penultimatepolicy",
+        views.get_penultimate_policy,
+        name="datacontrollergetpenultimatepolicy",
+    ),
+    path(
+        "organization/penultimatepolicydiff",
+        views.get_penultimate_policy_diff,
+        name="datacontrollergetpenultimatepolicydiff",
+    ),
+    path(
+        "organization/downloadcontract",
+        views.download_contract,
+        name="datacontrollerdownloadcontract",
     ),
     path(
         "organization/createpolicy",
@@ -195,4 +211,18 @@ urlpatterns = [
     #     name="view_responses_controller_processor_odrl_single",
     # ),
     path("", views.index, name="index"),
+
+    path(
+            "organization/gather_agreement_inputs",
+            views.gather_agreement_inputs,
+
+            name= "datacontrollercreateagreement",
+        ),
+
+    path(
+        "organization/generate_legal_agreement",
+        views.generate_legal_agreement,
+        name="datacontrollergenerateagreement",
+    ),
+
 ]

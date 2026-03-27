@@ -1,0 +1,43 @@
+[{
+  "uid": "http://example.com/policy:001",
+  "@type": "Policy",
+  "profile": "http://example.com/odrl:profile:10",
+  "permission": [
+    {
+      "target": "http://example.com/asset:123",
+      "action": "read"
+    },
+    {
+        "target": "http://example.com/book/1999",
+        "assigner": "http://example.com/org/paisley-park",
+        "action": [{
+           "rdf:value": { "@id": "odrl:reproduce" }
+        }]
+    },
+    {
+       "target": "http://example.com/asset:3333",
+       "action": "display",
+       "assigner": "http://example.com/party:0001"
+   },
+   {
+        "target": "http://example.com/looking-glass.ebook",
+        "assigner": {
+            "@type": [ "Party", "vcard:Organization" ],
+            "uid":  "http://example.com/org/sony-books",
+            "vcard:fn": "Sony Books LCC",
+            "vcard:hasEmail": "sony-contact@example.com" },
+        "assignee": {
+            "@type": [ "PartyCollection", "vcard:Group" ],
+            "uid":  "http://example.com/team/A",
+            "vcard:fn": "Team A",
+            "vcard:hasEmail": "teamA@example.com"},
+        "action": "use"
+   },
+   {
+       "target": "http://example.com/document:1234",
+       "assigner": "http://example.com/org:616",
+       "action": [{
+          "rdf:value": { "@id": "odrl:print" }
+      }]
+  }]
+}]

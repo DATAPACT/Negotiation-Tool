@@ -32,7 +32,7 @@ SECRET_KEY = "django-insecure-e+dfmqm))kmz9k*e4dt(0=)(=uxc0z9hzmfar1-pif#1r=npin
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1","dips.soton.ac.uk"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "10.22.38.111", "dips.soton.ac.uk"]
 
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
@@ -175,4 +175,5 @@ AUTH_USER_MODEL = "custom_accounts.User"
 
 CSRF_TRUSTED_ORIGINS = [
     'https://dips.soton.ac.uk',
+    "https://10.22.38.111:8000"
 ]

@@ -37,6 +37,7 @@ origins = ["*",
            "http://62.171.168.208:8002",
            "http://127.0.0.1:8001",
            "http://localhost:8001",
+           "http://10.22.38.111:8002",
 ]
 
 app.add_middleware(
@@ -80,14 +81,16 @@ MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 print(f'MONGO_PASSWORD {MONGO_PASSWORD}')
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 print(f'MONGO_HOST {MONGO_HOST}')
-# MONGO_PORT = os.getenv("MONGO_PORT")
-# if MONGO_PORT: # Assumption: A local or remote installation of MongoDB is provided.
-#     MONGO_PORT = int(MONGO_PORT)
-#     MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}"
-# else: # Assumption: The database is stored in mongodb cloud.
-#     MONGO_URI = f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}/?retryWrites=true&w=majority&appName=Cluster0"
+MONGO_PORT = os.getenv("MONGO_PORT")
+if MONGO_PORT: # Assumption: A local or remote installation of MongoDB is provided.
+    MONGO_PORT = int(MONGO_PORT)
+    MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}"
+else: # Assumption: The database is stored in mongodb cloud.
+    MONGO_URI = f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}/?retryWrites=true&w=majority&appName=Cluster0"
 
-MONGO_URI = "mongodb://root:rootpassword@localhost:27017/"
+# MONGO_URI = "mongodb://root:rootpassword@localhost:27017/"
+
+
 print(f'MONGO_URI {MONGO_URI}')
 
 client = AsyncIOMotorClient(MONGO_URI)
@@ -319,6 +322,7 @@ async def get_last_policy(
         user_id: str = Header(..., description="The ID of the user")
 ):
     try:
+
         negotiation = await negotiations_collection.find_one(
             {"_id": ObjectId(negotiation_id), "$or": [{"consumer_id": ObjectId(user_id)}, {"provider_id": ObjectId(user_id)}]}
         )

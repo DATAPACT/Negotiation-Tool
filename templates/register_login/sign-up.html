@@ -21,61 +21,114 @@
         </header>
 
         <div class="row">
-            <div class="col-lg-2"></div>
+          <div class="col-lg-2"></div>
           <div class="col-lg-7">
 
 
-  <form method="post" action="{% url 'register' %}">
-        {% csrf_token %}
-                  <div class="mb-4">
-                       <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username"  Required>
-                      <div id="usernameHelp" class="form-text">Enter desired username.</div>
-                  </div>
-                  {% comment %} <div class="mb-4">
-                    <label for="firstname" class="form-label">First name</label>
-                    <input type="text" class="form-control" id="firstname" name="firstname" aria-describedby="firstnameHelp" Required>
-                    <div id="firstnameHelp" class="form-text">Enter your first name.</div>
-                  </div>
-                  <div class="mb-4">
-                    <label for="lastname" class="form-label">Last name</label>
-                    <input type="text" class="form-control"  name="lastname" id="lastname" aria-describedby="lastnameHelp" Required>
-                    <div id="lastnameHelp" class="form-text">Enter your last name.</div>
-                  </div> {% endcomment %}
-                  <div class="mb-4">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp" Required>
-                    <div id="emailHelp" class="form-text">Enter your registered email address.</div>
-                  </div>
-                  <div class="mb-4">
-                    <label for="user_type" class="form-label">User type</label>
-                    <select class="form-select" id="user_type" name="user_type" aria-label="Select user type" Required>
-                      <option value="" selected disabled>Select user type</option>
-                      <option value="consumer">Consumer</option>
-                      <option value="provider">Provider</option>
-                    </select>
-                    <div id="userTypeHelp" class="form-text">Select your user type.</div>
-                  </div>
-                  <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" Required>
-                  </div>
-                  <div class="mb-4">
-                    <label for="confirmpassword" class="form-label">Confirm password</label>
-                    <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" Required>
-                  </div>
-                  <button type="submit" class="btn btn-primary">Sign Up</button>
-                   <div class="mb-3">
-                    <a href="{% url 'login' %}">Login</a>
-                  </div>
-                </form>
+            <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
 
+            <p class="text-muted">
+              <span class="text-danger">*</span> Required fields
+            </p>
+
+            <div class="mb-4">
+              <label for="username">Username <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="username" name="username" required>
+              <div id="usernameHelp" class="form-text">Enter desired username.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="email" class="form-label">Email address <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp" required>
+              <div id="emailHelp" class="form-text">Enter your registered email address.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="user_type" class="form-label">User type <span class="text-danger">*</span></label>
+              <select class="form-select" id="user_type" name="user_type" aria-label="Select user type" required>
+                <option value="" selected disabled>Select user type</option>
+                <option value="consumer">Consumer</option>
+                <option value="provider">Provider</option>
+              </select>
+              <div id="userTypeHelp" class="form-text">Select your user type.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="organization" class="form-label">Organization</label>
+              <input type="text" class="form-control" name="organization" id="organization" aria-describedby="organizationHelp">
+              <div id="organizationHelp" class="form-text">Enter your organization.</div>
+            </div>
+
+{#            <div class="mb-4">#}
+{#              <label for="distinctive_title" class="form-label">Distinctive Title</label>#}
+{#              <input type="text" class="form-control" name="distinctive_title" id="distinctive_title" aria-describedby="distinctiveTitleHelp">#}
+{#              <div id="distinctiveTitleHelp" class="form-text">Enter your distinctive title.</div>#}
+{#            </div>#}
+
+            <div class="mb-4">
+              <label for="incorporation" class="form-label">Incorporation</label>
+              <input type="text" class="form-control" name="incorporation" id="incorporation" aria-describedby="incorporationHelp">
+              <div id="incorporationHelp" class="form-text">Enter your incorporation.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="address" class="form-label">Address</label>
+              <input type="text" class="form-control" name="address" id="address" aria-describedby="addressHelp">
+              <div id="addressHelp" class="form-text">Enter your address.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="vat_no" class="form-label">VAT No</label>
+              <input type="text" class="form-control" name="vat_no" id="vat_no" aria-describedby="vatNoHelp">
+              <div id="vatNoHelp" class="form-text">Enter your VAT No.</div>
+            </div>
+
+{#            <div class="mb-4">#}
+{#              <label for="legal_representative" class="form-label">Legal Representative</label>#}
+{#              <input type="text" class="form-control" name="legal_representative" id="legal_representative" aria-describedby="legalRepresentativeHelp">#}
+{#              <div id="legalRepresentativeHelp" class="form-text">Enter your legal representative.</div>#}
+{#            </div>#}
+
+{#            <div class="mb-4">#}
+{#              <label for="contact_person" class="form-label">Contact Person</label>#}
+{#              <input type="text" class="form-control" name="contact_person" id="contact_person" aria-describedby="contactPersonHelp">#}
+{#              <div id="contactPersonHelp" class="form-text">Enter your contact person.</div>#}
+{#            </div>#}
+
+            <div class="mb-4">
+              <label for="position_title" class="form-label">Position Title</label>
+              <input type="text" class="form-control" name="position_title" id="position_title" aria-describedby="PositionTitleHelp">
+              <div id="PositionTitleHelp" class="form-text">Enter your position title.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="phone" class="form-label">Phone number</label>
+              <input type="text" class="form-control" name="phone" id="phone" aria-describedby="phoneHelp">
+              <div id="phoneHelp" class="form-text">Enter your phone number.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <div class="mb-4">
+              <label for="confirmpassword" class="form-label">Confirm password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <div class="mb-3">
+              <a href="{% url 'login' %}">Login</a>
+            </div>
+          </form>
           </div>
 
           <div class="col-lg-3">
-<p>
+{% comment %} <p>
     <b>Note: </b> All fields are required.
-</p>
+</p> {% endcomment %}
 {% if messages %}
   {% for message in messages %}
     <div class="alert alert-danger">

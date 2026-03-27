@@ -46,35 +46,43 @@
                                                 <td>{{ negotiation.negotiation_status }}</td>
                                                 <td>
 
-
                                                     <!-- JavaScript logic for buttons -->
                                                     {% if user_type == 'provider' %}
                                                         {% if negotiation.negotiation_status == 'requested' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                             <input type="button" class="styled-button styled-button-offer" value="Offer">
                                                             <input type="button" class="styled-button styled-button-agree" value="Agree">
                                                         {% elif negotiation.negotiation_status == 'accepted' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                             <input type="button" class="styled-button styled-button-agree" value="Agree">
                                                         {% elif negotiation.negotiation_status == 'agreed' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                         {% elif negotiation.negotiation_status == 'offered' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                         {% elif negotiation.negotiation_status == 'verified' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                             <input type="button" class="styled-button styled-button-finalize" value="Sign-Finalize">
                                                         {% endif %}
                                                     {% elif user_type == 'consumer' %}
                                                         {% if negotiation.negotiation_status == 'requested' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                         {% elif negotiation.negotiation_status == 'agreed' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                             <input type="button" class="styled-button styled-button-verify" value="Sign-Verify">
                                                         {% elif negotiation.negotiation_status == 'offered' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                             <input type="button" class="styled-button styled-button-accept" value="Accept">
                                                             <input type="button" class="styled-button createRequestBtn styled-button-request" value="Request" data-negotiation-id="{{ negotiation.id }}">
                                                         {% elif negotiation.negotiation_status == 'accepted' or negotiation.negotiation_status == 'verified' %}
+                                                            <input type="button" class="styled-button styled-button-view" value="View">
                                                             <input type="button" class="styled-button styled-button-terminate" value="Terminate">
                                                         {% endif %}
                                                     {% endif %}
@@ -182,6 +190,7 @@
         </div>
     </div>
     <div id="modal" class="modal">
+
         <!-- Modal content -->
         <div class="modal-content">
           <span class="close">&times;</span>
@@ -200,56 +209,77 @@
                                         <!--<li id="confirm"><strong>Finish</strong></li>-->
                                     </ul>
                                     <br>
+                                    <div id="readonly-warning" class="alert alert-warning" style="display:none;">
+                                        {% if user_type == 'consumer' %}
+                                            You can not make any changes until you accept or reject the incoming offer via clicking "Examine Previous Changes" in NLP step.
+                                        {% elif user_type == 'provider' %}
+                                            You can not make any changes until you accept or reject the incoming request via clicking "Examine Previous Changes" in NLP step.
+                                        {% else %}
+                                            You can not make any changes until you accept or reject the incoming offer/request via clicking "Examine Previous Changes" in NLP step.
+                                        {% endif %}
+                                    </div>
 
                                     <fieldset id="fieldset-resource" >
                                     <div class="form-card">
 
                                         <div class="col-md-12">
-                                            <label for="title" class="fieldlabels">Title</label>
+                                            <label for="title" class="fieldlabels">Title <i class="fas fa-eye field-info-icon" data-field="title" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="title" name="title" placeholder="Your title." readonly/>
 
-                                            <label for="price" class="fieldlabels">Price</label>
-                                            <input type="text" id="price" name="price" placeholder="Your Price." required/>
+                                            <label for="price" class="fieldlabels">Price <i class="fas fa-eye field-info-icon" data-field="price" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
+                                            <input type="text" id="price" name="price" placeholder="Your Price (EUR)." required/>
 
-                                            <label for="uri" class="fieldlabels">URI</label>
+                                            <label for="uri" class="fieldlabels">URI <i class="fas fa-eye field-info-icon" data-field="uri" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="uri" name="uri" placeholder="Your URI." readonly/>
 
-                                            <label for="policy-url" class="fieldlabels">Policy URL</label>
+                                            <label for="policy-url" class="fieldlabels">Policy URL <i class="fas fa-eye field-info-icon" data-field="policy-url" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="policy-url" name="policy-url" placeholder="Your Policy URL." readonly/>
 
                                             <div class="section-title">Environmental Cost of Generation</div>
 
-                                            <label for="energy-consumption" class="fieldlabels">Energy Consumption</label>
+                                            <label for="energy-consumption" class="fieldlabels">Energy Consumption <i class="fas fa-eye field-info-icon" data-field="energy-consumption" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="energy-consumption" name="energy-consumption" placeholder="Energy Consumption in kWh" required/>
 
-                                            <label for="carbon-emission" class="fieldlabels">Carbon Emission</label>
+                                            <label for="carbon-emission" class="fieldlabels">Carbon Emission <i class="fas fa-eye field-info-icon" data-field="carbon-emission" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="carbon-emission" name="carbon-emission" placeholder="Carbon Emission in kilograms" required/>
 
                                             <div class="section-title">Environmental Cost of Serving</div>
 
-                                            <label for="generating-cost" class="fieldlabels">Energy Consumption</label>
+                                            <label for="generating-cost" class="fieldlabels">Energy Consumption <i class="fas fa-eye field-info-icon" data-field="generating-cost" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="generating-cost" name="generating-cost" placeholder="Generating Cost in kWh" required/>
 
-                                            <label for="serving-cost" class="fieldlabels">Carbon Emission</label>
+                                            <label for="serving-cost" class="fieldlabels">Carbon Emission <i class="fas fa-eye field-info-icon" data-field="serving-cost" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="serving-cost" name="serving-cost" placeholder="Serving Cost in kilograms" required/>
 
-                                            <label for="description" class="fieldlabels">Description</label>
+                                            <label for="description" class="fieldlabels">Description <i class="fas fa-eye field-info-icon" data-field="description" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <textarea id="description" name="description" placeholder="Description will come here." style="height:100px" readonly></textarea>
 
-                                            <label for="type-of-data" class="fieldlabels">Type of Data</label>
+                                            <label for="type-of-data" class="fieldlabels">Type of Data <i class="fas fa-eye field-info-icon" data-field="type-of-data" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="type-of-data" name="type-of-data" placeholder="Type of Data." readonly/>
 
-                                            <label for="data-format" class="fieldlabels">Data Format</label>
+                                            <label for="data-format" class="fieldlabels">Data Format <i class="fas fa-eye field-info-icon" data-field="data-format" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="data-format" name="data-format" placeholder="Data Format." required/>
 
-                                            <label for="data-size" class="fieldlabels">Data Size</label>
+                                            <label for="data-size" class="fieldlabels">Data Size <i class="fas fa-eye field-info-icon" data-field="data-size" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="data-size" name="data-size" placeholder="Data Size." required/>
 
-                                            <label for="validity-period" class="fieldlabels">Validity Period</label>
-                                            <input type="text" id="validity-period" name="validity-period" placeholder="Validity Period." required/>
+                                            <label for="validity-period" class="fieldlabels">Validity Period <i class="fas fa-eye field-info-icon" data-field="validity-period" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
+                                            <input type="text" id="validity-period" name="validity-period" placeholder="Validity Period (months)." required/>
 
-                                            <label for="tags" class="fieldlabels">Tags/Keywords</label>
+                                            <label for="categories" class="fieldlabels">Categories <i class="fas fa-eye field-info-icon" data-field="categories" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
+                                            <select id="categories" name="categories" class="resource-multiselect" multiple></select>
+
+                                            <label for="tags" class="fieldlabels">Tags/Keywords <i class="fas fa-eye field-info-icon" data-field="tags" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
                                             <input type="text" id="tags" name="tags" placeholder="Tags/Keywords." readonly/>
+
+                                            <label for="languages" class="fieldlabels">Languages <i class="fas fa-eye field-info-icon" data-field="languages" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
+                                            <select id="languages" name="languages" class="resource-multiselect" multiple></select>
+
+                                            <label for="geographic-scope" class="fieldlabels">Spatial Coverage <i class="fas fa-eye field-info-icon" data-field="geographic-scope" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
+                                            <select id="geographic-scope" name="geographic-scope" class="resource-multiselect" multiple></select>
+                                            
+                                            <label for="temporal-coverage" class="fieldlabels">Temporal Coverage <i class="fas fa-eye field-info-icon" data-field="temporal-coverage" style="cursor: pointer; color: #673AB7; margin-left: 5px;"></i></label>
+                                            <input type="text" id="temporal-coverage" name="temporal-coverage" placeholder='["dd/mm/yyyy","dd/mm/yyyy"]' />
 
                                         </div>
                                     </div>
@@ -275,19 +305,38 @@
 
                                         </div>
                                     </fieldset>
-
-                                    {% include 'policy_editor/policy_editor.html' %}  
-                                                                     
+                                    {% include 'policy_editor/policy_editor.html' %}                        
                                     <fieldset id="fieldset-nl">
                                     <div class="form-card">
-                                        <input type="button" class="last-changes-button" value="Last Changes">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <h1>Natural Language Interface</h1>
+{#                                        <button type="button" class="last-changes-button action-button" disabled#}
+{#                                                style="background:#f5f5f5;color:#2f2f2f;border:1px solid #c7c7c7;#}
+{#                                                       border-radius:6px;white-space:nowrap;min-width:150px;#}
+{#                                                       padding:8px 16px;font-size:14px;font-weight:600;cursor:not-allowed;">#}
+{#                                            Last Changes#}
+{#                                        </button>#}
+                                        <div class="row" style="align-items:center;">
+                                            <div class="col-12" style="display:flex;align-items:center;gap:12px;">
+                                                <h1 style="margin:0;">Text Contract Generation</h1>
+                                                <span id="nlp-text-edited-badge" style="display:none;padding:3px 8px;border-radius:12px;background:#ff9800;color:#fff;font-size:12px;font-weight:600;">Text edited</span>
                                             </div>
                                         </div>
+
+
+                                        <div id="app">
+                                          <div id="agreementDisplay" style="clear: both; padding-top: 10px;"></div>
+                                            <div class="agreement-operation">
+
+                                                <button id="compare-last-changes-button" class="action-button" type="button" disabled>Examine Previous Changes</button>
+{#                                                <button id="last-changes-button" class="action-button" type="button" disabled>Last Changes</button>#}
+                                                <button id="agreement-generation" class="action-button" type="button">Agreement Generation</button>
+                                            </div>
+                                        </div>
+
+
                                         <div class="col-md-12">
-                                            <textarea id="nlpInput" rows="10" placeholder="Enter your text here..." class="fieldlabels"></textarea>
+{#                                            <textarea id="nlpInput" rows="10" placeholder="Enter your text here..." class="fieldlabels"></textarea>#}
+                                            <textarea id="nlpInput" rows="30" placeholder="Enter your text here..." class="fieldlabels"></textarea>
+
                                         </div>
                                     </div>
 
@@ -295,6 +344,37 @@
                                         <div class="diff-modal-content">
                                             <span class="diff-close" >&times;</span>
                                             <div id="result"></div>
+                                        </div>
+                                    </div>
+
+                                    <div id="compare-last-changes-modal" class="diff-modal compare-last-changes-modal">
+                                        <div class="diff-modal-content compare-last-changes-content">
+                                            <div class="compare-header">
+                                                <div class="compare-header-left">
+{#                                                    <button type="button" class="compare-tab active" disabled>Compared</button>#}
+                                                    <button type="button" id="compare-accept-button" class="compare-action">Accept Agreement Changes</button>
+                                                    <button type="button" id="compare-reject-button" class="compare-action">Reject Agreement Changes</button>
+                                                </div>
+                                                <div class="compare-header-right">
+                                                    <span id="compare-change-count" class="compare-change-count"></span>
+                                                    <span class="diff-close compare-close">&times;</span>
+                                                </div>
+                                            </div>
+                                            <div class="compare-body">
+                                                <div class="compare-diff-pane">
+{#                                                    <div class="compare-legend">#}
+{#                                                        <span class="legend-badge legend-inserted">Inserted</span>#}
+{#                                                        <span class="legend-badge legend-deleted">Deleted</span>#}
+{#                                                        <span class="legend-badge legend-replaced">Replaced</span>#}
+{#                                                    </div>#}
+                                                    <div id="compare-diff-box" class="compare-diff-box diff-box" contenteditable="false" aria-readonly="true" aria-live="polite"></div>
+                                                </div>
+                                                <div class="compare-summary-pane">
+                                                    <h3 class="compare-summary-title">Change Summary</h3>
+                                                    <p id="compare-summary-empty" class="compare-summary-empty">No tracked textual changes.</p>
+                                                    <ol id="compare-change-summary" class="compare-change-summary"></ol>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -309,6 +389,31 @@
                                         <input type="button" name="next" id="submit-details" class="action-button" value="Send" style="width: 150px; float: right;"/>
                                     </div>
                                 </form>
+
+                                <div id="merge-modal" class="merge-modal">
+                                    <div class="merge-modal-content">
+                                        <span class="merge-close">&times;</span>
+                                        <h2>Merge Contract Versions</h2>
+                                        <div class="merge-columns">
+                                            <div class="merge-column">
+                                                <h3>Baseline</h3>
+                                                <div id="merge-baseline-text" class="merge-editor" contenteditable="true"></div>
+{#                                                <div class="merge-actions">#}
+{#                                                    <button type="button" id="merge-accept-baseline" class="merge-action merge-secondary">Accept Baseline</button>#}
+{#                                                </div>#}
+                                            </div>
+                                            <div class="merge-column">
+                                                <h3>Regenerated</h3>
+                                                <div id="merge-regenerated-text" class="merge-editor" contenteditable="true"></div>
+                                                <div class="merge-actions">
+                                                    <button type="button" id="merge-cancel-regenerated" class="merge-action merge-tertiary">Cancel</button>
+                                                    <button type="button" id="merge-accept-regenerated" class="merge-action">Accept Regenerated</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="merge-note">Differences are highlighted with color. Edit Regenerated version if needed, then accept Regenerated as final version.</p>
+                                    </div>
+                                </div>
 
                             </div>
                         <input type="text" id="negotiation-id-text" hidden="hidden" value=""/>
@@ -328,8 +433,98 @@
         <!-- Your loading spinner HTML/CSS -->
         Loading...
     </div>
+
+    <!-- Sending spinner -->
+    <div id="sending-spinner" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+        <div style="padding:16px 24px;background:#5a5757;color:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(103,97,97,0.3);font-weight:600;">
+            Sending...
+        </div>
+    </div>
+
+    <!-- ODRL Diff Modal (read-only, like Merge Contract Versions) -->
+    <div id="odrl-diff-modal" class="diff-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:10050;overflow:auto;">
+        <div class="diff-modal-content compare-last-changes-content" style="max-width: 1100px;z-index:10051;margin:60px auto;">
+            <div class="compare-header" style="display:flex;align-items:center;justify-content:center;position:relative;">
+                <div class="compare-header-left" style="flex:1;text-align:center;">
+                    <h3 style="margin:0;">ODRL Diff</h3>
+                </div>
+                <div class="compare-header-right" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);">
+                    <span class="diff-close odrl-diff-close">&times;</span>
+                </div>
+            </div>
+            <div class="compare-body" style="display:flex;gap:16px;">
+                <div class="compare-diff-pane" style="flex:1;min-width:0;">
+                    <div class="compare-legend" style="font-weight:600;margin-bottom:6px;">Previous ODRL</div>
+                    <div id="odrl-prev-box" class="compare-diff-box diff-box" contenteditable="false" aria-readonly="true" aria-live="polite"></div>
+                </div>
+                <div class="compare-diff-pane" style="flex:1;min-width:0;">
+                    <div class="compare-legend" style="font-weight:600;margin-bottom:6px;">Updated ODRL</div>
+                    <div id="odrl-next-box" class="compare-diff-box diff-box" contenteditable="false" aria-readonly="true" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Definition Diff Modal -->
+    <div id="definition-diff-modal" class="diff-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:10050;overflow:auto;">
+        <div class="diff-modal-content compare-last-changes-content" style="max-width: 1100px;z-index:10051;margin:60px auto;">
+            <div class="compare-header" style="display:flex;align-items:center;justify-content:center;position:relative;">
+                <div class="compare-header-left" style="flex:1;text-align:center;">
+                    <h3 style="margin:0;">Custom Definition Diff</h3>
+                </div>
+                <div class="compare-header-right" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);">
+                    <span class="diff-close def-diff-close">&times;</span>
+                </div>
+            </div>
+            <div class="compare-body" style="display:flex;gap:16px;">
+                <div class="compare-diff-pane" style="flex:1;min-width:0;">
+                    <div class="compare-legend" style="font-weight:600;margin-bottom:6px;">Previous</div>
+                    <div id="def-prev-box" class="compare-diff-box diff-box" contenteditable="false" aria-readonly="true" aria-live="polite"></div>
+                </div>
+                <div class="compare-diff-pane" style="flex:1;min-width:0;">
+                    <div class="compare-legend" style="font-weight:600;margin-bottom:6px;">Updated</div>
+                    <div id="def-next-box" class="compare-diff-box diff-box" contenteditable="false" aria-readonly="true" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Clause Diff Modal -->
+    <div id="clause-diff-modal" class="diff-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:10050;overflow:auto;">
+        <div class="diff-modal-content compare-last-changes-content" style="max-width: 1100px;z-index:10051;margin:60px auto;">
+            <div class="compare-header" style="display:flex;align-items:center;justify-content:center;position:relative;">
+                <div class="compare-header-left" style="flex:1;text-align:center;">
+                    <h3 style="margin:0;">Custom Clause Diff</h3>
+                </div>
+                <div class="compare-header-right" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);">
+                    <span class="diff-close clause-diff-close">&times;</span>
+                </div>
+            </div>
+            <div class="compare-body" style="display:flex;gap:16px;">
+                <div class="compare-diff-pane" style="flex:1;min-width:0;">
+                    <div class="compare-legend" style="font-weight:600;margin-bottom:6px;">Previous</div>
+                    <div id="clause-prev-box" class="compare-diff-box diff-box" contenteditable="false" aria-readonly="true" aria-live="polite"></div>
+                </div>
+                <div class="compare-diff-pane" style="flex:1;min-width:0;">
+                    <div class="compare-legend" style="font-weight:600;margin-bottom:6px;">Updated</div>
+                    <div id="clause-next-box" class="compare-diff-box diff-box" contenteditable="false" aria-readonly="true" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
         </section>
-    <div id="messageBox" style="display:none;"></div>
+        <div id="messageBox" style="display:none;"></div>
+        
+        <!-- Field Info Modal -->
+        <div id="fieldInfoModal" class="field-info-modal">
+            <div class="field-info-modal-content">
+                <span class="field-info-close">&times;</span>
+                <h3 id="fieldInfoTitle"></h3>
+                <p id="fieldInfoDescription"></p>
+            </div>
+        </div>
     </main>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -338,6 +533,7 @@
 
 
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.min.js"></script>
 
     <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -347,14 +543,928 @@
 
 
     <script>
+
+        // Field Information Data
+        const fieldInfoData = {
+            'title': {
+                title: 'Title',
+                description: 'The name or title of the data resource. This is a descriptive identifier for the dataset.'
+            },
+            'price': {
+                title: 'Price',
+                description: 'The cost or price for accessing or using this data resource. Enter the amount in your preferred currency.'
+            },
+            'uri': {
+                title: 'URI',
+                description: 'Uniform Resource Identifier - a unique identifier for the data resource. This is typically a URL or URN that points to where the data can be accessed.'
+            },
+            'policy-url': {
+                title: 'Policy URL',
+                description: 'The web address (URL) where the data usage policy or terms of service can be found. This document outlines the rules and regulations for using the data.'
+            },
+            'energy-consumption': {
+                title: 'Energy Consumption (Generation)',
+                description: 'The amount of electrical energy consumed during the generation or creation of this dataset, measured in kilowatt-hours (kWh). This helps track the environmental impact of data generation.'
+            },
+            'carbon-emission': {
+                title: 'Carbon Emission (Generation)',
+                description: 'The amount of carbon dioxide (CO2) emissions produced during the generation of this dataset, measured in kilograms. This metric is important for understanding the carbon footprint of data creation.'
+            },
+            'generating-cost': {
+                title: 'Energy Consumption (Serving)',
+                description: 'The amount of electrical energy consumed when serving or providing access to this dataset, measured in kilowatt-hours (kWh). This includes the energy used for storage, retrieval, and transmission.'
+            },
+            'serving-cost': {
+                title: 'Carbon Emission (Serving)',
+                description: 'The amount of carbon dioxide (CO2) emissions produced when serving or providing access to this dataset, measured in kilograms. This reflects the environmental impact of data distribution.'
+            },
+            'description': {
+                title: 'Description',
+                description: 'A detailed textual description of the data resource, including its purpose, content, collection methods, and any other relevant information that helps users understand what the data contains.'
+            },
+            'type-of-data': {
+                title: 'Type of Data',
+                description: 'The category or classification of the data (e.g., personal data, sensor data, transactional data, images, text, etc.). This helps users understand the nature and sensitivity of the information.'
+            },
+            'data-format': {
+                title: 'Data Format',
+                description: 'The file format or structure in which the data is stored or delivered (e.g., JSON, CSV, XML, Parquet, etc.). This is important for understanding how to process and use the data.'
+            },
+            'data-size': {
+                title: 'Data Size',
+                description: 'The total size of the dataset, typically measured in bytes, kilobytes (KB), megabytes (MB), gigabytes (GB), or terabytes (TB). This helps users understand storage and bandwidth requirements.'
+            },
+            'validity-period': {
+                title: 'Validity Period',
+                description: 'The duration for which this data or data access rights remain valid, expressed in months. After this period, the data may become outdated or access may expire.'
+            },
+            'categories': {
+                title: 'Categories',
+                description: 'Select one or more categories that this dataset belongs to. This helps organize and discover related datasets.'
+            },
+
+            'tags': {
+                title: 'Tags/Keywords',
+                description: 'Tags: A list of descriptive tags or keywords that help classify and search for the dataset. Use comma-separated values for multiple terms.'
+            },
+            'languages': {
+                title: 'Languages',
+                description: 'Select one or more languages in which the data content is written or represented.'
+            },
+            'geographic-scope': {
+                title: 'Spatial Coverage',
+                description: 'Select one or more geographic areas or regions that the data covers.'
+            },
+            'temporal-coverage': {
+                title: 'Temporal Coverage',
+                description: 'Temporal coverage refers to the specific time period—dates, years, eras—associated with the dataset, describing when observations or records were made. It is crucial for understanding the applicability and context of data, especially for scientific, research, and digital resources. Provide it as a list such as ["dd/mm/yyyy","dd/mm/yyyy"].'
+            }
+        };
+
+        const upcastReferenceData = {
+            categories: [
+                { id: '10001', name: 'Vehicles' },
+                { id: '10002', name: 'Family&Community' },
+                { id: '10003', name: 'RealEstate' },
+                { id: '10004', name: 'Business&Industrial' },
+                { id: '10005', name: 'Beauty&PersonalCare' },
+                { id: '10006', name: 'Occasions&Gifts' },
+                { id: '10007', name: 'Internet&Telecom' },
+                { id: '10009', name: 'Home&Garden' },
+                { id: '10010', name: 'Food&Groceries' },
+                { id: '10011', name: 'Health' },
+                { id: '10012', name: 'Finance' },
+                { id: '10013', name: 'Arts&Entertainment' },
+                { id: '10014', name: 'Sports&Fitness' },
+                { id: '10015', name: 'Hobbies&Leisure' },
+                { id: '10016', name: 'Jobs&Education' },
+                { id: '10017', name: 'Travel&Tourism' },
+                { id: '10018', name: 'Law&Government' },
+                { id: '10019', name: 'Computers&ConsumerElectronics' },
+                { id: '10020', name: 'Dining&Nightlife' },
+                { id: '10021', name: 'Apparel' },
+                { id: '10108', name: 'News-Media&Publications' },
+                { id: '13575', name: 'Retailers&GeneralMerchandise' }
+            ],
+            languages: [
+                { id: '1000', name: 'English' },
+                { id: '1001', name: 'German' },
+                { id: '1002', name: 'French' },
+                { id: '1003', name: 'Spanish' },
+                { id: '1004', name: 'Italian' },
+                { id: '1005', name: 'Japanese' },
+                { id: '1009', name: 'Danish' },
+                { id: '1010', name: 'Dutch' },
+                { id: '1013', name: 'Norwegian' },
+                { id: '1014', name: 'Portuguese' },
+                { id: '1015', name: 'Swedish' },
+                { id: '1025', name: 'Indonesian' },
+                { id: '1030', name: 'Polish' },
+                { id: '1037', name: 'Turkish' },
+                { id: '1042', name: 'Filipino' },
+                { id: '1102', name: 'Malay' }
+            ],
+            geographicScope: [
+                { id: '2032', name: 'Argentina' },
+                { id: '2036', name: 'Australia' },
+                { id: '2040', name: 'Austria' },
+                { id: '2056', name: 'Belgium' },
+                { id: '2076', name: 'Brazil' },
+                { id: '2124', name: 'Canada' },
+                { id: '2152', name: 'Chile' },
+                { id: '2170', name: 'Colombia' },
+                { id: '2208', name: 'Denmark' },
+                { id: '2218', name: 'Ecuador' },
+                { id: '2250', name: 'France' },
+                { id: '2276', name: 'Germany' },
+                { id: '2344', name: 'Hong Kong' },
+                { id: '2356', name: 'India' },
+                { id: '2360', name: 'Indonesia' },
+                { id: '2372', name: 'Ireland' },
+                { id: '2380', name: 'Italy' },
+                { id: '2392', name: 'Japan' },
+                { id: '2458', name: 'Malaysia' },
+                { id: '2484', name: 'Mexico' },
+                { id: '2528', name: 'Netherlands' },
+                { id: '2554', name: 'New Zealand' },
+                { id: '2578', name: 'Norway' },
+                { id: '2586', name: 'Pakistan' },
+                { id: '2604', name: 'Peru' },
+                { id: '2608', name: 'Philippines' },
+                { id: '2616', name: 'Poland' },
+                { id: '2620', name: 'Portugal' },
+                { id: '2702', name: 'Singapore' },
+                { id: '2710', name: 'South Africa' },
+                { id: '2724', name: 'Spain' },
+                { id: '2752', name: 'Sweden' },
+                { id: '2756', name: 'Switzerland' },
+                { id: '2792', name: 'Turkey' },
+                { id: '2826', name: 'United Kingdom' },
+                { id: '2840', name: 'United States' }
+            ]
+        };
+
+        function buildUpcastIndex(items) {
+            const byId = {};
+            const byName = {};
+            items.forEach((item) => {
+                const label = `${item.id} ${item.name}`;
+                byId[item.id] = label;
+                byName[item.name.toLowerCase()] = label;
+            });
+            return { byId, byName };
+        }
+
+        const upcastReferenceIndex = {
+            categories: buildUpcastIndex(upcastReferenceData.categories),
+            languages: buildUpcastIndex(upcastReferenceData.languages),
+            geographicScope: buildUpcastIndex(upcastReferenceData.geographicScope)
+        };
+
+        function buildUpcastOptions(selectId, items) {
+            const select = document.getElementById(selectId);
+            if (!select) {
+                return;
+            }
+            select.innerHTML = '';
+            items.forEach((item) => {
+                const option = document.createElement('option');
+                const value = `${item.id} ${item.name}`;
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+            });
+        }
+
+        function normalizeMultiSelectValues(values) {
+            if (!values) {
+                return [];
+            }
+            if (Array.isArray(values)) {
+                return values.map((value) => `${value}`).filter(Boolean);
+            }
+            if (typeof values === 'string') {
+                return values
+                    .split(',')
+                    .map((value) => value.trim())
+                    .filter(Boolean);
+            }
+            return [`${values}`];
+        }
+
+        function normalizeUpcastValues(values, index) {
+            const normalized = normalizeMultiSelectValues(values);
+            return normalized
+                .map((value) => {
+                    const trimmed = value.trim();
+                    if (!trimmed) {
+                        return null;
+                    }
+                    if (index.byId[trimmed]) {
+                        return index.byId[trimmed];
+                    }
+                    const idMatch = trimmed.match(/^(\d+)\s+/);
+                    if (idMatch && index.byId[idMatch[1]]) {
+                        return index.byId[idMatch[1]];
+                    }
+                    const lower = trimmed.toLowerCase();
+                    if (index.byName[lower]) {
+                        return index.byName[lower];
+                    }
+                    return null;
+                })
+                .filter(Boolean);
+        }
+
+        function getMultiSelectValues(selector) {
+            const values = $(selector).val();
+            return Array.isArray(values) ? values : [];
+        }
+
+        function setUpcastMultiSelectValues(selector, values, index) {
+            const normalized = normalizeUpcastValues(values, index);
+            const $field = $(selector);
+            $field.val(normalized);
+            if ($field.data('plugin_multiselect')) {
+                $field.multiselect('reload');
+            }
+        }
+
+        function initUpcastMultiselects() {
+            buildUpcastOptions('categories', upcastReferenceData.categories);
+            buildUpcastOptions('languages', upcastReferenceData.languages);
+            buildUpcastOptions('geographic-scope', upcastReferenceData.geographicScope);
+
+            $('#categories, #languages, #geographic-scope').multiselect({
+                columns: 1,
+                placeholder: 'Select values',
+                search: true,
+                searchOptions: {
+                    'default': 'Search values'
+                },
+                maxHeight: 160,
+                selectAll: true
+            });
+        }
+
+        function setUpcastMultiselectDisabled(disabled) {
+            $('#categories, #languages, #geographic-scope').each(function() {
+                const $field = $(this);
+                if ($field.data('plugin_multiselect')) {
+                    $field.multiselect('disable', disabled);
+                } else {
+                    $field.prop('disabled', disabled);
+                }
+            });
+        }
+
+        function setReadonlyWarningVisible(visible) {
+            $('#readonly-warning').toggle(visible);
+        }
+
+        $(function() {
+            initUpcastMultiselects();
+        });
+
+
+        // new NLP interface with custom clause sync
+        const AgreementApp = {
+          formate_agreement_data: {
+            definitions: {},          // system-provided (read-only)
+            custom_definitions: {},   // user-provided (editable)
+            odrl_policy_summary: {
+              permission:   [],
+              prohibition:  [],
+              obligation:   [],
+              duty:         [],
+              // e.g. "Data Sharing Rules": [], "FFFFF": []
+            },
+            custom_clauses: {}
+          },
+
+          response_from_created_agreement : {},
+
+          DEFAULT_KEYS: ['permission','prohibition','obligation','duty'],
+          removedCustomClauses: new Set(),
+          removedCustomDefinitions: new Set(),
+
+          markDirty() {
+            try {
+              if (typeof evaluateAgreementGenerationState === 'function') {
+                evaluateAgreementGenerationState();
+                return;
+              }
+            } catch (err) {
+              console.warn('Failed to evaluate agreement generation state:', err);
+            }
+            if (typeof setAgreementGenerationEnabled === 'function') {
+              setAgreementGenerationEnabled(true);
+            }
+          },
+
+          resetRemovalTracking() {
+            this.removedCustomClauses = new Set();
+            this.removedCustomDefinitions = new Set();
+          },
+
+          recordCustomClauseRemoval(name) {
+            if (!name) return;
+            this.removedCustomClauses.add(name);
+            this.markDirty();
+          },
+
+          recordCustomClauseRestoration(name) {
+            if (!name) return;
+            this.removedCustomClauses.delete(name);
+          },
+
+          recordCustomDefinitionRemoval(name) {
+            if (!name) return;
+            this.removedCustomDefinitions.add(name);
+            this.markDirty();
+          },
+
+          recordCustomDefinitionRestoration(name) {
+            if (!name) return;
+            this.removedCustomDefinitions.delete(name);
+          },
+
+          // Keep custom_clauses aligned with odrl_policy_summary (repair only)
+          syncCustomClauses() {
+            const ps = this.formate_agreement_data.odrl_policy_summary || {};
+            const cc = this.formate_agreement_data.custom_clauses || {};
+            const defaults = this.DEFAULT_KEYS;
+
+            // Add/align custom keys -> make them reference the SAME array
+            for (const [k, v] of Object.entries(ps)) {
+              if (!defaults.includes(k)) {
+                if (cc[k] !== v) cc[k] = v; // share the same array instance
+              }
+            }
+            // Remove stale or default keys from custom_clauses
+            for (const k of Object.keys(cc)) {
+              if (defaults.includes(k) || !(k in ps)) delete cc[k];
+            }
+            this.formate_agreement_data.custom_clauses = cc;
+          },
+
+          // convenience logger
+          debugLogPolicyKeys() {
+            const psKeys = Object.keys(this.formate_agreement_data.odrl_policy_summary || {});
+            const ccKeys = Object.keys(this.formate_agreement_data.custom_clauses || {});
+            const fmt = arr => `dict_keys([${arr.map(k => `'${k}'`).join(', ')}])`;
+            console.log(`policy_summary: ${fmt(psKeys)}`);
+            console.log(`custom_clauses: ${fmt(ccKeys)}`);
+          },
+
+          // Create a new custom clause under BOTH stores (same array instance)
+          addCustomClause(name) {
+            const ps = this.formate_agreement_data.odrl_policy_summary;
+            const cc = this.formate_agreement_data.custom_clauses;
+            if (!name) return false;
+            if (typeof name === 'string') name = name.trim();
+            if (!name) return false;
+            if (ps[name]) return false;
+            const arr = [];          // one shared array
+            ps[name] = arr;
+            cc[name] = arr;          // share by reference -> edits mirror automatically
+            this.recordCustomClauseRestoration(name);
+            return true;
+          },
+
+          _rerender() {
+            this.syncCustomClauses();  // repair legacy / ensure alignment
+
+            const container = document.getElementById("agreementDisplay");
+            if (!container) return;
+            container.innerHTML = "";
+            AgreementApp.renderObject(AgreementApp.formate_agreement_data, container, 0, []);
+
+            this.debugLogPolicyKeys();
+          },
+
+          handleAgreementChange(key) {
+            this.markDirty();
+            if (!key || typeof key !== 'string') {
+              return;
+            }
+            const normalizedKey = key.toLowerCase();
+            const shouldSyncPolicyEditor = /^(permission|prohibition|obligation|duty)-\d+$/.test(normalizedKey);
+            if (!shouldSyncPolicyEditor) {
+              return;
+            }
+            const MAX_WAIT_TIME = 5000, INTERVAL = 200;
+            let waited = 0;
+            const $policyEditor = $('#policyEditorContainer');
+            const t = setInterval(() => {
+              const $form = $policyEditor.find(`.form-card[data-policy-id="${normalizedKey}"]`);
+              if ($form.length) { clearInterval(t); window.removePolicyForm($form); }
+              else if ((waited += INTERVAL) >= MAX_WAIT_TIME) clearInterval(t);
+            }, INTERVAL);
+          },
+
+
+
+          renderObject(obj, parentElement, indent = 0, path = []) {
+            const nonDeletableKeys = [
+              'negotiation_base','resource_description',
+              'environmental_cost_of_generation',
+              'environmental_cost_of_serving',
+              'odrl_policy_summary','definitions','custom_definitions'
+            ];
+
+            for (const [key, value] of Object.entries(obj)) {
+              const fullPath = [...path, key];
+
+              // hide these from UI
+              if ([
+                'base_info','odrl','dpw','natural_language_document','nlp','contract_id',
+                'negotiation_id', 'custom_clauses', 'client_optional_info','validity_period',
+                'notice_period','contacts','resource_description', 'contract_type',
+              ].includes(key)) continue;
+
+              // ---------- ARRAY BRANCH ----------
+              if (Array.isArray(value)) {
+                const defaults = this.DEFAULT_KEYS;
+                const isDefault = defaults.includes(key);
+                const isCustom  = path[0] === 'odrl_policy_summary' && !isDefault;
+
+                const wrapper = document.createElement("div");
+                wrapper.style.cssText = `
+                  margin-left:${indent*60}px;margin-bottom:8px;padding:10px 16px;
+                  border:1px solid #ccc;border-radius:6px;background:#f9f9f9;`;
+                const label = document.createElement("strong");
+                label.innerText =
+                  key==='permission'?'Permissions:':
+                  key==='prohibition'?'Prohibitions:':
+                  key==='obligation'?'Obligations:':
+                  key==='duty'?'Duties:': key+':';
+                wrapper.appendChild(label);
+                parentElement.appendChild(wrapper);
+
+                if (isCustom && value.length===0) value.push("");
+
+                value.forEach((item, i) => {
+                  const row = document.createElement("div");
+                  const rowIndent = (indent + 1) * 40;
+                  row.style.cssText = `
+                    display:flex;align-items:flex-start;gap:16px;
+                    margin:12px 0;
+                    margin-left:${rowIndent}px;
+                    padding:12px 16px;border:1px solid #d6d6d6;border-radius:6px;background:#fff;`;
+
+                  const left = document.createElement("div");
+                  left.style.cssText = `display:flex;align-items:flex-start;gap:12px;flex:1;`;
+                  if (isDefault) {
+                    const idx = document.createElement("div");
+                    idx.innerText = `${i+1}:`;
+                    idx.style.cssText = `width:30px;text-align:center;margin-top:4px;`;
+                    left.appendChild(idx);
+                  }
+                  const ta = document.createElement("textarea");
+                  ta.cols = 60;
+                  ta.rows = 6;
+                  ta.value = item;
+                  const baseStyle = `flex:1;min-height:110px;font-family:monospace;font-size:13px;line-height:1.45;`;
+                  if (isDefault) {
+                    ta.readOnly = true;
+                    ta.classList.add("odrl-readonly");
+                    ta.style.cssText = baseStyle + `background:#f3f3f3;cursor:default;`;
+                  } else {
+                    ta.style.cssText = baseStyle;
+                    ta.oninput = e => {
+                      value[i] = e.target.value;
+                      // custom_clauses shares the same array by reference, so no extra sync needed
+                      AgreementApp.markDirty?.();
+                    };
+                  }
+                  left.appendChild(ta);
+                  row.appendChild(left);
+
+                  const del = document.createElement("button");
+                  del.innerText="Delete";
+                  del.style.cssText = `
+                    margin-left:8px;align-self:center;background:#f44336;color:#fff;
+                    border:none;padding:4px 10px;border-radius:4px;cursor:pointer;`;
+                  if (window.isReadOnlyMode) {
+                    del.disabled = true;
+                    del.style.opacity = '0.5';
+                    del.style.cursor = 'not-allowed';
+                  }
+                  del.onclick = () => {
+                    if (isCustom) {
+                      if (window.isReadOnlyMode) return;
+                      if (!confirm(`Delete policy “${key}”?`)) return;
+                      delete AgreementApp.formate_agreement_data.odrl_policy_summary[key];
+                      delete AgreementApp.formate_agreement_data.custom_clauses[key];
+                      AgreementApp.recordCustomClauseRemoval?.(key);
+                      AgreementApp.markDirty?.();
+                      AgreementApp._rerender();
+                      window.refreshAgreementViewAfterDeletion?.();
+                      return;
+                    }
+
+                    // Default ODRL bucket item deletion: wait for form removal in ODRL editor
+                    if (!confirm(`Delete item ${key}-${i+1}?`)) return;
+                    const removedId = `${key}-${i+1}`.toLowerCase();
+                    value.splice(i,1);
+                    AgreementApp.handleAgreementChange?.(removedId);
+
+                    const $policyEditor = $('#policyEditorContainer');
+                    const deadline = Date.now() + 3000; // up to 3s wait
+                    const tick = 100;
+                    const waiter = setInterval(() => {
+                      const stillThere = $policyEditor.find(`.form-card[data-policy-id="${removedId}"]`).length > 0;
+                      if (!stillThere || Date.now() > deadline) {
+                        clearInterval(waiter);
+                        AgreementApp._rerender();
+                        window.refreshAgreementViewAfterDeletion?.();
+                      }
+                    }, tick);
+                  };
+                  row.appendChild(del);
+                  parentElement.appendChild(row);
+                });
+                continue;
+              }
+
+              // ---------- RULES (odrl_policy_summary) ----------
+              if (key==='odrl_policy_summary' && typeof value==='object' && value!==null) {
+                const head = document.createElement("div");
+                head.style.cssText = `
+                  margin-left:${indent*60}px;margin-bottom:8px;padding:10px 16px;
+                  border:1px solid #ccc;border-radius:6px;background:#f9f9f9;`;
+                const title = document.createElement("strong"); title.innerText="ODRL Rules:";
+                head.appendChild(title); parentElement.appendChild(head);
+
+                const defaults = this.DEFAULT_KEYS;
+                defaults.forEach(k => { if (k in value) AgreementApp.renderObject({[k]:value[k]}, parentElement, indent+1, fullPath); });
+
+                // Aligned "Custom Clauses" section
+                const customHead = document.createElement("div");
+                customHead.style.cssText = `
+                  margin-left:${indent*60}px;margin-bottom:8px;padding:10px 16px;
+                  border:1px solid #ccc;border-radius:6px;background:#f9f9f9;`;
+                const customLbl = document.createElement("strong"); customLbl.innerText="Custom Clauses:";
+                customHead.appendChild(customLbl); parentElement.appendChild(customHead);
+
+                Object.keys(value).filter(k=>!defaults.includes(k)).forEach(k=>{
+                  AgreementApp.renderObject({[k]:value[k]}, parentElement, indent+1, fullPath);
+                });
+
+                const clauseButtonRow = document.createElement("div");
+                clauseButtonRow.style.cssText = `
+                  display:flex;
+                  gap:8px;
+                  align-items:center;
+                  margin:12px 0 24px;
+                  margin-left:${(indent + 1) * 60}px;   /* indent */
+                `;
+
+                const addBtn = document.createElement("button");
+                addBtn.innerText = "Add Clause";
+                addBtn.style.cssText = `
+                  display:inline-block;
+                  padding:6px 12px;
+                  background:#f44336;
+                  color:#fff;
+                  border:none;
+                  border-radius:4px;
+                  cursor:pointer;
+                `;
+                if (window.isReadOnlyMode) {
+                  addBtn.disabled = true;
+                  addBtn.style.opacity = '0.5';
+                  addBtn.style.cursor = 'not-allowed';
+                  console.log('Add Clause button created in readonly mode');
+                } else {
+                  console.log('Add Clause button created in editable mode');
+                }
+                addBtn.onclick = () => {
+                  if (window.isReadOnlyMode) return;
+                  const name = prompt("New Clause Title (e.g. Data Protection):");
+                  if (!name) return;
+                  if (!AgreementApp.addCustomClause(name)) {
+                    alert(`"${name}" already exists or is invalid.`);
+                    return;
+                  }
+                  AgreementApp._rerender();
+                  AgreementApp.markDirty?.();
+                };
+                clauseButtonRow.appendChild(addBtn);
+
+                  const viewClauseDiffBtn = document.createElement("button");
+                  viewClauseDiffBtn.innerText = "View Clause Diff";
+                viewClauseDiffBtn.style.cssText = `
+                  display:inline-block;
+                  padding:6px 12px;
+                  background:#2196F3;
+                  color:#fff;
+                  border:none;
+                  border-radius:4px;
+                  cursor:pointer;
+                `;
+                viewClauseDiffBtn.onclick = () => {
+                  try { window.openCustomClauseDiff(); } catch(e) { console.error(e); alert('Failed to prepare Clause differences.'); }
+                };
+                clauseButtonRow.appendChild(viewClauseDiffBtn);
+
+                parentElement.appendChild(clauseButtonRow);
+                continue;
+              }
+
+              // ---------- OBJECTS (incl. DEFINITIONS) ----------
+              if (typeof value==='object' && value!==null) {
+                const section = document.createElement("div");
+                section.style.cssText = `
+                  margin-left:${indent*60}px;margin-bottom:8px;padding:10px 16px;
+                  border:1px solid #ccc;border-radius:6px;background:#f9f9f9;`;
+                const title = document.createElement("strong");
+
+                // Titles for the two vocab buckets
+                if (key === 'definitions') {
+                  title.innerText = "Definitions:";
+                } else if (key === 'custom_definitions') {
+                  title.innerText = "Custom Definitions:";
+                } else {
+                  title.innerText = key.charAt(0).toUpperCase()+key.slice(1)+":";
+                }
+                section.appendChild(title);
+
+                // No delete button for the section title (per your earlier requirement),
+                // also keep custom_definitions non-deletable as a section to avoid accidental loss.
+                if (!nonDeletableKeys.includes(key)) {
+                  const del = document.createElement("button");
+                  del.innerText="Delete";
+                  del.style.cssText=`
+                    margin-left:12px;background:#f44336;color:#fff;border:none;
+                    padding:4px 10px;border-radius:4px;cursor:pointer;`;
+                  if (window.isReadOnlyMode) {
+                    del.disabled = true;
+                    del.style.opacity = '0.5';
+                    del.style.cursor = 'not-allowed';
+                  }
+                  del.onclick=()=>{ if (window.isReadOnlyMode) return; if(!confirm(`Delete section "${key}"?`)) return;
+                    delete obj[key]; section.remove(); AgreementApp.handleAgreementChange?.(key); AgreementApp._rerender(); AgreementApp.markDirty?.(); window.refreshAgreementViewAfterDeletion?.(); };
+                  section.appendChild(del);
+                }
+
+                parentElement.appendChild(section);
+
+                AgreementApp.renderObject(value, parentElement, indent+1, fullPath);
+
+                // "Add Definition" button lives under the Definitions header, but it inserts into custom_definitions
+                if (key==='custom_definitions') {
+                  const addRow = document.createElement("div");
+                  addRow.style.cssText = `margin-left:${(indent+1)*28}px; display:flex; gap:8px; align-items:center;`;
+                  const addDef = document.createElement("button");
+                  addDef.innerText = "Add Definition";
+                  addDef.style.cssText = `
+                    display:inline-block;margin:12px 0 24px;padding:6px 12px;background:#f44336;
+                    color:#fff;border:none;border-radius:4px;cursor:pointer;`;
+                  if (window.isReadOnlyMode) {
+                    addDef.disabled = true;
+                    addDef.style.opacity = '0.5';
+                    addDef.style.cursor = 'not-allowed';
+                  }
+                  addDef.onclick = () => {
+                    if (window.isReadOnlyMode) return;
+                    const term =  prompt("Definition term (e.g., “Data Consumer”):");
+                    if (!term) return;
+
+                    const sysDefs = AgreementApp.formate_agreement_data.definitions || {};
+                    const userDefs = AgreementApp.formate_agreement_data.custom_definitions || {};
+
+                    if (Object.prototype.hasOwnProperty.call(sysDefs, term) ||
+                        Object.prototype.hasOwnProperty.call(userDefs, term)) {
+                      alert(`"${term}" already exists.`);
+                      return;
+                    }
+                    // Add to USER store (custom_definitions), not to system
+                    AgreementApp.formate_agreement_data.custom_definitions[term] = "Please insert the definition.";
+                    AgreementApp.recordCustomDefinitionRestoration?.(term);
+
+                    AgreementApp._rerender();
+                    AgreementApp.markDirty?.();
+                  };
+                  addRow.appendChild(addDef);
+                  
+                  const viewDiffBtn = document.createElement("button");
+                  viewDiffBtn.innerText = "View Definition Diff";
+                  viewDiffBtn.style.cssText = `
+                    display:inline-block;margin:12px 0 24px 0;padding:6px 12px;background:#2196F3;
+                    color:#fff;border:none;border-radius:4px;cursor:pointer;`;
+                  viewDiffBtn.onclick = () => {
+                    try { window.openCustomDefinitionDiff(); } catch(e) { console.error(e); alert('Failed to prepare Definition differences.'); }
+                  };
+                  addRow.appendChild(viewDiffBtn);
+                  
+                  parentElement.appendChild(addRow);
+                }
+
+                continue;
+              }
+
+              // ---------- PRIMITIVE FIELDS ----------
+              {
+                // SPECIAL CASE A: system definitions (read-only, no per-item Delete)
+                if (path[0] === 'definitions') {
+                  const term = key; // definition key
+                  const row = document.createElement("div");
+                  const indentPx = indent * 60;
+                  row.style.cssText = `
+                    display:flex;align-items:flex-start;gap:16px;
+                    margin-left:${indentPx}px;margin-bottom:12px;padding:12px 16px;
+                    border:1px solid #d6d6d6;border-radius:6px;background:#fff;`;
+
+                  const label = document.createElement("strong");
+                  label.innerText = `${term}:`;
+                  label.style.cssText = `min-width:190px;margin-top:4px;text-align:right;`;
+
+                  const ta = document.createElement("textarea");
+                  ta.rows = 4; ta.cols = 60;
+                  ta.style.cssText = `flex:1;min-height:140px;resize:vertical;`;
+                  ta.value = value;
+                  ta.readOnly = 1; // system-provided -> read-only
+                  ta.style.background = "#f3f3f3";
+
+                  const left = document.createElement("div");
+                  left.style.cssText = `display:flex;align-items:flex-start;gap:12px;flex:1;`;
+                  left.appendChild(label);
+                  left.appendChild(ta);
+                  row.appendChild(left);
+
+                  // Spacer keeps textarea width consistent with custom definitions (which have a delete button)
+                  const spacer = document.createElement("button");
+                  spacer.innerText = "Delete";
+                  spacer.style.cssText = `
+                    visibility:hidden;margin-left:8px;align-self:center;background:#f44336;
+                    color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:default;`;
+                  row.appendChild(spacer);
+
+                  // No visible delete button for system definitions
+                  parentElement.appendChild(row);
+                  continue; // handled
+                }
+
+                // SPECIAL CASE B: custom definitions (editable + per-item delete)
+                if (path[0] === 'custom_definitions') {
+                  const term = key; // definition key
+                  const row = document.createElement("div");
+                  row.style.cssText = `
+                    display:flex;align-items:flex-start;gap:16px;
+                    margin-left:${indent*60}px;margin-bottom:12px;padding:12px 16px;
+                    border:1px solid #d6d6d6;border-radius:6px;background:#fff;`;
+
+                  const label = document.createElement("strong");
+                  label.innerText = `${term}:`;
+                  label.style.cssText = `min-width:190px;margin-top:4px;text-align:right;`;
+
+                  const ta = document.createElement("textarea");
+                  ta.rows = 4; ta.cols = 60; ta.style.cssText = `flex:1;min-height:140px;resize:vertical;`;
+                  ta.value = value;
+
+
+                  const hi = el => { el.style.color = el.value.includes("Please insert the definition.") ? "red" : ""; };
+                  hi(ta);
+
+                  // Write into the user (custom) store
+                  ta.oninput = e => {
+                    AgreementApp.formate_agreement_data.custom_definitions[term] = e.target.value;
+                    hi(e.target);
+                    AgreementApp.markDirty?.();
+                  };
+
+                  const left = document.createElement("div");
+                  left.style.cssText = `display:flex;align-items:flex-start;gap:12px;flex:1;`;
+                  left.appendChild(label);
+                  left.appendChild(ta);
+                  row.appendChild(left);
+
+                  const del = document.createElement("button");
+                  del.innerText = "Delete";
+                  del.style.cssText = `
+                    margin-left:8px;align-self:center;background:#f44336;color:#fff;
+                    border:none;padding:4px 10px;border-radius:4px;cursor:pointer;`;
+                  if (window.isReadOnlyMode) {
+                    del.disabled = true;
+                    del.style.opacity = '0.5';
+                    del.style.cursor = 'not-allowed';
+                  }
+                  del.onclick = () => {
+                    if (window.isReadOnlyMode) return;
+                    if (!confirm(`Delete definition "${term}"?`)) return;
+                    delete AgreementApp.formate_agreement_data.custom_definitions[term];
+                    row.remove();
+                    AgreementApp._rerender();
+                    AgreementApp.recordCustomDefinitionRemoval?.(term);
+                    window.refreshAgreementViewAfterDeletion?.();
+                  };
+                  row.appendChild(del);
+
+                  parentElement.appendChild(row);
+                  continue; // handled
+                }
+
+                // DEFAULT PRIMITIVE FIELD RENDERING (non-definition fields)
+                const row = document.createElement("div");
+                row.style.cssText = `
+                  display:flex;align-items:center;justify-content:space-between;
+                  margin-left:${indent*60}px;margin-bottom:8px;padding:10px 16px;
+                  border:1px solid #ccc;border-radius:6px;background:#f9f9f9;`;
+                const label = document.createElement("strong"); label.innerText = `${key}:`; label.style.marginRight="10px";
+                const ta = document.createElement("textarea");
+                ta.rows=6; ta.cols=60; ta.style.marginLeft="10px"; ta.value=value;
+
+                const hi = el => { el.style.color = el.value.includes("Please insert the definition.") ? "red" : ""; };
+                hi(ta);
+                ta.oninput=e=>{ obj[key]=e.target.value; hi(e.target); AgreementApp.markDirty?.(); };
+
+                const left = document.createElement("div"); left.style.cssText=`display:flex;align-items:center;gap:12px;`;
+                left.appendChild(label); left.appendChild(ta); row.appendChild(left);
+
+                const del = document.createElement("button");
+                del.innerText="Delete";
+                del.style.cssText=`
+                  background:#f44336;color:#fff;border:none;padding:4px 10px;
+                  border-radius:4px;cursor:pointer;`;
+                if (window.isReadOnlyMode) {
+                  del.disabled = true;
+                  del.style.opacity = '0.5';
+                  del.style.cursor = 'not-allowed';
+                }
+                del.onclick=()=>{ if (window.isReadOnlyMode) return; if(!confirm(`Delete field "${key}"?`)) return; delete obj[key]; row.remove(); AgreementApp.handleAgreementChange?.(key); AgreementApp._rerender(); AgreementApp.markDirty?.(); };
+                row.appendChild(del);
+
+                parentElement.appendChild(row);
+              }
+            }
+          }
+        };
+
+
+
+
         var saveddata = [];
         var global_policy_type = null;
         var global_provider_id = null;
         var global_consumer_id = null;
         var global_policy_id = null;
 
+        var global_contract_id = null;
+        var global_contract_type = null;
+        var isReadOnlyMode = false;
+        var isViewMode = false; // Tracks if modal opened in view-only mode
+
 
         $(document).ready(function () {
+
+            // Field Info Modal Handler
+            const fieldInfoModal = $('#fieldInfoModal');
+            const fieldInfoCloseBtn = $('.field-info-close');
+
+            // Handle eye icon clicks
+            $(document).on('click', '.field-info-icon', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const fieldName = $(this).data('field');
+                const info = fieldInfoData[fieldName];
+
+                console.log('Eye icon clicked, field:', fieldName, 'info:', info);
+
+                if (info) {
+                    $('#fieldInfoTitle').text(info.title);
+                    $('#fieldInfoDescription').text(info.description);
+                    
+                    // Try both class and inline style as backup
+                    fieldInfoModal.addClass('show');
+                    fieldInfoModal.css({'display': 'block', 'z-index': '99999'});
+                    
+                    console.log('Modal classes:', fieldInfoModal.attr('class'));
+                    console.log('Modal display style:', fieldInfoModal.css('display'));
+                    console.log('Modal is visible:', fieldInfoModal.is(':visible'));
+                }
+            });
+
+            // Close modal when clicking the X
+            fieldInfoCloseBtn.on('click', function(e) {
+                e.preventDefault();
+                fieldInfoModal.removeClass('show').css('display', 'none');
+            });
+
+            // Close modal when clicking outside the modal content
+            fieldInfoModal.on('click', function(event) {
+                if ($(event.target).is('#fieldInfoModal')) {
+                    fieldInfoModal.removeClass('show').css('display', 'none');
+                }
+            });
+
+            // Close modal with Escape key
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && fieldInfoModal.is(':visible')) {
+                    fieldInfoModal.removeClass('show').css('display', 'none');
+                }
+            });
 
             function applyFormActionsConfig($form) {
 
@@ -367,7 +1477,15 @@
                         formCard.remove();
                     }
                 });
-                    // Add new constraint row within the form
+
+                $form.find('.remove-form-button').click(function () {
+                    const $formCard = $(this).closest('.form-card');
+                     if ($formCard.length > 0) {
+                        removePolicyForm($formCard);
+                     }
+                 });
+
+                // Add new constraint row within the form
                 $form.find('#addConstraintRow').click(function () {
                     let newRow;
                     if ($form.find('#constraintsContainer').find('.constraintRow').length > 0) {
@@ -527,7 +1645,7 @@
                             newRow.find('input[type="text"]').val(value);
 
                             console.log('value', value);
-    
+
                             if (typeof value === 'string' && value.trim() !== '') {
                                 newRow.css({
                                     'display': 'flex', // Overwrite the display property to make it visible
@@ -555,49 +1673,30 @@
     
                 $newForm.css('display', '');
     
-                $newForm.appendTo('.col-lg-12');
+                $newForm.prependTo('.col-lg-12');
                 _actions_for_dropdown_form("Actor", $newForm);
                 _actions_for_dropdown_form("Action", $newForm);
                 _actions_for_dropdown_form("Purpose", $newForm);
                 _actions_for_dropdown_form("Target", $newForm);
                 // Populate HTML components within the duplicated form
                 $newForm.find('#ruleDropdown').val(data.rule);
-                
+
+                // Assign UUID
+                assignPolicyUUID($newForm);
+
+
                 $newForm.find('#ActorDropdown').val(data.actor);
                 _fillRefinementDropdownForm(data.actor, 'Actor', $newForm);
                 
                 $newForm.find('#ActionDropdown').val(data.action);
                 _fillRefinementDropdownForm(data.action, 'Action', $newForm);
                 
-                
-                // This code added to deal with the display of non-default targets whenin update
-                console.log("We are updating the form target dropdown if required");
-                inList=false
-                var target_dropdown=$newForm.find('#TargetDropdown')
-                var target_options=$newForm.find('#TargetDropdown option')
-                console.log("The target_options length is " + target_options.length)
-                for (let j=0; j < target_options.length; j++){
-                    console.log("The next dropdown value is " + target_options[j].text);
-                    if ( data.target == target_options[j].text){
-                        inList=true;
-                        console.log("Dropdown match found");
-                    }
-                }
-                if ( inList == false){
-                    console.log("No dropdown match found, update the dropdown options");
-                    var objOption = document.createElement("option");
-                    objOption.text = data.target;
-                    objOption.value = data.target;
 
-                    target_dropdown.append(objOption);
-                }	
-                
-                $newForm.find('#TargetDropdown').val(data.target);
-                $newForm.find('#TargetDropdown').prop("disabled", true); 
+                // Set target value directly (now a text input instead of dropdown)
+                console.log("Setting target value");
+                $newForm.find('#TargetDropdown').val(data.target); 
                 _fillRefinementDropdownForm(data.target, 'Target', $newForm);
                 console.log('target value', data.target);
-                
-                $('#Target2Dropdown').val(data.target);
     
                 $newForm.find('#PurposeDropdown').val(data.purpose);
                 _fillRefinementDropdownForm(data.purpose, 'Purpose', $newForm);
@@ -772,10 +1871,10 @@
 
             function loadPreferencesData($fieldset, data, preferences, price) {
 
-                console.log('loadPreferencesData preferences', preferences);
-                console.log('loadPreferencesData price', price);
+                // console.log('loadPreferencesData preferences', preferences);
+                // console.log('loadPreferencesData price', price);
 
-                console.log('type of preferences', typeof preferences);
+                // console.log('type of preferences', typeof preferences);
 
                 var priceLower = preferences?.find(p => p.key === "price")?.lower_value || null;
                 var priceUpper = preferences?.find(p => p.key === "price")?.upper_value || null;
@@ -797,7 +1896,7 @@
 
                 var $originalForm = $fieldset.find('#preferencesFormCard');
                 console.log($originalForm)
-                console.log('loadPreferencesData data', data)
+                // console.log('loadPreferencesData data', data)
                 //var $originalForm = $('.form-card').first();
                 var $newForm = $originalForm.clone();
     
@@ -894,7 +1993,10 @@
                 makeAllInputsEditable();
             }
 
-            $('.last-changes-button').click(function () {
+            $('#last-changes-button').click(function () {
+                if ($(this).prop('disabled')) {
+                    return;
+                }
                 document.getElementById('text-diff').style.display = 'block';
             });
             $('.diff-close').click(function () {
@@ -922,6 +2024,87 @@
                 return (value === undefined || value === null) ?"" : value;
             }
 
+            function parseTemporalCoverageInput() {
+                const rawValue = getValue('#temporal-coverage').trim();
+                if (!rawValue) {
+                    return null;
+                }
+                try {
+                    const parsed = JSON.parse(rawValue);
+                    if (Array.isArray(parsed) && parsed.length) {
+                        return parsed.map((entry) => (typeof entry === 'string' ? entry : `${entry}`));
+                    }
+                } catch (err) {
+                    const withoutBrackets = rawValue.replace(/^\s*\[|\]\s*$/g, '');
+                    const parts = withoutBrackets.split(',').map((item) => item.trim().replace(/^"|"$/g, '')).filter(Boolean);
+                    if (parts.length) {
+                        return parts;
+                    }
+                }
+                return null;
+            }
+
+            function formatTemporalCoverageField(value) {
+                if (!value || !Array.isArray(value) || !value.length) {
+                    return '';
+                }
+                return JSON.stringify(value);
+            }
+
+
+
+            function get_definitions()
+            {
+                console.log("get-definitons");
+
+              return AgreementApp?.formate_agreement_data?.definitions ?? {};
+            }
+
+            function get_odrl_policy_summary()
+            {
+                console.log("get-odrl-translation");
+
+              return AgreementApp?.formate_agreement_data?.odrl_policy_summary ?? {};
+            }
+
+            function get_custom_definitions()
+            {
+
+              return AgreementApp?.formate_agreement_data?.custom_definitions ?? {};
+            }
+
+            function get_removed_custom_sections()
+            {
+              if (!AgreementApp?.removedCustomClauses) return [];
+              return Array.from(AgreementApp.removedCustomClauses);
+            }
+
+            function get_removed_custom_definitions()
+            {
+              if (!AgreementApp?.removedCustomDefinitions) return [];
+              return Array.from(AgreementApp.removedCustomDefinitions);
+            }
+
+            function get_new_added_section()
+            {
+                {#const summary = AgreementApp.formate_agreement_data.odrl_policy_summary || {};#}
+                const summary = AgreementApp.formate_agreement_data?.odrl_policy_summary ?? {};
+
+                const builtIns = ['permission', 'prohibition', 'obligation', 'duty'];
+                const customSections = {};
+
+                Object.entries(summary).forEach(([key, value]) => {
+                if (!builtIns.includes(key)) {
+                  customSections[key] = value;
+                }
+                });
+
+                 console.log('customSections', customSections);
+
+                return customSections;
+            }
+
+
             function prepare_odrl_data()
             {
                 var saveddata = []; // Initialize saveddata array to store data from all forms
@@ -947,12 +2130,19 @@
 
                         // Gather constraints data
                         form.find('.constraintRow').each(function () {
-                            var constraint = {
-                                type: $(this).find('.constraintDropdown').val(),
-                                operator: $(this).find('.operatorDropdown').val(),
-                                value: $(this).find('.constraintValue').val()
-                            };
-                            data.constraints.push(constraint);
+                            var constraintType = $(this).find('.constraintDropdown').val();
+                            var constraintOperator = $(this).find('.operatorDropdown').val();
+                            var constraintValue = $(this).find('.constraintValue').val();
+                            
+                            // Only add constraint if it has a valid type, operator, and non-empty value
+                            if (constraintType && constraintOperator && constraintValue && constraintValue.trim() !== '') {
+                                var constraint = {
+                                    type: constraintType,
+                                    operator: constraintOperator,
+                                    value: constraintValue
+                                };
+                                data.constraints.push(constraint);
+                            }
                         });
 
                         // Gather actor refinements data
@@ -999,6 +2189,16 @@
                         saveddata.push(data);
                     }
                 });
+                // Normalize order so backend diffs don't flag cosmetic reorder
+                try {
+                    const key = (o) => [
+                        (o.rule||''), (o.actor||''), (o.action||''), (o.target||''), (o.purpose||''), (o.query||'')
+                    ].join('|').toLowerCase();
+                    saveddata.sort(function(a,b){
+                        const ka = key(a), kb = key(b);
+                        if (ka < kb) return -1; if (ka > kb) return 1; return 0;
+                    });
+                } catch(e) { /* no-op */ }
                 console.log('saved data', saveddata)
                 return saveddata;
             }
@@ -1040,20 +2240,552 @@
                 return savedPreferencesData;
             }
 
-            // Function to handle button click
-            $('#submit-details').click(function () {
-                // Get JSON data from the form
-                var jsonData = getFormData();
-                var preferences = prepare_preferences_data()
-                // Example headers with negotiation_id and type
-                var headers = {
+
+            const handleAgreementGeneration = function () {
+                const $button = $(this);
+
+                AgreementApp.syncCustomClauses();
+                const jsonData = AgreementApp.formate_agreement_data;
+
+                const headers = {
+                    'negotiationid': $('#negotiation-id-text').val(),
+                    'policyid': global_policy_id,
+                    'type': $('#user-role-text').val() === 'consumer' ? 'request' : 'offer',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                  };
+
+                  $.ajax({
+                    url: '/negotiation/organization/generate_legal_agreement',
+                    type: 'POST',
+                    headers: headers,
+                    contentType: 'application/json',
+                    data: JSON.stringify(jsonData),
+
+                    success: function (response) {
+                        handleRegenerationMerge(response || {});
+
+                    },
+                    error: function (xhr, status, error) {
+                      console.error('Error creating policy:', error);
+                      alert("Failed to generate Data SharingAgreement. Please try again.");
+                    },
+                    complete: function () {
+                      $button[0]?.style.removeProperty('background-color');
+                      $button[0]?.style.removeProperty('color');
+                      $button.blur();
+                    }
+                  });
+
+            };
+
+            function handleRegenerationMerge(response) {
+                const previousBaseline = AgreementVersions.currentBaseline || '';
+                const previousEdited = AgreementVersions.currentEdited || $('#nlpInput').val() || '';
+                const newBaseline = response?.natural_language_document || '';
+
+                AgreementApp.response_from_created_agreement = response;
+                global_contract_id = response?.contract_id || null;
+                console.log('global_contract_id:', global_contract_id);
+                if (response?.agreement_payload_current) {
+                    window.agreementPayloadBaselineObj = response.agreement_payload_current;
+                    captureAgreementGenerationBaseline(response.agreement_payload_current);
+                }
+                if (response?.agreement_data) {
+                    AgreementApp.formate_agreement_data = response.agreement_data;
+                    AgreementApp._rerender();
+                }
+
+                // First-time generation: no merge needed.
+                if (!previousBaseline) {
+                    AgreementVersions.currentBaseline = newBaseline;
+                    AgreementVersions.currentEdited = newBaseline;
+                    $('#nlpInput').val(newBaseline);
+                    pendingRegenerationRequired = false;
+                    resetCompareState();
+                    AgreementVersions.pendingMerge = null;
+                    window.agreementPayloadBaselineObj = response?.agreement_payload_current || null;
+                    captureAgreementGenerationBaseline(response?.agreement_payload_current);
+                    updateTextEditedBadge();
+                    if (window._sendAfterRegenerate) { try { window._sendAfterRegenerate = false; } catch(e){} doSendNow(); }
+                    return;
+                }
+
+                if (previousBaseline === newBaseline) {
+                    AgreementVersions.currentBaseline = newBaseline;
+                    AgreementVersions.currentEdited = previousEdited;
+                    $('#nlpInput').val(previousEdited);
+                    pendingRegenerationRequired = false;
+                    window.changes = {};
+                    resetCompareState();
+                    AgreementVersions.pendingMerge = null;
+                    window.agreementPayloadBaselineObj = response?.agreement_payload_current || null;
+                    captureAgreementGenerationBaseline(response?.agreement_payload_current);
+                    updateTextEditedBadge();
+                    if (window._sendAfterRegenerate) { try { window._sendAfterRegenerate = false; } catch(e){} doSendNow(); }
+                    return;
+                }
+
+                // If regeneration was initiated by Send, auto-accept regenerated text
+                if (window._suppressMergeModalOnce) {
+                    try { window._suppressMergeModalOnce = false; } catch(e){}
+                    applyMergeSelection(newBaseline);
+                    return;
+                }
+
+                AgreementVersions.pendingMerge = {
+                    baselineText: previousEdited,
+                    regeneratedText: newBaseline,
+                };
+
+                pendingRegenerationRequired = true;
+                openMergeModal(AgreementVersions.pendingMerge);
+            }
+
+            function escapeHtml(text) {
+                return (text || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/\n/g, '<br>');
+            }
+
+            const mergeDiffEngine = (typeof diff_match_patch !== 'undefined')
+                ? new diff_match_patch()
+                : null;
+
+            function tokenizeDiffText(value) {
+                if (!value) {
+                    return [];
+                }
+                const tokens = [];
+                value.replace(/(\s+|\S+)/g, function (match) {
+                    tokens.push(match);
+                    return match;
+                });
+                return tokens;
+            }
+
+            function coalesceDiffOps(entries) {
+                const merged = [];
+                entries.forEach(function (entry) {
+                    const op = entry.op;
+                    const text = entry.text || '';
+                    if (!text) {
+                        return;
+                    }
+                    const last = merged[merged.length - 1];
+                    if (last && last.op === op) {
+                        last.text += text;
+                    } else {
+                        merged.push({ op: op, text: text });
+                    }
+                });
+                return merged;
+            }
+
+            function fallbackDiffOps(baseText, regenText) {
+                const baseTokens = tokenizeDiffText(baseText);
+                const regenTokens = tokenizeDiffText(regenText);
+                const baseLen = baseTokens.length;
+                const regenLen = regenTokens.length;
+                const matrixSize = (baseLen + 1) * (regenLen + 1);
+
+                if (matrixSize > 1200000) {
+                    // Avoid quadratic blowups for very large texts when diff_match_patch is unavailable.
+                    return [
+                        { op: -1, text: baseText },
+                        { op: 1, text: regenText },
+                    ];
+                }
+
+                const table = Array.from({ length: baseLen + 1 }, function () {
+                    return new Array(regenLen + 1).fill(0);
+                });
+
+                for (let i = baseLen - 1; i >= 0; i--) {
+                    for (let j = regenLen - 1; j >= 0; j--) {
+                        if (baseTokens[i] === regenTokens[j]) {
+                            table[i][j] = table[i + 1][j + 1] + 1;
+                        } else {
+                            table[i][j] = Math.max(table[i + 1][j], table[i][j + 1]);
+                        }
+                    }
+                }
+
+                const result = [];
+                let i = 0;
+                let j = 0;
+
+                while (i < baseLen && j < regenLen) {
+                    if (baseTokens[i] === regenTokens[j]) {
+                        result.push({ op: 0, text: baseTokens[i] });
+                        i += 1;
+                        j += 1;
+                        continue;
+                    }
+                    if (table[i + 1][j] >= table[i][j + 1]) {
+                        result.push({ op: -1, text: baseTokens[i] });
+                        i += 1;
+                    } else {
+                        result.push({ op: 1, text: regenTokens[j] });
+                        j += 1;
+                    }
+                }
+
+                while (i < baseLen) {
+                    result.push({ op: -1, text: baseTokens[i] });
+                    i += 1;
+                }
+                while (j < regenLen) {
+                    result.push({ op: 1, text: regenTokens[j] });
+                    j += 1;
+                }
+
+                return coalesceDiffOps(result);
+            }
+
+            function computeDiffOps(baseline, regenerated) {
+                const baseText = (baseline || '').replace(/\r\n/g, '\n');
+                const regenText = (regenerated || '').replace(/\r\n/g, '\n');
+
+                if (baseText === regenText) {
+                    return [{ type: 'equal', text: baseText }];
+                }
+
+                const rawDiff = computeRawDiff(baseText, regenText);
+                return buildDiffSegments(rawDiff);
+            }
+
+            function computeRawDiff(baseText, regenText) {
+                if (mergeDiffEngine) {
+                    let diff = mergeDiffEngine.diff_main(baseText, regenText);
+                    if (typeof mergeDiffEngine.diff_cleanupSemantic === 'function') {
+                        mergeDiffEngine.diff_cleanupSemantic(diff);
+                    }
+                    if (typeof mergeDiffEngine.diff_cleanupSemanticLossless === 'function') {
+                        mergeDiffEngine.diff_cleanupSemanticLossless(diff);
+                    }
+                    if (typeof mergeDiffEngine.diff_cleanupEfficiency === 'function') {
+                        mergeDiffEngine.diff_cleanupEfficiency(diff);
+                    }
+                    return diff.map(function (item) {
+                        return { op: item[0], text: item[1] };
+                    });
+                }
+                return fallbackDiffOps(baseText, regenText);
+            }
+
+            function buildDiffSegments(entries) {
+                const normalized = coalesceDiffOps(entries);
+                const segments = [];
+                let pendingDelete = '';
+                let pendingInsert = '';
+
+                const flushPending = function () {
+                    const hasDelete = pendingDelete.length > 0;
+                    const hasInsert = pendingInsert.length > 0;
+                    if (hasDelete && hasInsert) {
+                        segments.push({
+                            type: 'replace',
+                            deleted: pendingDelete,
+                            inserted: pendingInsert
+                        });
+                    } else if (hasDelete) {
+                        segments.push({
+                            type: 'delete',
+                            text: pendingDelete
+                        });
+                    } else if (hasInsert) {
+                        segments.push({
+                            type: 'insert',
+                            text: pendingInsert
+                        });
+                    }
+                    pendingDelete = '';
+                    pendingInsert = '';
+                };
+
+                normalized.forEach(function (entry) {
+                    const text = entry.text || '';
+                    if (!text) {
+                        return;
+                    }
+                    if (entry.op === -1) {
+                        pendingDelete += text;
+                        return;
+                    }
+                    if (entry.op === 1) {
+                        pendingInsert += text;
+                        return;
+                    }
+
+                    flushPending();
+                    segments.push({
+                        type: 'equal',
+                        text: text
+                    });
+                });
+
+                flushPending();
+                return segments;
+            }
+
+            function computeInlineDiffEntries(original, updated) {
+                const base = original || '';
+                const regen = updated || '';
+                if (base === regen) {
+                    return [{ op: 0, text: base }];
+                }
+                if (mergeDiffEngine) {
+                    let diff = mergeDiffEngine.diff_main(base, regen);
+                    if (typeof mergeDiffEngine.diff_cleanupSemantic === 'function') {
+                        mergeDiffEngine.diff_cleanupSemantic(diff);
+                    }
+                    if (typeof mergeDiffEngine.diff_cleanupSemanticLossless === 'function') {
+                        mergeDiffEngine.diff_cleanupSemanticLossless(diff);
+                    }
+                    return diff.map(function (item) {
+                        return { op: item[0], text: item[1] };
+                    });
+                }
+                return coalesceDiffOps(fallbackDiffOps(base, regen));
+            }
+
+            function renderSegmentText(text) {
+                return escapeHtml(text || '').replace(/\n/g, '<br>');
+            }
+
+            function renderSingleSpan(text, className) {
+                const content = text || '';
+                const trimmed = content.replace(/\s+/g, '');
+                const safe = renderSegmentText(content);
+                if (!trimmed.length) {
+                    return safe;
+                }
+                if (!className) {
+                    return safe;
+                }
+                const classes = `diff-segment ${className}`.trim();
+                return `<span class="${classes}">${safe}</span>`;
+            }
+
+            function renderReplacementSegment(segment, perspective) {
+                const deleted = segment.deleted || '';
+                const inserted = segment.inserted || '';
+                const deletedTrim = deleted.replace(/\s+/g, '');
+                const insertedTrim = inserted.replace(/\s+/g, '');
+
+                if (!deletedTrim && !insertedTrim) {
+                    const fallbackText = perspective === 'baseline' ? deleted : inserted;
+                    return renderSegmentText(fallbackText);
+                }
+
+                const inlineDiff = computeInlineDiffEntries(deleted, inserted);
+                let html = '';
+
+                if (perspective === 'baseline') {
+                    inlineDiff.forEach(function (entry) {
+                        const text = entry.text || '';
+                        const trimmed = text.replace(/\s+/g, '');
+                        const safe = renderSegmentText(text);
+                        if (!trimmed.length) {
+                            html += safe;
+                            return;
+                        }
+                        if (entry.op === -1) {
+                            html += `<span class="diff-segment del">${safe}</span>`;
+                        } else if (entry.op === 0) {
+                            html += safe;
+                        }
+                        // Skip inserted content in baseline rendering.
+                    });
+                } else {
+                    inlineDiff.forEach(function (entry) {
+                        const text = entry.text || '';
+                        const trimmed = text.replace(/\s+/g, '');
+                        const safe = renderSegmentText(text);
+                        if (!trimmed.length) {
+                            html += safe;
+                            return;
+                        }
+                        if (entry.op === 1) {
+                            html += `<span class="diff-segment ins">${safe}</span>`;
+                        } else if (entry.op === 0) {
+                            html += safe;
+                        }
+                        // Skip deleted content in regenerated rendering.
+                    });
+                }
+
+                if (!html) {
+                    const fallbackText = perspective === 'baseline' ? deletedTrim : insertedTrim;
+                    if (fallbackText) {
+                        const className = perspective === 'baseline' ? 'del' : 'ins';
+                        return renderSingleSpan(fallbackText, className);
+                    }
+                    const fallbackSource = perspective === 'baseline' ? deleted : inserted;
+                    return renderSegmentText(fallbackSource);
+                }
+
+                return html;
+            }
+
+            function renderDiffHtml(diffOps, perspective, fallbackText) {
+                if (!Array.isArray(diffOps) || diffOps.length === 0) {
+                    return escapeHtml(fallbackText || '');
+                }
+                let html = '';
+                diffOps.forEach(function (segment) {
+                    if (!segment) {
+                        return;
+                    }
+                    if (segment.type === 'equal') {
+                        html += renderSegmentText(segment.text);
+                        return;
+                    }
+                    if (segment.type === 'delete') {
+                        if (perspective === 'baseline') {
+                            html += renderSingleSpan(segment.text, 'del');
+                        }
+                        return;
+                    }
+                    if (segment.type === 'insert') {
+                        if (perspective === 'regenerated') {
+                            html += renderSingleSpan(segment.text, 'ins');
+                        }
+                        return;
+                    }
+                    if (segment.type === 'replace') {
+                        html += renderReplacementSegment(segment, perspective);
+                        return;
+                    }
+                });
+                return html || escapeHtml(fallbackText || '');
+            }
+
+            function getEditorPlainText($editor) {
+                const html = ($editor.html() || '')
+                    .replace(/<br\s*\/?>/gi, '\n')
+                    .replace(/<div[^>]*>/gi, '\n')
+                    .replace(/<span[^>]*>/gi, '')
+                    .replace(/<\/(span|div)>/gi, '');
+                const temp = $('<textarea>').html(html);
+                return temp.text().replace(/\u00a0/g, ' ');
+            }
+
+            const agreementGenerationButton = $('#agreement-generation');
+            let agreementPayloadSignature = null;
+
+            function updateTextEditedBadge() {
+                try {
+                    const current = ($('#nlpInput').val() || '').toString();
+                    const baseline = (AgreementVersions.currentBaseline || '').toString();
+                    const edited = current !== baseline;
+                    const badge = document.getElementById('nlp-text-edited-badge');
+                    if (!badge) return;
+                    badge.style.display = edited ? 'inline-block' : 'none';
+                } catch (e) {
+                    // no-op
+                }
+            }
+
+            function setAgreementGenerationEnabled(enabled) {
+                if (enabled) {
+                    agreementGenerationButton.prop('disabled', false);
+                    agreementGenerationButton.css('opacity', '1');
+                    agreementGenerationButton.css('cursor', 'pointer');
+                } else {
+                    agreementGenerationButton.prop('disabled', true);
+                    agreementGenerationButton.css('opacity', '0.5');
+                    agreementGenerationButton.css('cursor', 'not-allowed');
+                }
+            }
+
+            function normalizeAgreementPayload(payload) {
+                const seen = new WeakSet();
+                const stableClone = (value) => {
+                    if (value && typeof value === 'object') {
+                        if (seen.has(value)) {
+                            return null;
+                        }
+                        seen.add(value);
+                        if (Array.isArray(value)) {
+                            return value.map(stableClone);
+                        }
+                        const ordered = {};
+                        Object.keys(value).sort().forEach((key) => {
+                            ordered[key] = stableClone(value[key]);
+                        });
+                        return ordered;
+                    }
+                    return value;
+                };
+                return JSON.stringify(stableClone(payload));
+            }
+
+            function captureAgreementGenerationBaseline(payload, disableButton = true) {
+                const sourcePayload = payload || getFormData();
+                agreementPayloadBaseline = normalizeAgreementPayload(sourcePayload);
+                if (disableButton) {
+                    setAgreementGenerationEnabled(false);
+                } else {
+                    evaluateAgreementGenerationState();
+                }
+            }
+
+            function evaluateAgreementGenerationState() {
+                if (!agreementPayloadBaseline) {
+                    setAgreementGenerationEnabled(true);
+                    return;
+                }
+                const currentPayload = normalizeAgreementPayload(getFormData());
+                setAgreementGenerationEnabled(currentPayload !== agreementPayloadBaseline);
+            }
+
+            $(document).on('input change', 'input:not([type=button]):not([type=submit]):not([type=reset]):not([type=hidden]), textarea, select', function () {
+                evaluateAgreementGenerationState();
+            });
+
+            $('#agreement-generation').click(function () {
+                if (isCompareDiffPending) {
+                    alert('Resolve pending changes before generating a new agreement.');
+                    return;
+                }
+
+
+                const secondConfirm = confirm('If you execute Agreement Generation, a new Agreement is generated and replaces the current one!');
+                if (!secondConfirm) {
+                    return;
+                }
+
+                handleAgreementGeneration.call(this);
+            });
+
+            // prepare to generate an agreement (obtain all needed information)
+            $('#nl').click(function () {
+              gatherAgreementData(false);
+                });
+
+            $('#nlpInput').on('input', function () {
+                AgreementVersions.currentEdited = $(this).val();
+                pendingRegenerationRequired = true;
+                updateTextEditedBadge();
+            });
+
+
+
+
+
+function doSendNow() {
+                const jsonData = getFormData();
+                const preferences = prepare_preferences_data()
+                const headers = {
                     'negotiationid': $('#negotiation-id-text').val(),
                     'policyid': global_policy_id,
                     'type': global_policy_type,
                     'X-CSRFToken': '{{ csrf_token }}'
                 };
-
-                // AJAX request to send JSON data to backend endpoint
                 $.ajax({
                     url: "{% url 'datacontrollercreatepolicy' %}",
                     type: 'POST',
@@ -1061,21 +2793,76 @@
                     contentType: 'application/json',
                     data: JSON.stringify(jsonData),
                     success: function (response) {
-                        // Handle success response from backend
                         console.log('Policy creation successful:', response);
-                        // Reload the negotiations table
                         updateNegotiationsTable();
                         updateFinishedNegotiationsTable();
                         modal.style.display = "none";
                         makeAllInputsEditable();
                         createRecommenderAgentRecord(response.negotiation_id, global_policy_id, preferences);
-                        },
+                    },
                     error: function (xhr, status, error) {
-                        // Handle error
                         console.error('Error creating policy:', error);
-                        // Optionally, you can show an error message
+                    },
+                    complete: function () {
+                        window._sendingInProgress = false;
+                        try { $('#sending-spinner').css('display','none'); } catch(e) {}
                     }
                 });
+            }
+
+            // Function to handle button click
+            $('#submit-details').click(function () {
+                window._sendingInProgress = true;
+                try { $('#sending-spinner').css('display','flex'); } catch(e) {}
+                // Do not allow send while comparison/merge is pending
+                if (typeof isCompareDiffPending !== 'undefined' && isCompareDiffPending) {
+                    alert('Resolve pending agreement changes before sending.');
+                    window._sendingInProgress = false;
+                    try { $('#sending-spinner').css('display','none'); } catch(e) {}
+                    return;
+                }
+
+                // Detect payload changes vs baseline
+                let payloadChanged = false;
+                try {
+                    const currentSig = normalizeAgreementPayload(getFormData());
+                    payloadChanged = !!(agreementPayloadBaseline && currentSig !== agreementPayloadBaseline);
+                } catch (e) { /* if normalization fails, assume changed to be safe */ payloadChanged = true; }
+
+                // Detect user-edited text changes
+                const currentText = $('#nlpInput').val() || '';
+                const baselineText = AgreementVersions.currentBaseline || '';
+                const textEdited = currentText !== baselineText;
+
+                // Mixed case: both changed
+                if (payloadChanged && textEdited) {
+                    const useRegenerated = confirm('You modified the agreement text! Regenerate agreement text from policy before sending?\nOK = Regenerate (Replace edited text) and Send! \nCancel = Use edited text and Send');
+                    if (useRegenerated) {
+                        // Refresh derived sections first, then regenerate (skip merge UI)
+                        gatherAgreementData(true).always(function () {
+                            window._suppressMergeModalOnce = true;
+                            window._sendAfterRegenerate = true;
+                            handleAgreementGeneration.call($('#agreement-generation')[0]);
+                        });
+                        return;
+                    }
+                    // Use edited text as-is
+                    doSendNow();
+                    return;
+                }
+
+                if (payloadChanged) {
+                    // Structural changes → gather, then regenerate (skip merge UI), then send
+                    gatherAgreementData(true).always(function () {
+                        window._suppressMergeModalOnce = true;
+                        window._sendAfterRegenerate = true;
+                        handleAgreementGeneration.call($('#agreement-generation')[0]);
+                    });
+                    return;
+                }
+
+                // Text-only or no change → send now
+                doSendNow();
             });
 
             // Function to handle button click
@@ -1103,6 +2890,8 @@
                     'user_id': $('#user-id-text').val(),
                     'X-CSRFToken': '{{ csrf_token }}'
                 };
+
+
                 console.log('headers', headers);
                 // AJAX request to send JSON data to backend endpoint
                 $.ajax({
@@ -1181,7 +2970,7 @@
                             method: 'GET',
                             headers: headers,
                             success: function (data) {
-                                console.log('response from getRecommenderAgentRecord data:', data);
+                                // console.log('response from getRecommenderAgentRecord data:', data);
                                 resolve(data);
                             },
                             error: function (error) {
@@ -1300,9 +3089,12 @@
                 var user_role = '{{ user_type }}';
                 //console.log(user_role)
                 if (negotiation.negotiation_status == 'finalized') {
+
                     buttons += '<input type="button" class="styled-button styled-button-download-json" value="Download JSON">';
-                    buttons += '<input type="button" class="styled-button styled-button-download-pdf" value="Download PDF">';
+                    buttons += '<input type="button" class="styled-button styled-button-download-pdf" value="Download Report">';
+                    buttons += '<input type="button" class="styled-button styled-button-download-agreement" value="Download Agreement">';
                 } else {
+                    buttons += '<input type="button" class="styled-button styled-button-view" value="View">';
                     if (user_role == 'provider') {
                         if (negotiation.negotiation_status == 'requested') {
                             buttons += '<input type="button" class="styled-button styled-button-terminate" value="Terminate">';
@@ -1367,35 +3159,7 @@
             });
             function bindNegotiationRowClickEvent() {
                 console.log('bindNegotiationRowClickEvent called');
-                $('.negotiation-row').on('click', function (event) {
-                    var $target = $(event.target);
-                    // Check if the target is within the first two columns
-                    if ($target.is('td:nth-child(1), td:nth-child(2)') || $target.closest('td:nth-child(1), td:nth-child(2)').length > 0) {
-                        var negotiationId = $(this).data('negotiation-id');
-                        $('#negotiation-id-text').val(negotiationId);
-                        global_policy_type = null;
-                        $('#negotiation-id').text(negotiationId);
-                        $('#loading-spinner').show();
-                        makeAllInputsReadOnly();
-                        var endpointUrl = 'negotiationlastpolicy?negotiation_id=' + negotiationId;
-                        $.ajax({
-                            url: endpointUrl,
-                            method: 'GET',
-                            success: function (data) {
-                                populateFormChanges(data);
-                                global_provider_id = data.provider_id;
-                                global_consumer_id = data.consumer_id;
-                                global_policy_id = data._id
-                                $('#modal').show();
-                                $('#loading-spinner').hide();
-                            },
-                            error: function (error) {
-                                console.log('Error:', error);
-                                $('#loading-spinner').hide();
-                            }
-                        });
-                    }
-                });
+                // Modal no longer opens on row click - disabled
             }
 
             // Initial binding
@@ -1435,6 +3199,7 @@
                     success: function (data) {
                         console.log('response from createRequestBtn ajax call:', data);
                         global_policy_id = offerId;
+                        global_contract_type = data.contract_type || "dsa";
                         if (offerId && negotiationId) {
                             global_provider_id = data.provider_id;
                             global_consumer_id = $('#user-id-text').val(); // or any specific logic if necessary
@@ -1518,6 +3283,7 @@
                                 success: function (data) {
                                     console.log('response from createRequestBtn ajax call:', data);
                                     global_policy_id = offerId;
+                                    global_contract_type = data.contract_type || "dsa";
                                     global_provider_id = data.provider_id;
                                     global_consumer_id = data.consumer_id;
                                     populateFormChanges(data);
@@ -1571,31 +3337,55 @@
 
 
             function makeAllInputsReadOnly() {
+                isReadOnlyMode = true;
+                // Note: isViewMode is NOT set here - it's only set when user clicks "view" button
+                // This allows incoming changes to still have enabled accept/reject buttons
                 $("input").each(function() {
                     if ($(this).attr('type') === 'button' || $(this).attr('type') === 'submit' || $(this).attr('type') === 'reset') {
                         $(this).attr('disabled', true);
+                        $(this).css('opacity', '0.5');
+                        $(this).css('cursor', 'not-allowed');
                     } else {
                         $(this).attr('readonly', true);
+                        $(this).css('opacity', '0.5');
+                        $(this).css('cursor', 'not-allowed');
                     }
                 });
                 $("textarea").each(function() {
                     $(this).attr('readonly', true);
+                    $(this).css('cursor', 'not-allowed');
                 });
                 $("select").each(function() {
                     $(this).attr('disabled', true);
+                    $(this).css('cursor', 'not-allowed');
                 });
+                setUpcastMultiselectDisabled(true);
+                setReadonlyWarningVisible(!isViewMode);
+                
+                setAgreementGenerationEnabled(false);
+
+                // Re-enable diff view buttons (keep them clickable in readonly mode)
+                $('#viewOdrlDiffButton, #viewDiffBtn, #viewClauseBtn').prop('disabled', false);
+                $('#viewOdrlDiffButton, #viewDiffBtn, #viewClauseBtn').css('opacity', '1');
+                $('#viewOdrlDiffButton, #viewDiffBtn, #viewClauseBtn').css('cursor', 'pointer');
+
             }
 
             function makeAllInputsEditable() {
+                isReadOnlyMode = false;
                 $("input").each(function() {
                     const inputId = $(this).attr('id');
                     if (inputId === 'title' || inputId ==='uri' || inputId === 'policy-url' || inputId === "description" || inputId === "type-of-data" || inputId === "tags") {
-                        return; 
+                        return;
                     }
                     if ($(this).attr('type') === 'button' || $(this).attr('type') === 'submit' || $(this).attr('type') === 'reset') {
                         $(this).removeAttr('disabled');
+                        $(this).css('opacity', '1');
+                        $(this).css('cursor', 'pointer');
                     } else {
                         $(this).removeAttr('readonly');
+                        $(this).css('opacity', '1');
+                        $(this).css('cursor', 'auto');
                     }
                 });
                 $("textarea").each(function() {
@@ -1604,10 +3394,23 @@
                         return; // skip description
                     }
                     $(this).removeAttr('readonly');
+                    $(this).css('cursor', 'auto');
                 });
                 $("select").each(function() {
                     $(this).removeAttr('disabled');
+                    $(this).css('cursor', 'auto');
                 });
+                setUpcastMultiselectDisabled(false);
+                setReadonlyWarningVisible(false);
+                
+                // Re-enable dynamically created buttons in agreement display
+                $('#agreementDisplay button').each(function() {
+                    $(this).prop('disabled', false);
+                    $(this).css('opacity', '1');
+                    $(this).css('cursor', 'pointer');
+                });
+                
+                evaluateAgreementGenerationState();
             }
 
 
@@ -1617,12 +3420,17 @@
                 const button = obj;
                 const negotiationRow = $(button).closest('.negotiation-row');
                 const negotiationId = negotiationRow.data('negotiation-id');
+
                 window.console.log(negotiationId)
 
                 $('#negotiation-id-text').val(negotiationId);
                 const userId = 'user123';  // Replace with actual user ID from your context
                 $('#loading-spinner').show();
                 switch (action) {
+                    case 'view':
+                        console.log('action', action);
+                        policyNegotiation(negotiationId, userId, action);
+                        break;
                     case 'offer':
                         policyNegotiation(negotiationId, userId, action);
                         break;
@@ -1650,10 +3458,49 @@
                     case 'download-pdf':
                         downloadNegotiationPdf(negotiationId);
                         break;
+
+                    case 'download-agreement':
+                        console.log('Download Agreement button clicked');
+                        console.log('negotiationId:', negotiationId);
+                        downloadNegotiationAgreement(negotiationId);
+                        break;
+
                 }
                 updateNegotiationsTable();
                 updateFinishedNegotiationsTable()
                 $('#loading-spinner').hide();
+            }
+
+
+
+            async function downloadNegotiationAgreement(negotiationId){
+                try {
+                    const endpointUrl = `downloadcontract?negotiation_id=${encodeURIComponent(negotiationId)}`;
+                    const response = await fetch(endpointUrl, {
+                        method: 'GET',
+                        headers: {
+                            'negotiationid': negotiationId
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        throw new Error(errText || 'Failed to download agreement');
+                    }
+
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `negotiation_agreement_${negotiationId}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                } catch (error) {
+                    console.error('Error downloading agreement:', error);
+                    alert('Failed to download the agreement PDF.');
+                }
             }
 
             function downloadNegotiationJson(negotiationId) {
@@ -1769,7 +3616,7 @@
                             });
                         }
 
-                                                 // Natural Language Document
+                        // Natural Language Document
                         doc.addPage();
                         doc.setFontSize(12);
                         doc.text("Natural Language Document:", 14, 15);
@@ -1830,7 +3677,9 @@
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'datacontrollersavesignature' %}",
-                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    headers: { 'X-CSRFToken': getCookie('csrftoken'),
+                    'negotiationid': $('#negotiation-id-text').val()
+                    },
                     data: { signature: signatureData },
                     success: function(data) {
                         console.log('Signature saved:', data);
@@ -1890,6 +3739,10 @@
                     handleButtonClick(this, event, 'request');
                 });
 
+                $('#negotiations-table').on('click', '.styled-button-view', function (event) {
+                    handleButtonClick(this, event, 'view');
+                });
+
                 $('#negotiations-table').on('click', '.styled-button-terminate', function (event) {
                     handleButtonClick(this, event, 'terminate');
                 });
@@ -1921,6 +3774,11 @@
                 $('#finished-negotiations-table').on('click', '.styled-button-download-pdf', function (event) {
                     handleButtonClick(this, event, 'download-pdf');
                 });
+
+                $('#finished-negotiations-table').on('click', '.styled-button-download-agreement', function (event) {
+                    handleButtonClick(this, event, 'download-agreement');
+                });
+
             }
 
 
@@ -1996,30 +3854,124 @@
             }
             // Function to offer/request negotiation
             function policyNegotiation(negotiationId, userId, type) {
-                console.log('policy negotiation')
                 $('#negotiation-id-text').val(negotiationId)
                 global_policy_type = type;
                 $('#loading-spinner').show();
-                makeAllInputsEditable();
+
+                // Set the flags BEFORE fetching data
+                if(type === 'view'){
+                    isReadOnlyMode = true;
+                    isViewMode = true; // User clicked "view" - no accept/reject allowed
+                    console.log('Setting view mode - compare buttons will be disabled');
+                } else {
+                    isReadOnlyMode = false;
+                    isViewMode = false; // Not in view mode - accept/reject allowed
+                    console.log('Setting edit mode for', type);
+                }
+
                 var endpointUrl = 'negotiationlastpolicy?negotiation_id=' + negotiationId;
                 $.ajax({
                     url: endpointUrl,
                     method: 'GET',
                     success: function(data) {
                         console.log('response from negotiation last policy', data);
+                        console.log('last policy is read only?', data.last_policy?.is_read_only);
                         if (data.last_policy)
                         {
                             data_temp = data.last_policy;
                         }
+                        if (data.last_policy?.is_read_only === true)
+                        {
+                            makeAllInputsReadOnly();
+                        } else {
+                            makeAllInputsEditable();
+                        }
                         global_provider_id = data_temp.provider_id;
                         global_consumer_id = data_temp.consumer_id;
-                        global_policy_id = data_temp._id
+                        global_policy_id = data_temp._id;
+                        global_contract_type = data_temp.contract_type || "dsa";
                         populateFormChanges(data);
+                        
+                        // Call appropriate function after form is populated to handle existing elements
+                        if(type === 'view'){
+                            makeAllInputsReadOnly();
+                            // Force re-render of agreement display to update button states
+                            if (AgreementApp && AgreementApp._rerender) {
+                                AgreementApp._rerender();
+                            }
+                            // Disable compare accept/reject buttons in view mode
+                            $('#compare-accept-button').prop('disabled', true);
+                            $('#compare-reject-button').prop('disabled', true);
+                        } else {
+                            // Force re-render of agreement display to update button states
+                            if (AgreementApp && AgreementApp._rerender) {
+                                AgreementApp._rerender();
+                            }
+                            // Enable compare accept/reject buttons in edit modes
+                            $('#compare-accept-button').prop('disabled', false);
+                            $('#compare-reject-button').prop('disabled', false);
+                        }
+                        
                         $('#modal').show();
                         $('#loading-spinner').hide();
                     },
                     error: function(error) {
                         console.log('Error:', error);
+                        $('#loading-spinner').hide();
+                    }
+                });
+            }
+
+            /**
+             * Retrieve the penultimate policy for the current negotiation and rehydrate the UI.
+             * The role stored in `global_policy_type` is deliberately left untouched so that the
+             * workflow (offer vs request) remains in the same context while the policy snapshot rolls back.
+             */
+            function penultimatePolicyNegotiation(negotiationId) {
+                if (!negotiationId) {
+                    alert('Negotiation id is missing; cannot revert changes.');
+                    return;
+                }
+
+                $('#loading-spinner').show();
+
+                $.ajax({
+                    url: `penultimatepolicydiff?negotiation_id=${negotiationId}`,
+                    method: 'GET',
+                    success: function(data) {
+                        const hasSnapshot = data && data.last_policy;
+                        if (!hasSnapshot) {
+                            alert('No earlier policy version could be located.');
+                            $('#loading-spinner').hide();
+                            return;
+                        }
+
+                        // Hydrate UI with the restored snapshot, including its diff metadata.
+                        populateFormChanges(data);
+
+                        const restoredPolicy = data.last_policy;
+                        global_policy_id = restoredPolicy._id;
+                        global_provider_id = restoredPolicy.provider_id;
+                        global_consumer_id = restoredPolicy.consumer_id;
+                        global_contract_type = restoredPolicy.contract_type || "dsa";
+
+                        window.changes = {};
+                        resetCompareModalContent();
+                        lastResolvedDiff = null;
+                        lastComparisonResponse = null;
+                        compareButton.prop('disabled', true).removeClass('compare-review-available').attr('title', '');
+                        $('#last-changes-button').prop('disabled', true);
+                        setDiffPending(false);
+                        AgreementVersions.pendingMerge = null;
+                        // Re-run the NLP aggregation so the textual agreement reflects the restored ODRL state.
+                        $('#nl').trigger('click');
+
+                        $('#modal').show();
+                        $('#loading-spinner').hide();
+                    },
+                    error: function(xhr) {
+                        const errorMsg = xhr?.responseJSON?.detail || 'Unable to load the previous policy version.';
+                        alert(errorMsg);
                         $('#loading-spinner').hide();
                     }
                 });
@@ -2051,6 +4003,7 @@
             }
 
             function getFormData() {
+                AgreementApp.syncCustomClauses();
                 // Assuming getValue() retrieves the selected values from the multi-select checkbox
                 var selectedValues = [];  // Array to hold selected values
 
@@ -2078,7 +4031,11 @@
                         type_of_data: getValue('#type-of-data'),
                         data_format: getValue('#data-format'),
                         data_size: getValue('#data-size'),
-                        tags: getValue('#tags')
+                        categories: getMultiSelectValues('#categories'),
+                        tags: getValue('#tags'),
+                        languages: getMultiSelectValues('#languages'),
+                        geographic_scope: getMultiSelectValues('#geographic-scope'),
+                        temporal_coverage: parseTemporalCoverageInput(),
                     },
                     _id: global_policy_id,
                     validity_period: getValue('#validity-period'),
@@ -2089,9 +4046,23 @@
                     provider_id: global_provider_id,
                     consumer_id: global_consumer_id,
                     negotiation_id: getValue('#negotiation-id-text'),
+                    contract_id:global_contract_id,
+                    contract_type: global_contract_type || "dsa",
                     title: getValue('#title'),
+
+                    //NEW: include any sections you’ve added dynamically
+                    odrl_policy_summary:get_odrl_policy_summary(),
+                    custom_arrangement_section: get_new_added_section(),
+                    definitions_section: get_definitions(),
+                    custom_definitions_section: get_custom_definitions(),
+                    custom_arrangement_removed: get_removed_custom_sections(),
+                    custom_definitions_removed: get_removed_custom_definitions(),
+                    contract_info: AgreementApp.formate_agreement_data,
+                    agreement_payload_current: (window.agreementPayloadBaselineObj || null)
+
                 };
                 console.log('frm', frm);
+                console.log('frm temporal_coverage', frm.resource_description_object.temporal_coverage);
                 console.log('negotiation_id', frm.negotiation_id);
                 console.log('frm._id', frm._id);
                 return frm;
@@ -2100,6 +4071,15 @@
             async function populateFormChanges(data) {
                 console.log('policy data', data)
                 unmarkChanged();
+                try {
+                    if (data && data.last_policy && data.changes) {
+                        window._lastNegotiationDiff = data; // store full diff payload for later (ODRL viewer)
+                        const hasOdrlData = !!(data.changes?.odrl_policy?.data);
+                        $('#viewOdrlDiffButton').prop('disabled', !hasOdrlData)
+                                                .css('opacity', hasOdrlData? '1':'0.5')
+                                                .css('cursor', hasOdrlData? 'pointer':'not-allowed');
+                    }
+                } catch(e) { /* no-op */ }
                 if (data.last_policy)
                 {
                     changes = data.changes;
@@ -2109,8 +4089,14 @@
                 {
                     changes = {};
                 }
+                global_contract_id = data.contract_id || null;
+                console.log('global_contract_id:', global_contract_id);
+                if (data.agreement_data && typeof data.agreement_data === 'object') {
+                    AgreementApp.formate_agreement_data = data.agreement_data;
+                    AgreementApp._rerender();
+                }
                 try {
-                    $("#fieldset-odrl").find('.form-card:gt(0)').remove();
+                    $("#fieldset-odrl").find('.form-card').not('[style*="display: none"]').remove();
                     var jsonData = data.odrl_policy.data;
                     console.log('jsonData', jsonData);
                     if (Array.isArray(jsonData)) {
@@ -2160,6 +4146,7 @@
                             $(this).css('color', '').attr('title', '');
                         }
                     });
+                    $('#last-changes-button').prop('disabled', true);
                 }
 
                 function markChanged(selector, changeKey) {
@@ -2174,8 +4161,10 @@
                         }
                     }
 
-                    $(selector).css('color', 'red');
-                    $(selector).attr('title', `Previous value: ${changeCheck.from}`);
+                    const $field = $(selector);
+                    const color = selector === '#nlpInput' ? '#000' : 'red';
+                    $field.css('color', color);
+                    $field.attr('title', `Previous value: ${changeCheck.from}`);
                 }
 
                 function handleChanges(changes) {
@@ -2185,8 +4174,8 @@
                         const text1 = changes['natural_language_document'].from;
                         const text2 = changes['natural_language_document'].to;
 
-                        // Make the button visible
-                        $('.last-changes-button').show();
+                        // Enable the button
+                        $('#last-changes-button').prop('disabled', false);
 
                         // Call the AJAX request
                         $.ajax({
@@ -2198,6 +4187,9 @@
                                 'csrfmiddlewaretoken': '{{ csrf_token }}'
                             },
                             success: function(data) {
+
+                                // console.log(`data.diff`,data.diff)
+
                                 $('#result').html(data.diff);
                             }
                         });
@@ -2210,6 +4202,7 @@
 
                 $('#price').val(data.resource_description_object.price);
                 markChanged('#price', 'resource_description_object.price');
+
 
                 $('#uri').val(data.resource_description_object.uri);
                 markChanged('#uri', 'resource_description_object.uri');
@@ -2246,10 +4239,37 @@
                 markChanged('#data-size', 'resource_description_object.data_size');
 
                 $('#validity-period').val(data.validity_period);
-                markChanged('#validity-period', 'validity_period');
+                markChanged('#validity-period', 'data.validity_period');
 
                 $('#tags').val(data.resource_description_object.tags);
                 markChanged('#tags', 'resource_description_object.tags');
+
+                setUpcastMultiSelectValues(
+                    '#categories',
+                    data.resource_description_object.categories,
+                    upcastReferenceIndex.categories
+                );
+                markChanged('#categories', 'resource_description_object.categories');
+
+                setUpcastMultiSelectValues(
+                    '#languages',
+                    data.resource_description_object.languages,
+                    upcastReferenceIndex.languages
+                );
+                markChanged('#languages', 'resource_description_object.languages');
+
+                setUpcastMultiSelectValues(
+                    '#geographic-scope',
+                    data.resource_description_object.geographic_scope,
+                    upcastReferenceIndex.geographicScope
+                );
+                markChanged('#geographic-scope', 'resource_description_object.geographic_scope');
+
+                const temporalCoverage = Array.isArray(data.resource_description_object.temporal_coverage)
+                    ? data.resource_description_object.temporal_coverage
+                    : [];
+                $('#temporal-coverage').val(formatTemporalCoverageField(temporalCoverage));
+                markChanged('#temporal-coverage', 'resource_description_object.temporal_coverage');
 
                 // Populate JSON inputs
                 $('#odrlInput').val(JSON.stringify(data.odrl_policy, null, 2));
@@ -2262,6 +4282,19 @@
                 $('#dpwInput').prop('readonly', true);
                 markChanged('#dpwInput', 'data_processing_workflow_object');
 
+                AgreementVersions.currentBaseline = data.natural_language_document || '';
+                AgreementVersions.currentEdited = $('#nlpInput').val();
+                pendingRegenerationRequired = false;
+
+                if (data.contract_id) {
+                    setTimeout(() => {
+                        captureAgreementGenerationBaseline();
+                    }, 0);
+                } else {
+                    agreementPayloadBaseline = null;
+                    setAgreementGenerationEnabled(true);
+                }
+
                 // Example for selecting options dynamically (if needed)
                 // var selectElement = $('#data_processing_workflow_object');
                 // selectElement.empty();
@@ -2272,7 +4305,7 @@
 
             function populateForm(data) {
                 try {
-                    $("#fieldset-odrl").find('.form-card:gt(0)').remove();
+                    $("#fieldset-odrl").find('.form-card').not('[style*="display: none"]').remove();
                     var jsonData = data.last_policy.odrl_policy.data;
                     if (Array.isArray(jsonData)) {
                         // Iterate over each dictionary in the array with a delay
@@ -2285,6 +4318,13 @@
                 } catch (error) {
                     alert('populateForm error: ' + error);
                     console.log(error)
+                }
+
+                global_contract_type = data.last_policy.contract_type || "dsa";
+                global_contract_id = data.last_policy.contract_id || null;
+                if (data.last_policy.agreement_data && typeof data.last_policy.agreement_data === 'object') {
+                    AgreementApp.formate_agreement_data = data.last_policy.agreement_data;
+                    AgreementApp._rerender();
                 }
 
                 $('#title').val(data.resource_description_object.title);
@@ -2307,12 +4347,35 @@
                 $('#data-format').val(data.resource_description_object.data_format);
                 $('#data-size').val(data.resource_description_object.data_size);
                 $('#validity-period').val(data.validity_period); // Assuming validity_period is at the top level
+                setUpcastMultiSelectValues(
+                    '#categories',
+                    data.resource_description_object.categories,
+                    upcastReferenceIndex.categories
+                );
                 $('#tags').val(data.resource_description_object.tags);
+                setUpcastMultiSelectValues(
+                    '#languages',
+                    data.resource_description_object.languages,
+                    upcastReferenceIndex.languages
+                );
+                setUpcastMultiSelectValues(
+                    '#geographic-scope',
+                    data.resource_description_object.geographic_scope,
+                    upcastReferenceIndex.geographicScope
+                );
+                const temporalCoverage = Array.isArray(data.resource_description_object.temporal_coverage)
+                    ? data.resource_description_object.temporal_coverage
+                    : [];
+                $('#temporal-coverage').val(formatTemporalCoverageField(temporalCoverage));
 
                 // Populate JSON inputs
                 $('#odrlInput').val(JSON.stringify(data.odrl_policy, null, 2));
                 $('#nlpInput').val(data.natural_language_document);
                 $('#dpwInput').val(JSON.stringify(data.data_processing_workflow_object, null, 2));
+
+                AgreementVersions.currentBaseline = data.natural_language_document || '';
+                AgreementVersions.currentEdited = $('#nlpInput').val();
+                pendingRegenerationRequired = false;
             }
 
         
@@ -2384,6 +4447,658 @@
                 }
             });
 
+            const AgreementVersions = {
+                currentBaseline: '',
+                currentEdited: '',
+                pendingMerge: null,
+            };
+            let pendingRegenerationRequired = false;
+            let agreementPayloadBaseline = null;
+            window.changes = window.changes || {};
+            let isAutoHydratingAgreement = false;
+
+
+            function gatherAgreementData(triggeredByAuto) {
+                const jsonData = getFormData();
+
+                const headers = {
+                        'negotiationid': $('#negotiation-id-text').val(),
+                        'policyid': global_policy_id,
+                        'type': $('#user-role-text').val() === 'consumer' ? 'request' : 'offer',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                };
+
+                return $.ajax({
+                        url: '{% url "datacontrollercreateagreement" %}',
+                        type: 'POST',
+                        headers: headers,
+                        contentType: 'application/json',
+                        data: JSON.stringify(jsonData),
+
+                        success: function (response) {
+                          console.log('Policy creation successful:', response);
+                          console.log('Natural language document:', response.natural_language_document);
+
+                          $('#nlpInput').val(response.natural_language_document);
+
+                          natural_language_document = getValue('#nlpInput');
+
+                          // Store agreement data
+                          AgreementApp.formate_agreement_data = response.agreement_data;
+                          AgreementVersions.currentBaseline = response.natural_language_document || '';
+                          AgreementVersions.currentEdited = response.natural_language_document || '';
+                          pendingRegenerationRequired = false;
+                          if (response.agreement_payload_current) {
+                              captureAgreementGenerationBaseline(response.agreement_payload_current, false);
+                              const hasChanges = response.agreement_payload_changes && Object.keys(response.agreement_payload_changes).length > 0;
+                              setAgreementGenerationEnabled(hasChanges);
+                          } else {
+                              agreementPayloadBaseline = null;
+                              setAgreementGenerationEnabled(true);
+                          }
+
+                          // Render agreement
+                          const container = document.getElementById("agreementDisplay");
+                          if (!container) {
+                            console.error("#agreementDisplay container not found");
+                            return;
+                          }
+
+                          AgreementApp._rerender();
+                          if (triggeredByAuto) {
+                            setAgreementGenerationEnabled(true);
+                          }
+                          updateTextEditedBadge();
+                        },
+
+                        error: function (xhr, status, error) {
+                          console.error('Error creating policy:', error);
+                          alert("Failed to gather all information. Please try again.");
+                        },
+                        complete: function () {
+                          if (triggeredByAuto) {
+                            isAutoHydratingAgreement = false;
+                          }
+                        }
+                    });
+            }
+
+            // Make refresh helper globally visible
+            window.refreshAgreementViewAfterDeletion = function () {
+                if (window.isReadOnlyMode) return;
+                if (isAutoHydratingAgreement) return;
+                isAutoHydratingAgreement = true;
+                gatherAgreementData(true);
+            };
+
+            // View ODRL Diffs
+            $('#viewOdrlDiffButton').on('click', function () {
+                const diff = window._lastNegotiationDiff;
+                if (!diff || !diff.changes) { alert('No negotiation diff loaded.'); return; }
+                const odrlChanges = (diff.changes.odrl_policy || {}).data || null;
+                if (!odrlChanges) { alert('No ODRL rule changes were detected.'); return; }
+
+                // Call backend text diff to render consistent HTML
+                try {
+                    const previousText = JSON.stringify(odrlChanges.from || [], null, 2);
+                    const currentText = JSON.stringify(odrlChanges.to || [], null, 2);
+
+                    $('#loading-spinner').show();
+                    $.ajax({
+                        url: '{% url "compare_last_changes" %}',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ previous_text: previousText, current_text: currentText, normalize_unicode: true }),
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                        success: function (resp) {
+                            const baselineHtml = resp.baseline_html || '';
+                            const regeneratedHtml = resp.regenerated_html || '';
+                            $('#odrl-prev-box').html(baselineHtml || previousText.replace(/</g,'&lt;'));
+                            $('#odrl-next-box').html(regeneratedHtml || currentText.replace(/</g,'&lt;'));
+                            $('#odrl-diff-modal').show();
+                        },
+                        error: function () {
+                            alert('Unable to compute ODRL diffs.');
+                        },
+                        complete: function () { $('#loading-spinner').hide(); }
+                    });
+                } catch (e) {
+                    console.error('ODRL diff request build failed:', e);
+                    alert('Failed to prepare ODRL differences.');
+                }
+            });
+
+            // Close ODRL diff modal
+            $(document).on('click', '.odrl-diff-close', function () { $('#odrl-diff-modal').hide(); });
+            $(document).on('click', '#odrl-diff-modal', function (e) {
+                if (e.target === this) { $('#odrl-diff-modal').hide(); }
+            });
+
+            // ---------- Custom Definition & Clause Diff Helpers ----------
+            function ensureQuoted(s) {
+                try { return JSON.stringify(String(s ?? '')); } catch(e) { return '""'; }
+            }
+
+            function joinArray(val) {
+                if (Array.isArray(val)) return val.join('\n');
+                return val == null ? '' : String(val);
+            }
+
+            function buildDefinitionDiffTexts(diff) {
+                const node = (diff?.changes?.odrl_policy?.custom_definitions) || (diff?.changes?.custom_definitions);
+                if (!node) return null;
+                const fromObj = (node.from && typeof node.from === 'object') ? node.from : {};
+                const toObj = (node.to && typeof node.to === 'object') ? node.to : {};
+                const keySet = new Set([...Object.keys(fromObj || {}), ...Object.keys(toObj || {})]);
+                const prevLines = [];
+                const nextLines = [];
+                [...keySet].sort().forEach(k => {
+                    const rec = (toObj && toObj[k]) || (fromObj && fromObj[k]) || null;
+                    let prev = '';
+                    let next = '';
+                    if (rec && typeof rec === 'object') {
+                        prev = rec.from ?? '';
+                        next = rec.to ?? '';
+                    } else {
+                        // fallback if backend returned direct strings
+                        prev = (fromObj && typeof fromObj[k] === 'string') ? fromObj[k] : '';
+                        next = (toObj && typeof toObj[k] === 'string') ? toObj[k] : '';
+                    }
+                    prevLines.push(`${k}: ${ensureQuoted(prev)}`);
+                    nextLines.push(`${k}: ${ensureQuoted(next)}`);
+                });
+                return { previousText: prevLines.join('\n'), currentText: nextLines.join('\n') };
+            }
+
+            function buildClauseDiffTexts(diff) {
+                const node = (diff?.changes?.odrl_policy?.custom_arrangement_section) || (diff?.changes?.custom_arrangement_section);
+                if (!node) return null;
+                const fromObj = (node.from && typeof node.from === 'object') ? node.from : {};
+                const toObj = (node.to && typeof node.to === 'object') ? node.to : {};
+                const keySet = new Set([...Object.keys(fromObj || {}), ...Object.keys(toObj || {})]);
+                const prevLines = [];
+                const nextLines = [];
+                [...keySet].sort().forEach(k => {
+                    const rec = (toObj && toObj[k]) || (fromObj && fromObj[k]) || null;
+                    let prev = '';
+                    let next = '';
+                    if (rec && typeof rec === 'object') {
+                        prev = joinArray(rec.from);
+                        next = joinArray(rec.to);
+                    } else {
+                        // fallback if backend returned direct arrays/strings
+                        prev = joinArray(fromObj && fromObj[k]);
+                        next = joinArray(toObj && toObj[k]);
+                    }
+                    prevLines.push(`${k}: ${ensureQuoted(prev)}`);
+                    nextLines.push(`${k}: ${ensureQuoted(next)}`);
+                });
+                return { previousText: prevLines.join('\n'), currentText: nextLines.join('\n') };
+            }
+
+            window.openCustomDefinitionDiff = function openCustomDefinitionDiff() {
+                const diff = window._lastNegotiationDiff;
+                if (!diff || !diff.changes) { alert('No negotiation diff loaded.'); return; }
+                const texts = buildDefinitionDiffTexts(diff);
+                if (!texts) { alert('No custom definition changes were detected.'); return; }
+                $('#loading-spinner').show();
+                $.ajax({
+                    url: '{% url "compare_last_changes" %}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ previous_text: texts.previousText, current_text: texts.currentText, normalize_unicode: true }),
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    success: function (resp) {
+                        const baselineHtml = resp.baseline_html || '';
+                        const regeneratedHtml = resp.regenerated_html || '';
+                        $('#def-prev-box').html(baselineHtml || texts.previousText.replace(/</g,'&lt;'));
+                        $('#def-next-box').html(regeneratedHtml || texts.currentText.replace(/</g,'&lt;'));
+                        $('#definition-diff-modal').show();
+                    },
+                    error: function () { alert('Unable to compute Definition diffs.'); },
+                    complete: function () { $('#loading-spinner').hide(); }
+                });
+            }
+
+            window.openCustomClauseDiff = function openCustomClauseDiff() {
+                const diff = window._lastNegotiationDiff;
+                if (!diff || !diff.changes) { alert('No negotiation diff loaded.'); return; }
+                const texts = buildClauseDiffTexts(diff);
+                if (!texts) { alert('No custom clause changes were detected.'); return; }
+                $('#loading-spinner').show();
+                $.ajax({
+                    url: '{% url "compare_last_changes" %}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ previous_text: texts.previousText, current_text: texts.currentText, normalize_unicode: true }),
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    success: function (resp) {
+                        const baselineHtml = resp.baseline_html || '';
+                        const regeneratedHtml = resp.regenerated_html || '';
+                        $('#clause-prev-box').html(baselineHtml || texts.previousText.replace(/</g,'&lt;'));
+                        $('#clause-next-box').html(regeneratedHtml || texts.currentText.replace(/</g,'&lt;'));
+                        $('#clause-diff-modal').show();
+                    },
+                    error: function () { alert('Unable to compute Clause diffs.'); },
+                    complete: function () { $('#loading-spinner').hide(); }
+                });
+            }
+
+            // Close Definition and Clause diff modals
+            $(document).on('click', '.def-diff-close', function () { $('#definition-diff-modal').hide(); });
+            $(document).on('click', '.clause-diff-close', function () { $('#clause-diff-modal').hide(); });
+            $(document).on('click', '#definition-diff-modal', function (e) { if (e.target === this) { $('#definition-diff-modal').hide(); } });
+            $(document).on('click', '#clause-diff-modal', function (e) { if (e.target === this) { $('#clause-diff-modal').hide(); } });
+
+
+
+
+
+            const compareButton = $('#compare-last-changes-button');
+            const compareModal = $('#compare-last-changes-modal');
+            const compareDiffBox = $('#compare-diff-box');
+            const compareSummaryPane = $('#compare-last-changes-modal .compare-summary-pane');
+            const compareSummaryList = $('#compare-change-summary');
+            const compareSummaryEmpty = $('#compare-summary-empty');
+            const compareCountLabel = $('#compare-change-count');
+            const compareAcceptButton = $('#compare-accept-button');
+            const compareRejectButton = $('#compare-reject-button');
+            const compareCloseButtons = compareModal.find('.compare-close');
+            const mergeModal = $('#merge-modal');
+            const mergeCloseButton = mergeModal.find('.merge-close');
+            const mergeBaselineText = $('#merge-baseline-text');
+            const mergeRegeneratedText = $('#merge-regenerated-text');
+            const mergeAcceptRegeneratedButton = $('#merge-accept-regenerated');
+            const mergeCancelRegeneratedButton = $('#merge-cancel-regenerated');
+            const agreementTextarea = $('#nlpInput');
+            let compareState = {
+                previousText: '',
+                currentText: '',
+                diffHtml: '',
+                changes: [],
+                changeCount: null,
+                response: null
+            };
+            let isCompareDiffPending = false;
+            let lastResolvedDiff = null;
+            let lastComparisonResponse = null;
+
+            function updateCompareButtonState() {
+                if (isCompareDiffPending) {
+                    compareButton
+                        .prop('disabled', false)
+                        .removeClass('compare-review-available')
+                        .attr('title', 'Review pending agreement changes');
+                } else if (lastResolvedDiff) {
+                    compareButton
+                        .prop('disabled', false)
+                        .addClass('compare-review-available')
+                        .attr('title', 'Reopen the last comparison and change your decision if needed.');
+                } else {
+                    compareButton
+                        .prop('disabled', true)
+                        .removeClass('compare-review-available')
+                        .attr('title', '');
+                }
+            }
+
+            function setDiffPending(pending) {
+                const isPending = !!pending;
+                isCompareDiffPending = isPending;
+                if (isPending) {
+                    lastResolvedDiff = null;
+                    lastComparisonResponse = null;
+                }
+                agreementGenerationButton.prop('disabled', isPending);
+                agreementGenerationButton.attr('title', isPending ? 'Resolve pending text changes before generating the agreement.' : '');
+                agreementTextarea.prop('readonly', isPending);
+                agreementTextarea.toggleClass('readonly-lock', isPending);
+                updateCompareButtonState();
+            }
+
+            setDiffPending(false);
+
+            function resetCompareState() {
+                compareState = {
+                    previousText: '',
+                    currentText: '',
+                    diffHtml: '',
+                    changes: [],
+                    changeCount: null,
+                    response: null
+                };
+                lastResolvedDiff = null;
+                lastComparisonResponse = null;
+                isCompareDiffPending = false;
+                AgreementVersions.pendingMerge = null;
+                updateCompareButtonState();
+                $('#last-changes-button').prop('disabled', true);
+                resetCompareModalContent();
+                compareModal.hide();
+                closeMergeModal(true);
+                makeAllInputsEditable();
+            }
+
+            function openMergeModal(mergeData) {
+                if (!mergeData) {
+                    closeMergeModal(true);
+                    return;
+                }
+
+                const baselineText = mergeData.baselineText || '';
+                const regeneratedText = mergeData.regeneratedText || '';
+                mergeBaselineText.html('<p class="merge-loading">Loading differences…</p>');
+                mergeRegeneratedText.html('<p class="merge-loading">Loading differences…</p>');
+
+                mergeAcceptRegeneratedButton.prop('disabled', true);
+
+                mergeModal.show();
+
+                $.ajax({
+                    url: '{% url "compare_last_changes" %}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        previous_text: baselineText,
+                        current_text: regeneratedText,
+                        normalize_unicode: true
+                    }),
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        const baselineHtml = response.baseline_html || '';
+                        const regeneratedHtml = response.regenerated_html || '';
+
+                        if (baselineHtml) {
+                            mergeBaselineText.html(baselineHtml);
+                        } else {
+                            mergeBaselineText.text(baselineText);
+                        }
+
+                        if (regeneratedHtml) {
+                            mergeRegeneratedText.html(regeneratedHtml);
+                        } else {
+                            mergeRegeneratedText.text(regeneratedText);
+                        }
+
+                        mergeAcceptRegeneratedButton.prop('disabled', false);
+                    },
+                    error: function () {
+                        const fallbackOps = computeDiffOps(baselineText, regeneratedText);
+                        mergeBaselineText.html(renderDiffHtml(fallbackOps, 'baseline', baselineText));
+                        mergeRegeneratedText.html(renderDiffHtml(fallbackOps, 'regenerated', regeneratedText));
+                        mergeAcceptRegeneratedButton.prop('disabled', false);
+                    }
+                });
+            }
+
+            function closeMergeModal(force = false) {
+                //if (AgreementVersions.pendingMerge && !force) {
+                //    alert('Please click Accept regenerated contract to continue.');
+                //    return;
+                //}
+                mergeModal.hide();
+            }
+
+            mergeCloseButton.on('click', function () { closeMergeModal(); });
+            mergeModal.on('click', function (event) {
+                if (event.target === this) {
+                    closeMergeModal();
+                }
+            });
+
+            function applyMergeSelection(chosenText) {
+                $('#nlpInput').val(chosenText);
+                AgreementVersions.currentBaseline = chosenText;
+                AgreementVersions.currentEdited = chosenText;
+                pendingRegenerationRequired = false;
+                AgreementVersions.pendingMerge = null;
+                window.changes = {};
+                closeMergeModal(true);
+                resetCompareState();
+                const baselinePayload = AgreementApp?.response_from_created_agreement?.agreement_payload_current;
+                captureAgreementGenerationBaseline(baselinePayload);
+                updateTextEditedBadge();
+                if (window._sendAfterRegenerate) {
+                    try { window._sendAfterRegenerate = false; } catch(e){}
+                    doSendNow();
+                }
+            }
+
+            mergeAcceptRegeneratedButton.on('click', function () {
+
+                const mergeData = AgreementVersions.pendingMerge;
+                const chosenText = getEditorPlainText(mergeRegeneratedText);
+                if (!mergeData) {
+                    closeMergeModal();
+                    return;
+                }
+                //if (!confirm('Have you reviewed the differences and made any needed edits?')) {
+                //    return;
+                //}
+                applyMergeSelection(chosenText);
+            });
+
+            mergeCancelRegeneratedButton.on('click', function () {
+                AgreementVersions.pendingMerge = null;
+                setDiffPending(false);
+                closeMergeModal(true);
+            });
+
+            function resetCompareModalContent(messageClass, messageText) {
+                compareDiffBox
+                    .removeClass('compare-diff-loading compare-diff-error')
+                    .empty();
+                compareSummaryList.empty();
+                compareSummaryList.scrollTop(0);
+                compareCountLabel.text('');
+                compareSummaryPane.removeClass('has-changes');
+                compareSummaryEmpty.show();
+                if (messageText) {
+                    compareDiffBox
+                        .addClass(messageClass || '')
+                        .html(messageText);
+                }
+                compareAcceptButton.prop('disabled', true);
+                compareRejectButton.prop('disabled', true);
+            }
+
+            function populateCompareModal(response) {
+                compareState.response = response || {};
+                compareState.diffHtml = compareState.response.diff_html || '';
+                compareState.changes = compareState.response.changes || [];
+                compareState.changeCount = compareState.response.change_segments || (compareState.response.stats ? compareState.response.stats.segments : null);
+
+                compareDiffBox
+                    .removeClass('compare-diff-loading compare-diff-error')
+                    .html(compareState.diffHtml || '<p>No textual differences were detected.</p>')
+                    .scrollTop(0);
+
+                compareSummaryList.empty();
+                if (Array.isArray(compareState.changes) && compareState.changes.length) {
+                    compareState.changes.forEach(function (item) {
+                        $('<li/>').text(item).appendTo(compareSummaryList);
+                    });
+                    compareSummaryPane.addClass('has-changes');
+                    compareSummaryEmpty.hide();
+                    compareSummaryList.scrollTop(0);
+                } else {
+                    compareSummaryPane.removeClass('has-changes');
+                    compareSummaryEmpty.show();
+                }
+
+                if (compareState.changeCount !== null && compareState.changeCount !== undefined) {
+                    compareCountLabel.text('Changes: ' + compareState.changeCount);
+                } else {
+                    compareCountLabel.text('');
+                }
+
+                // Enable buttons for incoming changes, but disable in view mode
+                if (isViewMode) {
+                    compareAcceptButton.prop('disabled', true);
+                    compareRejectButton.prop('disabled', true);
+                } else {
+                    compareAcceptButton.prop('disabled', false);
+                    compareRejectButton.prop('disabled', false);
+                }
+            }
+
+            function closeCompareModal() {
+                compareModal.hide();
+            }
+
+            compareCloseButtons.on('click', closeCompareModal);
+            compareModal.on('click', function (event) {
+                if (event.target === this) {
+                    closeCompareModal();
+                }
+            });
+
+            $(document).on('keydown', function (event) {
+                if (event.key === 'Escape' && compareModal.is(':visible')) {
+                    closeCompareModal();
+                }
+            });
+
+            compareButton.on('click', function () {
+                if (compareButton.prop('disabled')) {
+                    return;
+                }
+
+                if (isCompareDiffPending) {
+                    var naturalLanguageChange = (window.changes || {}).natural_language_document;
+                    if (!naturalLanguageChange) {
+                        setDiffPending(false);
+                        return;
+                    }
+
+                    compareState.previousText = naturalLanguageChange.from || '';
+                    compareState.currentText = naturalLanguageChange.to || '';
+                    compareModal.show();
+                    resetCompareModalContent('compare-diff-loading', '<p>Loading comparison…</p>');
+
+                    $.ajax({
+                        url: '{% url "compare_last_changes" %}',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            previous_text: compareState.previousText,
+                            current_text: compareState.currentText,
+                            normalize_unicode: true
+                        }),
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        success: function (response) {
+                            lastComparisonResponse = response;
+                            lastResolvedDiff = null;
+                            populateCompareModal(response);
+                        },
+                        error: function (xhr, status) {
+                            console.error('Failed to fetch comparison diff:', status);
+                            resetCompareModalContent('compare-diff-error', '<p>Unable to load comparison view. Please try again later.</p>');
+                        }
+                    });
+                    return;
+                }
+
+                if (lastResolvedDiff) {
+                    compareState.previousText = lastResolvedDiff.previousText || '';
+                    compareState.currentText = lastResolvedDiff.currentText || '';
+                    const reopenPayload = lastResolvedDiff.response || lastComparisonResponse || {
+                        diff_html: compareState.diffHtml,
+                        changes: compareState.changes,
+                        change_segments: compareState.changeCount
+                    };
+                    compareModal.show();
+                    resetCompareModalContent();
+                    populateCompareModal(reopenPayload);
+                    return;
+                }
+            });
+
+            compareAcceptButton.on('click', function () {
+                const finalText = compareState.currentText;
+                if (finalText === undefined || finalText === null) {
+                    return;
+                }
+                if (!confirm('Accepting these revisions will permanently apply them to the agreement. This comparison view cannot be reopened afterwards. Do you wish to proceed?')) {
+                    return;
+                }
+                $('#nlpInput').val(finalText).trigger('input');
+                if (window.changes && window.changes.natural_language_document) {
+                    delete window.changes.natural_language_document;
+                }
+                window.changes = {};
+                lastResolvedDiff = null;
+                lastComparisonResponse = null;
+                compareButton
+                    .prop('disabled', true)
+                    .removeClass('compare-review-available')
+                    .attr('title', '');
+                pendingRegenerationRequired = false;
+                $('#last-changes-button').prop('disabled', true);
+                AgreementVersions.currentBaseline = $('#nlpInput').val();
+                AgreementVersions.currentEdited = $('#nlpInput').val();
+                AgreementVersions.pendingMerge = null;
+                setDiffPending(false);
+                resetCompareModalContent();
+                closeCompareModal();
+                updateCompareButtonState();
+                makeAllInputsEditable();
+            });
+
+            compareRejectButton.on('click', function () {
+                if (compareState.previousText === undefined || compareState.previousText === null) {
+                    return;
+                }
+                if (!confirm('Rejecting these revisions will restore the previous policy version and discard the current edits. This comparison view cannot be reopened afterwards. Do you wish to proceed?')) {
+                    return;
+                }
+                const negotiationId = $('#negotiation-id-text').val();
+                if (!negotiationId) {
+                    alert('Negotiation id is missing; cannot revert changes.');
+                    return;
+                }
+                closeCompareModal();
+                penultimatePolicyNegotiation(negotiationId);
+                pendingRegenerationRequired = true;
+                makeAllInputsEditable();
+            });
+
+            const lastChangesButtonEl = document.getElementById('last-changes-button');
+            if (lastChangesButtonEl) {
+                const observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (mutation) {
+                        if (mutation.attributeName === 'disabled') {
+                            if (lastChangesButtonEl.disabled) {
+                                resetCompareModalContent();
+                                setDiffPending(false);
+                            } else {
+                                updateCompareButtonState();
+                            }
+                        }
+                    });
+                });
+                observer.observe(lastChangesButtonEl, { attributes: true });
+            }
+
+            $(document).ajaxSuccess(function (event, xhr, settings) {
+                if (!settings || !settings.url) {
+                    return;
+                }
+                if (settings.url.indexOf('{% url "get_text_diff" %}') !== -1) {
+                    var naturalLanguageChange = (window.changes || {}).natural_language_document;
+                    if (naturalLanguageChange && (naturalLanguageChange.from !== undefined || naturalLanguageChange.to !== undefined)) {
+                        compareState.previousText = naturalLanguageChange.from || '';
+                        compareState.currentText = naturalLanguageChange.to || '';
+                        setDiffPending(true);
+                    } else {
+                        setDiffPending(false);
+                    }
+                }
+            });
 
             const selectedNegotiationId = "{{ selected_negotiation_id|default:'' }}";
             if (selectedNegotiationId) {
@@ -2406,6 +5121,8 @@
                         global_policy_id = data.last_policy._id;
                         global_provider_id = data.last_policy.provider_id;
                         global_consumer_id = data.last_policy.consumer_id;
+                        global_contract_type = data.last_policy.contract_type || "dsa";
+                        global_contract_id = data.last_policy.contract_id || null;
 
                         populateFormChanges(data);
                         $('#modal').show();

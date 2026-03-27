@@ -110,6 +110,7 @@ class UpcastPolicyObject(MongoObject):
     resource_description_object: UpcastResourceDescriptionObject
     odrl_policy: Dict
     negotiation_id: Optional[object] = None
+    is_read_only: bool = Field(default=False, description="Indicates whether the policy is locked for editing.")
     created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
 

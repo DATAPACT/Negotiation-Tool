@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/"
+    xml:base="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dct="http://purl.org/dc/terms/"
+    xmlns:edam="http://edamontology.org/"
+    xmlns:dpv="https://w3id.org/dpv/owl#"
+    xmlns:pd="https://w3id.org/dpv/pd/owl#"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2/">
+
+  <!-- Ontology header -->
+  <owl:Ontology rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf">
+    <owl:imports rdf:resource="https://w3id.org/dpv/owl"/>
+    <owl:imports rdf:resource="https://w3id.org/dpv/pd/owl"/>
+    <owl:imports rdf:resource="http://www.w3.org/ns/odrl/2/"/>
+    <dct:creator>Genomics Ontology</dct:creator>
+    <dct:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-08-14</dct:created>
+  </owl:Ontology>
+
+  <!-- ==== EDAM Data Concepts ==== -->
+
+    <rdf:Description rdf:about="http://edamontology.org/data_2977">
+    <rdfs:label>Nucleic acid sequence</rdfs:label>
+    <rdf:type rdf:resource="http://edamontology.org/Genetic"/>
+    <rdfs:subClassOf rdf:resource="http://edamontology.org/Genetic"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://edamontology.org/data_3498">
+    <rdfs:label>Sequence variations</rdfs:label>
+    <rdf:type rdf:resource="http://edamontology.org/Genetic"/>
+    <rdfs:subClassOf rdf:resource="http://edamontology.org/Genetic"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://edamontology.org/data_3914">
+    <rdfs:label>Quality control report</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://edamontology.org/data_1383">
+    <rdfs:label>Nucleic acid sequence alignment</rdfs:label>
+    <rdf:type rdf:resource="http://edamontology.org/Genetic"/>
+    <rdfs:subClassOf rdf:resource="http://edamontology.org/Genetic"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://edamontology.org/data_3917">
+    <rdfs:label>Count per genomic region matrix</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://edamontology.org/data_2914">
+    <rdfs:label>Sequence features metadata</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+  </rdf:Description>
+
+  <owl:Class rdf:about="http://edamontology.org/Genetic">
+	<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Data"/>
+  </owl:Class>
+
+
+
+  <!-- ==== EDAM and NHRF specific Operations mapped to DPV ==== -->
+
+   <!-- 1. Sequencing quality control -->
+  <rdf:Description rdf:about="http://edamontology.org/operation_3218">
+    <rdfs:label>Sequencing quality control</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+  </rdf:Description>
+
+  <!-- 2. Trimming -->
+  <rdf:Description rdf:about="http://edamontology.org/operation_3192">
+    <rdfs:label>Trimming</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Modify"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Modify"/>
+  </rdf:Description>
+
+  <!-- 3. Alignment -->
+  <rdf:Description rdf:about="http://edamontology.org/operation_3198">
+    <rdfs:label>Alignment</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+  </rdf:Description>
+
+  <!-- 4. Variant Calling -->
+  <rdf:Description rdf:about="http://edamontology.org/operation_3227">
+    <rdfs:label>Variant calling</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+  </rdf:Description>
+
+  <!-- 5. Variant filtering -->
+  <rdf:Description rdf:about="http://edamontology.org/operation_3675">
+    <rdfs:label>Variant filtering</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Modify"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Modify"/>
+  </rdf:Description>
+
+  <!-- 6. Variant classification -->
+  <rdf:Description rdf:about="http://edamontology.org/operation_3225">
+    <rdfs:label>Variant classification</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+  </rdf:Description>
+  
+   <!-- 7. Somatic preprocessing & alignment -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/SomaticPreprocessingAndAlignment">
+    <rdfs:label>Somatic Preprocessing and Alignment</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+  </rdf:Description>
+  
+   <!-- 8. Somatic Variant Calling -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/SomaticVariantCalling">
+    <rdfs:label>Somatic Variant Calling</rdfs:label>
+    <rdf:type rdf:resource="http://edamontology.org/operation_3227"/>
+    <rdfs:subClassOf rdf:resource="http://edamontology.org/operation_3227"/>
+  </rdf:Description>
+  
+  <!-- 9. Somatic Variant Filtering -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/SomaticVariantFiltering">
+    <rdfs:label>Somatic Variant Filtering</rdfs:label>
+    <rdf:type rdf:resource="http://edamontology.org/operation_3675"/>
+    <rdfs:subClassOf rdf:resource="http://edamontology.org/operation_3675"/>
+  </rdf:Description>
+  
+  <!-- 10. RNA-Seq quantification -->
+  <rdf:Description rdf:about="http://edamontology.org/operation_3800">
+    <rdfs:label>RNA Seq quantification</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+ 	<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+  </rdf:Description>
+  
+  <!-- 11. Annotation -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Annotation">
+    <rdfs:label>Annotation</rdfs:label>
+    <rdf:type rdf:resource="http://edamontology.org/operation_3225"/>
+ 	<rdfs:subClassOf rdf:resource="http://edamontology.org/operation_3225"/>
+  </rdf:Description>
+  
+  <!-- 12. Read Quantification -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/ReadQuantification">
+    <rdfs:label>Read Quantification</rdfs:label>
+    <rdf:type rdf:resource="http://edamontology.org/operation_3800"/>
+ 	<rdfs:subClassOf rdf:resource="http://edamontology.org/operation_3800"/>
+  </rdf:Description>
+
+
+  <!-- ==== NHRF Roles ==== -->
+
+  <!-- Researcher -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Researcher">
+    <rdfs:label>Researcher</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+  </rdf:Description>
+
+  <!-- JuniorResearcher -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/JuniorResearcher">
+    <rdfs:label>Junior Researcher</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Researcher"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Researcher"/>
+  </rdf:Description>
+
+  <!-- SeniorResearcher -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/SeniorResearcher">
+    <rdfs:label>Senior Researcher</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Researcher"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Researcher"/>
+  </rdf:Description>
+
+  <!-- TeamLeader -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/TeamLeader">
+    <rdfs:label>Team Leader</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+  </rdf:Description>	
+
+  <!-- ProjectLeader -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/ProjectLeader">
+    <rdfs:label>Project Leader</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/TeamLeader"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/TeamLeader"/>
+  </rdf:Description>
+
+  <!-- GroupLeader -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/GroupLeader">
+    <rdfs:label>Group Leader</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/TeamLeader"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/TeamLeader"/>
+  </rdf:Description>
+
+  <!-- Director -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director">
+    <rdfs:label>Director</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+  </rdf:Description>	
+
+  <!-- GeneralDirector -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/GeneralDirector">
+    <rdfs:label>General Director</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+  </rdf:Description>
+
+  <!-- DeputyDirector -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/DeputyDirector">
+    <rdfs:label>Deputy Director</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+  </rdf:Description>
+
+  <!-- DivisionHead -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/DivisionHead">
+    <rdfs:label>Division Head</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+  </rdf:Description>
+
+   <!-- LabDirector -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/LabDirector">
+    <rdfs:label>Lab Director</rdfs:label>
+    <rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+    <rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/nhrf/Director"/>
+  </rdf:Description>
+
+</rdf:RDF>

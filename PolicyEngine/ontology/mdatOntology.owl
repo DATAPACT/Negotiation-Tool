@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/"
+    xml:base="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/"
+   xmlns:owl="http://www.w3.org/2002/07/owl#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+   xmlns:dct="http://purl.org/dc/terms/"
+   xmlns:dpv="https://w3id.org/dpv/owl#"
+   xmlns:pd="https://w3id.org/dpv/pd/owl#"
+   xmlns:odrl="http://www.w3.org/ns/odrl/2/"
+   xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+>
+
+<!-- Ontology header -->
+  <owl:Ontology rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat">
+    <owl:imports rdf:resource="https://w3id.org/dpv/owl"/>
+    <owl:imports rdf:resource="https://w3id.org/dpv/pd/owl"/>
+    <owl:imports rdf:resource="http://www.w3.org/ns/odrl/2/"/>
+    <dct:creator>MDAT</dct:creator>
+    <dct:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-10-17</dct:created>
+    <rdfs:label>UPCAST MDAT Domain Specific Ontology</rdfs:label>
+    <rdfs:comment>Ontology describing specific data processing operations in MDAT, aligned with DPV and ODRL.</rdfs:comment>
+  </owl:Ontology>
+  
+  
+  <!-- ==== Domain specific operations mapped to DPV and ODRL ==== -->
+
+<!-- 1. Aggregate and compute mean pollutant levels -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#AggregateAndComputeMeanPollutantLevels">
+    <rdfs:label>Aggregate and compute mean pollutant levels</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Aggregate"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Aggregate"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <skos:narrower rdf:resource="http://www.w3.org/ns/odrl/2/derive"/>
+    <rdfs:comment>Aggregating pollutant data to compute mean values for specific periods.</rdfs:comment>
+  </rdf:Description>
+
+<!-- 2. Clean and normalise -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#CleanAndNormalise">
+    <rdfs:label>Clean and normalise</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Transform"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Transform"/>
+    <skos:narrower rdf:resource="http://www.w3.org/ns/odrl/2/derive"/>
+    <rdfs:comment>Removing inconsistencies and harmonizing units within datasets.</rdfs:comment>
+  </rdf:Description>
+  
+<!-- 3. Merge datasets and compute pollutant-per-capita ratios -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#ComputePollutantPerCapitaRatios">
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <skos:narrower rdf:resource="http://www.w3.org/ns/odrl/2/aggregate"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Analyse"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdfs:label>Compute pollutant-per-capita ratios</rdfs:label>
+    <rdfs:comment>Merging datasets and calculating pollutant-per-capita ratios.</rdfs:comment>
+  </rdf:Description>
+  
+<!-- 4. Assess compliance with EU limits -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#AssessComplianceWithEULimits">
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Assess"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Assess"/>
+    <rdfs:label>Assess compliance with EU limits</rdfs:label>
+    <rdfs:comment>Evaluating compliance of pollutants against EU regulatory limits.</rdfs:comment>
+  </rdf:Description>
+
+<!-- 5. Generate graphs and visual summaries -->  
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#GenerateGraphsAndVisualSummaries">
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <skos:narrower rdf:resource="http://www.w3.org/ns/odrl/2/display"/>
+    <rdfs:label>Generate graphs and visual summaries</rdfs:label>
+    <rdfs:comment>Producing visual representations and summaries of analysed data.</rdfs:comment>
+  </rdf:Description>
+  
+  
+<!-- 6. Extract population count -->  
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#ExtractPopulationCount">
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdfs:label>Extract population count</rdfs:label>
+    <rdfs:comment>Extract population count from population distribution.</rdfs:comment>
+  </rdf:Description>
+  
+  <!-- 7. Calculate urban green indicators -->  
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#CalculateUrbanGreenIndicators">
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdfs:label>Calculate urban green indicators</rdfs:label>
+  </rdf:Description>
+  
+  <!-- 8. Compute CO2 emissions indicators -->  
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#ComputeCO2EmissionsIndicators">
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdfs:label>Compute CO2 emissions indicators</rdfs:label>
+  </rdf:Description>
+  
+  
+<!-- 9. Generate graphs and visual summaries -->  
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat#GenerateEmissionVisuals">
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#Derive"/>
+    <skos:narrower rdf:resource="http://www.w3.org/ns/odrl/2/display"/>
+    <rdfs:label>Generate CO2 emission visuals</rdfs:label>
+  </rdf:Description>
+  
+  
+   <!-- ==== MDAT Roles ==== -->
+
+<!-- 1. Researcher -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/Researcher">
+    <rdfs:label>Researcher</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+  </rdf:Description>
+  
+
+<!-- 2. Data Analyst -->
+  <rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DataAnalyst">
+    <rdfs:label>Data Analyst</rdfs:label>
+    <rdf:type rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+    <rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#HumanSubject"/>
+  </rdf:Description>
+  
+  
+   <!-- ==== MDAT Datatypes ==== -->
+   <!-- 1. Environmental Data -->  
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnvironmentalData">
+		<rdfs:label>Environmental data</rdfs:label>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#NonPersonalData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#NonPersonalData"/>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#StatisticallyConfidentialData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#StatisticallyConfidentialData"/>
+	</rdf:Description>
+	
+	 <!-- 2. Demographic Data -->  
+	 <!-- dpv:StatisticallyConfidentialData Statistically Confidential Data???? -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DemographicData">
+		<rdfs:label>Demographic data</rdfs:label>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#NonPersonalData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#NonPersonalData"/>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#StatisticallyConfidentialData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#StatisticallyConfidentialData"/>
+	</rdf:Description>
+	
+	 <!-- 3. Extended Demographic Data -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/ExtendedPopulationData">
+		<rdfs:label>Extended demographic data</rdfs:label>
+		<rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DemographicData"/>
+		<rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DemographicData"/>
+	</rdf:Description>
+  
+	 <!-- 4. PollutantMean -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/PollutantMean">
+		<rdfs:label>Pollutant mean</rdfs:label>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+		<rdfs:comment>Mean Concentration</rdfs:comment>
+	</rdf:Description>
+  
+   <!-- 5. Pollution per capita report -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/PollutionPerCapitaReport">
+		<rdfs:label>Pollution per capita report</rdfs:label>
+		<rdfs:comment>Pollution per Capita</rdfs:comment>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+	</rdf:Description>
+	
+   <!-- 6. Trees distribution -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/TreesDistribution">
+		<rdfs:label>Trees distribution</rdfs:label>
+		<rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnvironmentalData"/>
+		<rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnvironmentalData"/>
+	</rdf:Description>
+	
+	 <!-- 7. Population distribution -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/PopulationDistribution">
+		<rdfs:label>Population distribution</rdfs:label>
+		<rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DemographicData"/>
+		<rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DemographicData"/>
+	</rdf:Description>
+	
+	 <!-- 8. Population count -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/PopulationCount">
+		<rdfs:label>Population count</rdfs:label>
+		<rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DemographicData"/>
+		<rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/DemographicData"/>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+	</rdf:Description>
+	
+	<!-- 9. Urban green indicators -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/UrbanGreenIndicators">
+		<rdfs:label>Urban green indicators</rdfs:label>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#StatisticallyConfidentialData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#StatisticallyConfidentialData"/>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+	</rdf:Description>
+	
+	<!-- 10. Energy data -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnergyData">
+		<rdfs:label>Energy data</rdfs:label>
+		<rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnvironmentalData"/>
+		<rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnvironmentalData"/>
+	</rdf:Description>
+	
+	
+	<!-- 11. CO2 emissions data -->
+	<rdf:Description rdf:about="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/CO2EmissionsData">
+		<rdfs:label>CO2 emissions data</rdfs:label>
+		<rdf:type rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnvironmentalData"/>
+		<rdfs:subClassOf rdf:resource="https://www.upcast-project.eu/upcast-vocab/1.0/dso/mdat/EnvironmentalData"/>
+		<rdf:type rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+		<rdfs:subClassOf rdf:resource="https://w3id.org/dpv/owl#DerivedData"/>
+	</rdf:Description>
+	
+	
+  
+</rdf:RDF>

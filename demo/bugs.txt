@@ -1,0 +1,106 @@
+
+Internal Server Error: /negotiation/organization/negotiation
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/app/custom_accounts/views.py", line 406, in negotiation
+    rules = get_rules_from_odrl()
+  File "/app/custom_accounts/ajax_ontology.py", line 325, in get_rules_from_odrl
+    subclasses_result = g.query(subclasses_query)
+  File "/usr/local/lib/python3.10/site-packages/rdflib/graph.py", line 1565, in query
+    return result(processor.query(query_object, initBindings, initNs, **kwargs))  # type: ignore[arg-type]
+  File "/usr/local/lib/python3.10/site-packages/rdflib/plugins/sparql/processor.py", line 144, in query
+    strOrQuery = translateQuery(parseQuery(strOrQuery), base, initNs)
+  File "/usr/local/lib/python3.10/site-packages/rdflib/plugins/sparql/parser.py", line 1542, in parseQuery
+    return Query.parseString(q, parseAll=True)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/util.py", line 256, in _inner
+    return fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 1190, in parse_string
+    loc, tokens = self._parse(instring, 0)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 3997, in parseImpl
+    loc, resultlist = self.exprs[0]._parse(
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4517, in parseImpl
+    return self.expr._parse(instring, loc, doActions, callPreParse=False)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 5042, in parseImpl
+    return super().parseImpl(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4941, in parseImpl
+    loc, tokens = self_expr_parse(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4248, in parseImpl
+    return e._parse(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4517, in parseImpl
+    return self.expr._parse(instring, loc, doActions, callPreParse=False)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4019, in parseImpl
+    loc, exprtokens = e._parse(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 891, in _parseNoCache
+    tokens = fn(instring, tokens_start, ret_tokens)  # type: ignore [call-arg, arg-type]
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 293, in wrapper
+    ret = func(*args[limit:])
+TypeError: Param.postParse2() missing 1 required positional argument: 'tokenList'
+2025-11-28 16:11:02 ERROR [django.request] Internal Server Error: /negotiation/organization/negotiation
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/app/custom_accounts/views.py", line 406, in negotiation
+    rules = get_rules_from_odrl()
+  File "/app/custom_accounts/ajax_ontology.py", line 325, in get_rules_from_odrl
+    subclasses_result = g.query(subclasses_query)
+  File "/usr/local/lib/python3.10/site-packages/rdflib/graph.py", line 1565, in query
+    return result(processor.query(query_object, initBindings, initNs, **kwargs))  # type: ignore[arg-type]
+  File "/usr/local/lib/python3.10/site-packages/rdflib/plugins/sparql/processor.py", line 144, in query
+    strOrQuery = translateQuery(parseQuery(strOrQuery), base, initNs)
+  File "/usr/local/lib/python3.10/site-packages/rdflib/plugins/sparql/parser.py", line 1542, in parseQuery
+    return Query.parseString(q, parseAll=True)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/util.py", line 256, in _inner
+    return fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 1190, in parse_string
+    loc, tokens = self._parse(instring, 0)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 3997, in parseImpl
+    loc, resultlist = self.exprs[0]._parse(
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4517, in parseImpl
+    return self.expr._parse(instring, loc, doActions, callPreParse=False)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 5042, in parseImpl
+    return super().parseImpl(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4941, in parseImpl
+    loc, tokens = self_expr_parse(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4248, in parseImpl
+    return e._parse(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4517, in parseImpl
+    return self.expr._parse(instring, loc, doActions, callPreParse=False)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 852, in _parseNoCache
+    loc, tokens = self.parseImpl(instring, pre_loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 4019, in parseImpl
+    loc, exprtokens = e._parse(instring, loc, doActions)
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 891, in _parseNoCache
+    tokens = fn(instring, tokens_start, ret_tokens)  # type: ignore [call-arg, arg-type]
+  File "/usr/local/lib/python3.10/site-packages/pyparsing/core.py", line 293, in wrapper
+    ret = func(*args[limit:])
+TypeError: Param.postParse2() missing 1 required positional argument: 'tokenList'
+[28/Nov/2025 16:11:03] "GET /negotiation/organization/negotiation HTTP/1.1" 500 173063
+
+

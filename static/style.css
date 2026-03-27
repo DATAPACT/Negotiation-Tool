@@ -154,6 +154,15 @@
     width: 100px;
     }
 
+    .styled-button-download-agreement {
+    width: auto;
+    min-width: 200px;
+    white-space: nowrap;
+    padding-left: 16px;
+    padding-right: 16px;
+    }
+
+
 
     #msform .action-button:hover, #msform .action-button:focus {
     background-color: #311B92;

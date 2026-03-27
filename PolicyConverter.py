@@ -77,13 +77,24 @@ class UpcastPolicyConverter:
 
         odrl_policy = self._extract_odrl_policy(policy_uri) if policy_uri else self._create_default_odrl_policy()
 
+        provider_id_value = dataset_info.get("contactPoint") #  contactPoint should be a user-id
+        provider_id = None
+
+        if provider_id_value:
+            try:
+                provider_id = ObjectId(provider_id_value)
+            except Exception:
+                provider_id = provider_id_value
+                print (f"\n\n{provider_id} is not a valid provider id, will be matching if it is oganizaion or user_name.\n\n")
+        else:
+            raise ValueError("No contactPoint provided, you should provide a valid name or provider_id")
         # Create a base policy object
         policy_object = {
             "id": str(uuid.uuid4()),
             "title": dataset_info.get("title", "Untitled Policy"),
             "type": "offer",  # Default type, adjust based on policy if found
             "consumer_id": None,  # Usually set during negotiation
-            "provider_id": ObjectId(dataset_info.get("contactPoint")),
+            "provider_id": provider_id,
             "data_processing_workflow_object": self._create_default_workflow(),
             "natural_language_document": self._generate_natural_language_description(dataset_info),
             "resource_description_object": resource_description,

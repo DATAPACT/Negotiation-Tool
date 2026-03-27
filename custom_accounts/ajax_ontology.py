@@ -294,30 +294,21 @@ def populate_content_to_graph(ttl_content, format="xml"):
 def get_rules_from_odrl():
     global global_graph
     g = global_graph
+    odrl = Namespace("http://www.w3.org/ns/odrl/2/")
+    rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 
-    # Define namespace
-    # odrl = Namespace(
-    #     "http://www.w3.org/ns/odrl/2/#"
-    # )  # Replace with the actual namespace
-    # rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
-
-    # Query for subclasses of :Rule
-    subclasses_query = """
+    qres = g.query(
+        """
         SELECT ?subClass ?label
         WHERE {
-          ?subClass rdfs:subClassOf odrl:Rule ;
-                    rdfs:label ?label .
+            ?subClass rdfs:subClassOf odrl:Rule ;
+                      rdfs:label ?label .
         }
-    """
+        """,
+        initNs={"odrl": odrl, "rdfs": rdfs}
+    )
 
-    # Execute the query
-    subclasses_result = g.query(subclasses_query)
-
-    # Convert results to a list of dictionaries
-    result_list = [
-        {"uri": str(row.subClass), "label": str(row.label)} for row in subclasses_result
-    ]
-
+    result_list = [{"uri": str(row.subClass), "label": str(row.label)} for row in qres]
     return result_list
 
 
@@ -329,6 +320,8 @@ def get_actors_from_dpv():
 
     # Query for subclasses of :Rule
     subclasses_query = """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         SELECT ?subClass ?label
         WHERE {
           ?subClass rdfs:subClassOf+ <http://www.w3.org/ns/odrl/2/Party> .
@@ -358,7 +351,7 @@ def get_actors_from_dpv():
 #     subclasses_query = """
 #         SELECT ?subClass ?label
 #         WHERE {
-#           ?subClass rdfs:subClassOf <https://w3id.org/dpv/dpv-owl#Purpose> .
+#           ?subClass rdfs:subClassOf <https://w3id.org/dpv/owl#Purpose> .
 #           ?subClass rdfs:label ?label .
 #         }
 #     """
@@ -374,9 +367,33 @@ def get_actors_from_dpv():
 #     return result_list
 
 
+
 def get_constraints_types_from_odrl():
     global global_graph
     g = global_graph
+    # # Query for subclasses of :Rule
+    # query = """
+    #     PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+    #     PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    #     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    #     SELECT ?leftoperand ?label
+    #     WHERE {
+    #       ?leftoperand a odrl:LeftOperand, owl:NamedIndividual ;
+    #                 rdfs:label ?label .
+    #     }
+    # """
+    #
+    # # Execute the query
+    # result = g.query(query)
+    #
+    # # Convert results to a list of dictionaries
+    # result_list = [
+    #     {"uri": str(row.leftoperand), "label": str(row.label)} for row in result
+    # ]
+    #
+    # return result_list
+
+
     # Query for subclasses of :Rule
     query = """
         SELECT ?leftoperand ?label
@@ -433,12 +450,12 @@ def get_action_hierarchy_from_odrl():
     actions_query = """
     SELECT DISTINCT ?action ?label ?sub_action ?sub_label
     WHERE {
-        ?action a odrl:Action.
-        ?action ( rdfs:label | skos:prefLabel ) ?label.
-        { ?sub_action odrl:includedIn | rdfs:subClassOf ?action }
+        ?action ( rdfs:subClassOf* / rdf:type? ) odrl:Action .
+        ?action ( rdfs:label | skos:prefLabel ) ?label .
+        { ?sub_action ( odrl:includedIn | rdfs:subClassOf ) ?action .  }
         UNION
-        { ?action odrl:includedBy | rdfs:subClassOf ?sub_action }
-        ?sub_action ( rdfs:label | skos:prefLabel ) ?sub_label
+        { ?action odrl:includedBy ?sub_action . }
+        ?sub_action ( rdfs:label | skos:prefLabel ) ?sub_label .
     }
     """
 
@@ -607,7 +624,7 @@ def get_actions_from_odrl():
 #     if "/" in class_uri:
 #         class_uri = "<" + class_uri + ">"
 #     properties_query = f"""
-#         PREFIX dpv: <https://w3id.org/dpv/dpv-owl#>
+#         PREFIX dpv: <https://w3id.org/dpv/owl#>
 #         PREFIX cc: <http://creativecommons.org/ns#>
 #         PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
 #         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -710,6 +727,10 @@ def get_purposes_from_dpv():
 
     # Query for subclasses of :Rule
     subclasses_query = """
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX dpv: <https://w3id.org/dpv/owl#>
         SELECT ?subclass ?label ?parent_class ?class_label
         WHERE {
             ?subclass rdf:type dpv:Purpose .
@@ -739,6 +760,8 @@ def get_operators_from_odrl():
 
     # Query actions
     actions_query = """
+    PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     SELECT ?action ?label
     WHERE {
         ?action a odrl:Operator.
@@ -841,8 +864,10 @@ def recursive_replace(data, target_str, replacement_str):
     elif isinstance(data, str):
         return data.replace(target_str, replacement_str)
     return data
+
+
 def convert_list_to_odrl_jsonld_no_user(data_list):
-    # data_list = recursive_replace (data_list,"https://w3id.org/dpv/dpv-owl#","https://w3id.org/dpv#")
+    # data_list = recursive_replace (data_list,"https://w3id.org/dpv/owl#","https://w3id.org/dpv#")
     # data_list = recursive_replace (data_list,"http://www.w3.org/ns/odrl/2/","")
 
     odrl_permissions = []
@@ -863,7 +888,7 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
         "http://www.w3.org/ns/odrl.jsonld",
         {
             "dcat": "http://www.w3.org/ns/dcat#",
-            "dpv": "https://w3id.org/dpv/dpv-owl#",
+            "dpv": "https://w3id.org/dpv/owl#",
         }
         ],
 
@@ -921,14 +946,15 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
 
                     odrl_jsonld["constraint"].append(purposerefinements)
                 else:
-                    purpose = data["purpose"]
-                    odrl_jsonld["constraint"].append(
-                        {
-                            "leftOperand": "purpose",
-                            "operator": "http://www.w3.org/ns/odrl/2/eq",
-                            "rightOperand": purpose,
-                        }
-                    )
+                    if "purpose" in data and data["purpose"]:
+                        purpose = data["purpose"]
+                        odrl_jsonld["constraint"].append(
+                            {
+                                "leftOperand": "purpose",
+                                "operator": "http://www.w3.org/ns/odrl/2/eq",
+                                "rightOperand": purpose,
+                            }
+                        )
             else:
                 ruleType = "rule"
                 odrl_jsonld = {
@@ -946,51 +972,37 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
                         }
                     )
             for constraint in data["constraints"]:
-                if constraint["operator"] is not None:
+                if constraint["operator"] is not None and constraint.get("type") is not None:
                     odrl_jsonld["constraint"].append(
                         {
-                            "leftOperand": constraint["type"].split("#")[
-                                -1
-                            ],  # Extract the constraint type
+                            "leftOperand": constraint["type"].split("#")[-1],
                             "operator": constraint["operator"],
                             "rightOperand": constraint["value"],
                         }
                     )
             for constraint in data["actorrefinements"]:
-                if constraint["operator"] is not None:
-                    print(constraint)
-                    print(odrl_jsonld)
-                    print(odrl_jsonld["assignee"]["refinement"])
-                    print(constraint["type"])
-                    print(constraint["operator"])
-                    print(constraint["value"])
+                if constraint["operator"] is not None and constraint.get("type") is not None:
                     odrl_jsonld["assignee"]["refinement"].append(
                         {
-                            "leftOperand": constraint["type"].split("#")[
-                                -1
-                            ],  # Extract the constraint type
+                            "leftOperand": constraint["type"].split("#")[-1],
                             "operator": constraint["operator"],
                             "rightOperand": constraint["value"],
                         }
                     )
             for constraint in data["actionrefinements"]:
-                if constraint["operator"] is not None:
+                if constraint["operator"] is not None and constraint.get("type") is not None:
                     odrl_jsonld["action"]["refinement"].append(
                         {
-                            "leftOperand": constraint["type"].split("#")[
-                                -1
-                            ],  # Extract the constraint type
+                            "leftOperand": constraint["type"].split("#")[-1],
                             "operator": constraint["operator"],
                             "rightOperand": constraint["value"],
                         }
                     )
             for constraint in data["targetrefinements"]:
-                if constraint["operator"] is not None:
+                if constraint["operator"] is not None and constraint.get("type") is not None:
                     odrl_jsonld["target"]["refinement"].append(
                         {
-                            "leftOperand": constraint["type"].split("#")[
-                                -1
-                            ],  # Extract the constraint type
+                            "leftOperand": constraint["type"].split("#")[-1],
                             "operator": constraint["operator"],
                             "rightOperand": constraint["value"],
                         }
@@ -1007,6 +1019,9 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
     if len(policy["rule"]) == 0:
         del policy["rule"]
     return policy
+
+
+
 
 def _fetch_valid_status(odrl_policy):
     edge_options = webdriver.EdgeOptions()
@@ -1046,7 +1061,7 @@ def _fetch_valid_status(odrl_policy):
 ###### custom odrl conversion function ######
 
 ODRL = Namespace("http://www.w3.org/ns/odrl/2/")
-DPV = Namespace("https://w3id.org/dpv/dpv-owl#")
+DPV = Namespace("https://w3id.org/dpv/owl#")
 EX = Namespace("http://example.org/resource/")
 
 def normalize_odrl_graph(g):
@@ -1096,11 +1111,12 @@ def normalize_odrl_graph(g):
     return g
 
 def custom_convert_odrl_policy(jsonld_str):
-    print("Starting custom conversion of ODRL policy")
     g = Graph()
     g.parse(data=jsonld_str, format='json-ld')
     g = normalize_odrl_graph(g)
     # normalise_here
+
+    # print(g.serialize(format='turtle'))
 
     results = []
 
@@ -1119,6 +1135,7 @@ def custom_convert_odrl_policy(jsonld_str):
           (odrl:permission odrl:Permission)
           (odrl:prohibition odrl:Prohibition)
           (odrl:obligation odrl:Obligation)
+          (odrl:duty odrl:Duty)
         }
       }
     """
@@ -1128,15 +1145,9 @@ def custom_convert_odrl_policy(jsonld_str):
 
     for row in g.query(rule_query, initNs={'odrl': ODRL}):
         rule_uri = row['rule']
-        # print("Processing rule URI:", rule_uri)
         rule_type = str(row['ruleType'])
-        # print("Rule type:", rule_type)
         processed_rule = process_rule(g, rule_uri, rule_type)
-        # print("Processed rule:", processed_rule)
         results.append(processed_rule)
-        # print("Current results:", results)
-    
-    print(json.dumps(results, indent=2))
 
     return results
 
@@ -1178,29 +1189,66 @@ def process_rule(g, rule_uri, rule_type):
 
     # Helper to group refinements or constraints by (leftOperand, operator)
     def group_constraints_or_refinements(query):
-        result = defaultdict(lambda: {"type": None, "operator": None, "value": ""})
+        result = []
+
         qres = g.query(query, initNs={'odrl': ODRL, 'dpv': DPV, 'rdf': RDF})
-    
+
         for row in qres:
             left = str(row.left)
             op = str(row.op)
-            right = row.right.toPython() if hasattr(row.right, 'toPython') else str(getattr(row.right, 'toPython', lambda: row.right)())
-            key = (left, op)
-            result[key]["type"] = left if left != "http://www.w3.org/ns/odrl/2/Purpose" else "http://www.w3.org/ns/odrl/2/purpose"
-            result[key]["operator"] = op
-            result[key]["value"] += str(right)  # Concatenate instead of append
-    
-        return list(result.values())
+            right = row.right
+
+            # If right is a list head (rdf:first / rdf:rest)
+            if isinstance(right, BNode) and (right, RDF.first, None) in g:
+                collection = Collection(g, right)
+                for item in collection:
+                    result.append({
+                        "type": left,
+                        "operator": op,
+                        "value": [str(item.toPython() if hasattr(item, 'toPython') else item)]
+                    })
+            else:
+                result.append({
+                    "type": left,
+                    "operator": op,
+                    "value": [str(right.toPython() if hasattr(right, 'toPython') else right)]
+                })
+
+        return result
+
     # Get constraints (grouped)
     constraints_query = """
     SELECT ?left ?op ?right WHERE {
       <%s> odrl:constraint ?c .
       ?c odrl:leftOperand ?left ;
          odrl:operator ?op ;
-         odrl:rightOperand ?right .
+         odrl:rightOperand | odrl:rightOperandReference ?right .
     }
     """ % rule_uri
     constraints = group_constraints_or_refinements(constraints_query)
+
+    # Extract purpose constraints with equality operator
+    purpose = ""
+    purpose_constraints = [
+        c for c in constraints
+        if c.get("type") == str(ODRL.purpose) and c.get("operator") == str(ODRL.eq)
+    ]
+
+    if purpose_constraints:
+        # Pick the first equality purpose constraint, if there are multiple ones (as there should be only one anyway)
+        first = purpose_constraints[0]
+        values = first.get("value") or []
+        if values:
+            purpose = values[0]
+
+        # Remove all purpose equality constraints from the constraints list
+        constraints = [
+            c for c in constraints
+            if not (
+                    c.get("type") == str(ODRL.purpose)
+                    and c.get("operator") == str(ODRL.eq)
+            )
+        ]
 
     # Get actor refinements (grouped)
     actor_ref_query = """
@@ -1209,7 +1257,7 @@ def process_rule(g, rule_uri, rule_type):
       ?actorNode odrl:refinement ?ref .
       ?ref odrl:leftOperand ?left ;
            odrl:operator ?op ;
-           odrl:rightOperand ?right .
+           odrl:rightOperand | odrl:rightOperandReference ?right .
     }
     """ % rule_uri
     actor_refinements = group_constraints_or_refinements(actor_ref_query)
@@ -1221,7 +1269,7 @@ def process_rule(g, rule_uri, rule_type):
       ?actionNode odrl:refinement ?ref .
       ?ref odrl:leftOperand ?left ;
            odrl:operator ?op ;
-           odrl:rightOperand ?right .
+           odrl:rightOperand | odrl:rightOperandReference ?right .
     }
     """ % rule_uri
     action_refinements = group_constraints_or_refinements(action_ref_query)
@@ -1233,7 +1281,7 @@ def process_rule(g, rule_uri, rule_type):
       ?targetNode odrl:refinement ?ref .
       ?ref odrl:leftOperand ?left ;
            odrl:operator ?op ;
-           odrl:rightOperand ?right .
+           odrl:rightOperand | odrl:rightOperandReference ?right .
     }
     """ % rule_uri
     target_refinements = group_constraints_or_refinements(target_ref_query)
@@ -1243,11 +1291,12 @@ def process_rule(g, rule_uri, rule_type):
         "actor": actor,
         "action": action,
         "target": target,
-        "purpose": "",  # Placeholder
-        "query": "",    # Placeholder
+        "purpose": purpose,
+        "query": "",  # Placeholder
         "constraints": constraints,
         "actorrefinements": actor_refinements,
         "actionrefinements": action_refinements,
         "targetrefinements": target_refinements,
         "purposerefinements": []
     }
+

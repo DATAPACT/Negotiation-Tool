@@ -114,7 +114,7 @@ push_provider_enabled = True
 MONGO_USER = os.getenv("MONGO_USER")
 print(f'MONGO_USER {MONGO_USER}')
 MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
-print(f'MONGO_PASSWORD {MONGO_PASSWORD}')
+# print(f'MONGO_PASSWORD {MONGO_PASSWORD}')
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 print(f'MONGO_HOST {MONGO_HOST}')
 MONGO_PORT = os.getenv("MONGO_PORT")
@@ -127,7 +127,7 @@ else: # Assumption: The database is stored in mongodb cloud.
 
 
 client = AsyncIOMotorClient(MONGO_URI)
-print(f'MONGO_URI {MONGO_URI}')
+# print(f'MONGO_URI {MONGO_URI}')
 db = client.upcast
 print(f'db {db}')
 negotiations_collection = db.negotiations

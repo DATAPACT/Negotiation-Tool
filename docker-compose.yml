@@ -13,6 +13,7 @@ services:
     environment:
       - API_BASE_URL=${API_BASE_URL}
       - DJANGO_BASE_URL=${DJANGO_BASE_URL}
+      - API_CONTRACT_SERVICE_URL=${API_CONTRACT_SERVICE_URL}
       - DEBUG=True
       - MASTER_PASSWORD=${MASTER_PASSWORD}
 
@@ -72,7 +73,7 @@ services:
     container_name: mongodb
     restart: always
     ports:
-      - "27017:27017"
+      - "27019:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}   # Use the same user
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD} # Use the same password

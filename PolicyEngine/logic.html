@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extract Logic Expressions</title>
+</head>
+<body>
+  <h1>Extract Logic Expressions</h1>
+
+  <form id="extractForm">
+    <textarea id="inputText" rows="20" cols="100" placeholder="Enter odrl content">
+[{
+  "uid": "http://example.com/policy:001",
+  "@type": "Policy",
+  "profile": "http://example.com/odrl:profile:10",
+  "prohibition": [
+    {
+      "target": "q(x1,x3) <-- Table1(x1,'u8',x3,x4), Table2(x4,x5,x6)",
+      "uid": "http://example.com/rule:001",
+      "assignee":  "https://w3id.org/dpv/owl#Employee",
+      "action": "aggregate",
+      "constraint": [{
+            "leftOperand": "purpose",
+            "operator": "eq",
+            "rightOperand": "https://w3id.org/dpv/owl#ResearchAndDevelopment"
+          }]
+    },
+    {
+      "target": "q(x2,x4) <-- Table1(x2,'r8',x3,x4), Table2(x4,x5,x6), Table3(x4,x7)",
+      "uid": "http://example.com/rule:002",
+      "assignee":  "https://w3id.org/dpv/owl#Employee",
+      "action": "aggregate",
+      "constraint": [{
+            "leftOperand": "purpose",
+            "operator": "eq",
+            "rightOperand": "https://w3id.org/dpv/owl#ResearchAndDevelopment"
+          }]
+    }
+    ]
+}]
+
+    </textarea>
+    <br>
+    <button type="button" onclick="extractLogicExpressions()">Extract Logic Expressions</button>
+  </form>
+
+  <h2>Result</h2>
+
+  <textarea id="resultText" rows="5" cols="100" readonly></textarea>
+
+  <script>
+    function extractLogicExpressions() {
+      var inputText = document.getElementById("inputText").value;
+
+      fetch('http://62.171.168.208:8080/extract_logic_expressions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: inputText // Assuming inputText is already a valid JSON string
+      })
+      .then(response => response.text())  // Change to text() method to receive a string
+      .then(data => {
+        document.getElementById("resultText").value = data;
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+  </script>
+</body>
+</html>
