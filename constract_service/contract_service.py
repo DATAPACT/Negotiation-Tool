@@ -108,6 +108,14 @@ class ContractAPIService():
         self.base_api_url = f"{API_CONTRACT_SERVICE_URL}/contract/"
         self.endpoint_url = ""
 
+    def _build_auth_headers(self, access_token: Optional[str], extra_headers: Optional[Dict[str, str]] = None):
+        # Old code sent only custom headers/content-type to contract-service.
+        # New code forwards the same bearer token obtained from authentication-service.
+        headers = dict(extra_headers or {})
+        if access_token:
+            headers["Authorization"] = f"Bearer {access_token}"
+        return headers
+
     @property
     def contracts_collection(self):
         return _get_db().contracts
@@ -214,13 +222,18 @@ class ContractAPIService():
         return {"updated": result.modified_count}
 
     # generate legal agreement by calling external API and verifying user
-    def create_contract(self, user_id: str, json_data: dict):
+    def create_contract(self, user_id: str, json_data: dict, access_token: Optional[str] = None):
 
         self.endpoint_url = f"{self.base_api_url}create"
-        headers = {
+        # Old code:
+        # headers = {
+        #     "user-id": user_id,
+        #     "Content-Type": "application/json",
+        # }
+        headers = self._build_auth_headers(access_token, {
             "user-id": user_id,
             "Content-Type": "application/json",
-        }
+        })
 
         try:
             response = requests.post(
@@ -242,13 +255,13 @@ class ContractAPIService():
         json_data["contract_id"] = result.get('contract_id')
         return json_data
 
-    def update_contract(self, contract_id: str, json_data: dict):
+    def update_contract(self, contract_id: str, json_data: dict, access_token: Optional[str] = None):
 
         print("update contract", contract_id, json_data.keys())
         self.endpoint_url = f"{self.base_api_url}update/{contract_id}"
-        headers = {
+        headers = self._build_auth_headers(access_token, {
             "Content-Type": "application/json",
-        }
+        })
 
         try:
             response = requests.put(
@@ -266,12 +279,12 @@ class ContractAPIService():
 
         return response.json()
 
-    def _get_contract(self, contract_id):
+    def _get_contract(self, contract_id, access_token: Optional[str] = None):
         self.endpoint_url = f"{self.base_api_url}get_contract/{contract_id}"
-        headers = {
+        headers = self._build_auth_headers(access_token, {
             "contract_id": contract_id,
             "Content-Type": "application/json",
-        }
+        })
 
         try:
             response = requests.get(
@@ -288,7 +301,7 @@ class ContractAPIService():
 
         return response.json()
 
-    async def get_contract(self, user_id, negotiation_id, contract_index=-1):
+    async def get_contract(self, user_id, negotiation_id, contract_index=-1, access_token: Optional[str] = None):
         # get a contract with respect a negotiation
         # verify user exists (no negotiation required)
 
@@ -331,10 +344,10 @@ class ContractAPIService():
         contract_id = str(contracts[index])
         logger.info("Selected contract_id %s", contract_id)
 
-        res = self._get_contract(contract_id)
+        res = self._get_contract(contract_id, access_token=access_token)
         return res
 
-    async def get_related_contracts(self, related_id: str):
+    async def get_related_contracts(self, related_id: str, access_token: Optional[str] = None):
 
         # get all contract with respect a user or a negotiation
         # 1. verfy the related_id is a user_id or negotiation_id
@@ -385,7 +398,7 @@ class ContractAPIService():
         # 3) Call the FastAPI endpoint
         res_contract_list = []
         for contract_id in contract_ids:
-            _res = self._get_contract(contract_id)
+            _res = self._get_contract(contract_id, access_token=access_token)
             logger.info(f"\n{contract_id} : {_res}")
             res_contract_list.append(_res)
 
@@ -393,7 +406,7 @@ class ContractAPIService():
 
         return res_contract_list
 
-    async def sign_contract(self, negotiation_id: str, dataform: dict):
+    async def sign_contract(self, negotiation_id: str, dataform: dict, access_token: Optional[str] = None):
         negotiation = await self._varify_negotiation(negotiation_id)
 
         if len(negotiation.get("negotiation_contracts", [])) == 0:
@@ -411,7 +424,8 @@ class ContractAPIService():
 
         self.endpoint_url = f"{self.base_api_url}sign_contract/{contract_id}"
         async with httpx.AsyncClient() as client:
-            resp = await client.put(self.endpoint_url, json=dataform, headers={"Content-Type": "application/json"},
+            headers = self._build_auth_headers(access_token, {"Content-Type": "application/json"})
+            resp = await client.put(self.endpoint_url, json=dataform, headers=headers,
                                     timeout=5.0)
             resp.raise_for_status()
             return resp.json()
@@ -426,7 +440,8 @@ class ContractAPIService():
 
         logger.info("contract_id %s", contract_id)
 
-    async def get_contract_diff(self, user_id, negotiation_id, first_index=-1, second_index=-2):
+    async def get_contract_diff(self, user_id, negotiation_id, first_index=-1, second_index=-2,
+                                access_token: Optional[str] = None):
 
         # obtain two contracts
         user, negotiation = await self._varify_user_and_negotiation(user_id, negotiation_id)
@@ -445,11 +460,11 @@ class ContractAPIService():
 
         # a test example in my mongodb
         first_contract_id = str_ids[first_index]
-        headers = {
+        headers = self._build_auth_headers(access_token, {
             "Content-Type": "application/json",
             "first-contract-id": first_contract_id,
             "second-contract-id": str_ids[second_index]
-        }
+        })
 
         self.endpoint_url = f"{self.base_api_url}get_diffs"
         resp = requests.get(self.endpoint_url, headers=headers)
@@ -466,7 +481,7 @@ class ContractAPIService():
         # 5. Return the parsed JSON diff
         return resp.json()
 
-    async def down_contract(self, user_id, negotiation_id):
+    async def down_contract(self, user_id, negotiation_id, access_token: Optional[str] = None):
         logger.info("Fetching contract for user_id=%s, negotiation_id=%s", user_id, negotiation_id)
 
         user, negotiation = await self._varify_user_and_negotiation(user_id, negotiation_id)
@@ -478,11 +493,12 @@ class ContractAPIService():
         # prepare API request
         self.endpoint_url = f"{self.base_api_url}download/{contract_id}"
         async with httpx.AsyncClient() as client:
-            resp = await client.get(self.endpoint_url, timeout=10.0)
+            headers = self._build_auth_headers(access_token)
+            resp = await client.get(self.endpoint_url, headers=headers, timeout=10.0)
             resp.raise_for_status()
             return resp.content
 
-    async def delete_contract(self, user_id, negotiation_id):
+    async def delete_contract(self, user_id, negotiation_id, access_token: Optional[str] = None):
 
         logger.info("Fetching contract for user_id=%s, negotiation_id=%s", user_id, negotiation_id)
 
@@ -498,7 +514,8 @@ class ContractAPIService():
 
         logger.info("contract_id %s", contract_id)
         self.endpoint_url = f"{self.base_api_url}delete_contract/{contract_id}"
-        res = requests.delete(self.endpoint_url)
+        headers = self._build_auth_headers(access_token)
+        res = requests.delete(self.endpoint_url, headers=headers)
         res.raise_for_status()
         return res.json()
 

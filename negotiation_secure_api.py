@@ -162,6 +162,15 @@ def build_authentication_service_url(path: str) -> str:
     return f"{base_url}{normalized_path}"
 
 
+def build_contract_service_headers(access_token: Optional[str], extra_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    # Old code called contract-service without bearer authentication.
+    # New code forwards the same token received by negotiation-api.
+    headers = dict(extra_headers or {})
+    if access_token:
+        headers["Authorization"] = f"Bearer {access_token}"
+    return headers
+
+
 # Password Hashing Functions
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
@@ -450,7 +459,7 @@ def _build_contract_request(
     }
 
 
-async def _fetch_contract_payload(contract_id: str) -> Optional[Dict[str, Any]]:
+async def _fetch_contract_payload(contract_id: str, access_token: Optional[str] = None) -> Optional[Dict[str, Any]]:
     if not CONTRACT_BASE_URL:
         raise HTTPException(status_code=500, detail="Contract service URL not configured")
 
@@ -458,7 +467,8 @@ async def _fetch_contract_payload(contract_id: str) -> Optional[Dict[str, Any]]:
     timeout = httpx.Timeout(15.0, connect=5.0, read=10.0)
 
     async with httpx.AsyncClient(timeout=timeout) as client:
-        resp = await client.get(endpoint_url)
+        headers = build_contract_service_headers(access_token)
+        resp = await client.get(endpoint_url, headers=headers)
 
     if resp.status_code == 404:
         return None
@@ -479,9 +489,10 @@ async def _update_contract_document(
         policy_id: str,
         consumer_doc: Dict[str, Any],
         provider_doc: Dict[str, Any],
+        access_token: Optional[str] = None,
 ) -> Optional[str]:
     contract_id_str = str(contract_oid)
-    payload = await _fetch_contract_payload(contract_id_str) or {}
+    payload = await _fetch_contract_payload(contract_id_str, access_token=access_token) or {}
 
     payload["contract_type"] = policy.contract_type or payload.get("contract_type") or DEFAULT_CONTRACT_TYPE
     payload["validity_period"] = _coerce_positive_int(
@@ -514,7 +525,8 @@ async def _update_contract_document(
     timeout = httpx.Timeout(20.0, connect=5.0, read=15.0)
 
     async with httpx.AsyncClient(timeout=timeout) as client:
-        resp = await client.put(endpoint_url, json=payload)
+        headers = build_contract_service_headers(access_token)
+        resp = await client.put(endpoint_url, json=payload, headers=headers)
     if resp.status_code >= 400:
         raise HTTPException(status_code=502, detail=f"Contract service error ({resp.status_code}): {resp.text}")
 
@@ -532,6 +544,7 @@ async def _maybe_generate_contract_for_policy(
         policy: UpcastPolicyObject,
         negotiation_id: ObjectId,
         policy_id: str,
+        access_token: Optional[str] = None,
 ) -> tuple[Optional[ObjectId], Optional[str]]:
 
     existing_contract = getattr(policy, "contract_id", None)
@@ -558,6 +571,7 @@ async def _maybe_generate_contract_for_policy(
                 policy_id,
                 consumer_doc,
                 provider_doc,
+                access_token=access_token,
             )
             policy.contract_id = contract_obj_id
             if updated_contract_text:
@@ -570,6 +584,7 @@ async def _maybe_generate_contract_for_policy(
             request_id=policy_id,
             consumer_doc=consumer_doc,
             provider_doc=provider_doc,
+            access_token=access_token,
         )
         contract_obj_id = ObjectId(contract_id_str)
         policy.contract_id = contract_obj_id
@@ -589,6 +604,7 @@ async def _request_contract_creation(
         request_id: str,
         consumer_doc: Dict[str, Any],
         provider_doc: Dict[str, Any],
+        access_token: Optional[str] = None,
 ) -> tuple[str, Optional[str]]:
     if not CONTRACT_BASE_URL:
         raise HTTPException(status_code=500, detail="Contract service URL not configured")
@@ -606,7 +622,8 @@ async def _request_contract_creation(
 
     async with httpx.AsyncClient(timeout=timeout) as client:
         try:
-            response = await client.post(endpoint_url, json=payload)
+            headers = build_contract_service_headers(access_token)
+            response = await client.post(endpoint_url, json=payload, headers=headers)
         except httpx.RequestError as exc:
             raise HTTPException(status_code=502, detail=f"Unable to reach contract service: {exc}") from exc
 
@@ -690,54 +707,50 @@ async def register_user(user: User, master_password_input: str):
     """
     Registers a new user. Requires validation of the master password.
     """
-    await verify_master(master_password_input)
-    # Verify the provided master password
-    # if not verify_password(master_password_input, master_password):
-    #   raise HTTPException(status_code=403, detail="Invalid master password")
-    # else:
-    # Check if the email is already registered
-    if await users_collection.find_one({"username_email": user.username_email}):
-        raise HTTPException(status_code=400, detail="Email already registered")
+    # Old code registered the user inside negotiation-api's own users collection.
+    # New code forwards registration to the dedicated authentication service.
+    register_url = build_authentication_service_url("/user/register/")
+    user.organization = normalize_org(user.organization)
+    payload = user.dict(by_alias=True, exclude_unset=True)
 
-    is_strong, resp = await is_strong_password(user.password)
-    if not is_strong:
-        # Provide a clear validation error for weak passwords
-        raise HTTPException(status_code=400, detail=resp or "Password does not meet strength requirements")
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        response = await client.post(
+            f"{register_url}?master_password_input={master_password_input}",
+            json=payload,
+        )
 
-    user_dict = None
-    try:
+    if response.status_code >= 400:
+        try:
+            detail = response.json().get("detail", "Registration failed")
+        except Exception:
+            detail = response.text or "Registration failed"
+        raise HTTPException(status_code=response.status_code, detail=detail)
 
-        # ✅ normalize organization here
-        user.organization = normalize_org(user.organization)
-
-        # Hash the user's password
-        user.password = get_password_hash(user.password)
-        # Insert the new user into the database
-        user_dict = user.dict(by_alias=True, exclude_unset=True)
-        result = await users_collection.insert_one(user_dict)
-        user_dict["_id"] = str(result.inserted_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="User cannot be created (possible reason, duplicate user ID)")
-
-    if not user_dict:
-        raise HTTPException(status_code=500, detail="User registration failed unexpectedly")
-    return user_dict
+    return response.json()
 
 
 # User Login
 @router.post("/user/login/")
 async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await users_collection.find_one({"username_email": form_data.username})
-    if not user or not verify_password(form_data.password, user["password"]):
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
+    # Old code created a JWT inside negotiation-api.
+    # New code forwards login to the dedicated authentication service.
+    login_url = build_authentication_service_url("/user/login/")
+    form_payload = {
+        "username": form_data.username,
+        "password": form_data.password,
+    }
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user["username_email"]}, expires_delta=access_token_expires
-    )
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        response = await client.post(login_url, data=form_payload)
 
-    return {"access_token": access_token, "token_type": "bearer", "user_id": str(user["_id"]),
-            "user_type": user["type"]}
+    if response.status_code >= 400:
+        try:
+            detail = response.json().get("detail", "Incorrect email or password")
+        except Exception:
+            detail = response.text or "Incorrect email or password"
+        raise HTTPException(status_code=response.status_code, detail=detail)
+
+    return response.json()
 
 
 @router.get("/user/details/", response_model=User, summary="Get details of a user")
@@ -854,6 +867,7 @@ def provider_recommend(
 
 @router.post("/negotiation/create", summary="Create a negotiation")
 async def create_upcast_negotiation(current_user: User = Depends(get_current_user),
+                                    token: str = Depends(oauth2_scheme),
                                     body: UpcastPolicyObject = Body(..., description="The request object")
                                     ):
     try:
@@ -892,6 +906,7 @@ async def create_upcast_negotiation(current_user: User = Depends(get_current_use
                 request_id=request_id,
                 consumer_doc=consumer,
                 provider_doc=provider,
+                access_token=token,
             )
             contract_object_id = ObjectId(contract_id_str)
             body.contract_id = contract_object_id
@@ -1178,7 +1193,8 @@ async def delete_upcast_negotiation(
 @router.get("/contract/{negotiation_id}", summary="Get a contract", )
 async def get_upcast_contract(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user),
+        token: str = Depends(oauth2_scheme),
 ):
     try:
         negotiation = await verify_negotiation_access(negotiation_id, current_user.id)
@@ -1210,7 +1226,7 @@ async def get_upcast_contract(
 
         endpoint_url = f"{CONTRACT_BASE_URL.rstrip('/')}/contract/get_contract/{contract_id}"
 
-        headers = {"contract_id": str(contract_id)}  # keep only if the service expects it
+        headers = build_contract_service_headers(token, {"contract_id": str(contract_id)})  # keep only if the service expects it
         timeout = httpx.Timeout(10.0, connect=2.0, read=6.0)
 
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -1995,6 +2011,7 @@ async def create_negotiation_with_initial_policies(
 @router.post("/consumer/request/new", summary="Create a new request")
 async def create_new_upcast_request(
         current_user: User = Depends(get_current_user),
+        token: str = Depends(oauth2_scheme),
         previous_policy_id: Optional[str] = Header(None, description="The ID of the previous offer"),
         body: UpcastPolicyObject = Body(..., description="The request object")
 ):
@@ -2060,7 +2077,7 @@ async def create_new_upcast_request(
 
         original_nlp = body.natural_language_document
         contract_object_id, contract_text = await _maybe_generate_contract_for_policy(
-            body, negotiation_object_id, request_id
+            body, negotiation_object_id, request_id, access_token=token
         )
         policy_updates = {}
         if contract_object_id:
@@ -2485,6 +2502,7 @@ async def get_upcast_offers(
 @router.post("/provider/offer/new", summary="Create a new offer")
 async def create_new_upcast_offer(
         current_user: User = Depends(get_current_user),
+        token: str = Depends(oauth2_scheme),
         body: UpcastPolicyObject = Body(..., description="The offer object")
 ):
     try:
@@ -2536,7 +2554,7 @@ async def create_new_upcast_offer(
 
         original_nlp = body.natural_language_document
         contract_object_id, contract_text = await _maybe_generate_contract_for_policy(
-            body, negotiation_object_id, offer_id
+            body, negotiation_object_id, offer_id, access_token=token
         )
         policy_updates = {}
         if contract_object_id:
@@ -2647,6 +2665,7 @@ async def create_initial_upcast_offer(
              response_model=UpcastPolicyObject)
 async def create_initial_upcast_offer_from_dataset(
         current_user: User = Depends(get_current_user),
+        token: str = Depends(oauth2_scheme),
         body: Dict[str, Any] = Body(..., description="The dataset object"),
 ):
     negotiation_provider_user_id = None
@@ -2745,6 +2764,7 @@ async def create_initial_upcast_offer_from_dataset(
              response_model=UpcastPolicyObject)
 async def create_initial_upcast_offer_from_dataset(
         current_user: User = Depends(get_current_user),
+        token: str = Depends(oauth2_scheme),
         body: Dict[str, Any] = Body(..., description="The dataset object"),
 ):
     current_user_id = current_user.id
@@ -2842,6 +2862,7 @@ async def create_initial_upcast_offer_from_dataset(
                 request_id="",
                 consumer_doc=consumer_doc,
                 provider_doc=provider_doc,
+                access_token=token,
             )
             contract_object_id = ObjectId(contract_id_str)
             upo.contract_id = contract_object_id
@@ -3555,14 +3576,29 @@ async def push_consumer_dashboard_message(action, object):
         if push_consumer_enabled:
             username = os.getenv("CONSUMER_DASHBOARD_USERNAME")
             password = os.getenv("CONSUMER_DASHBOARD_PASSWORD")
-            username_encoded = urllib.parse.quote(username)
-            password_encoded = urllib.parse.quote(password)
+
+            # Old code:
+            # username_encoded = urllib.parse.quote(username)
+            # password_encoded = urllib.parse.quote(password)
+            #
+            # New code:
+            # Validate env values before trying to build the token request. This
+            # avoids TypeError when username/password are missing or not strings.
+            if not isinstance(username, str) or not username.strip():
+                logging.error("Consumer dashboard push skipped: CONSUMER_DASHBOARD_USERNAME is missing or empty")
+                return
+            if not isinstance(password, str) or not password.strip():
+                logging.error("Consumer dashboard push skipped: CONSUMER_DASHBOARD_PASSWORD is missing or empty")
+                return
 
             token_url = "https://sso.ict-abovo.gr/realms/goodflows/protocol/openid-connect/token"
-            token_payload = (
-                f'grant_type=password&client_id=goodflows-api&username={username_encoded}'
-                f'&password={password_encoded}&client_secret=imPnW4YevqTWmUBx6NSCC2v4kad7Xphp'
-            )
+            token_payload = {
+                "grant_type": "password",
+                "client_id": "goodflows-api",
+                "username": username,
+                "password": password,
+                "client_secret": "imPnW4YevqTWmUBx6NSCC2v4kad7Xphp",
+            }
             token_headers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'cache-control': 'no-cache'
@@ -3570,7 +3606,9 @@ async def push_consumer_dashboard_message(action, object):
 
             async with httpx.AsyncClient(timeout=4.0) as client:
                 token_resp = await client.post(token_url, data=token_payload, headers=token_headers)
-                token_resp.raise_for_status()
+                if token_resp.status_code != 200:
+                    logging.error(f"Consumer dashboard token error: {token_resp.status_code} {token_resp.text}")
+                    return
                 access_token = token_resp.json()["access_token"]
 
                 url = "https://upcast-api.ict-abovo.gr/negotiation"
@@ -3597,6 +3635,13 @@ async def push_provider_dashboard_message(action, object):
         if push_provider_enabled:
             username = os.getenv("PROVIDER_DASHBOARD_USERNAME")
             password = os.getenv("PROVIDER_DASHBOARD_PASSWORD")
+
+            if not isinstance(username, str) or not username.strip():
+                logging.error("Provider dashboard push skipped: PROVIDER_DASHBOARD_USERNAME is missing or empty")
+                return
+            if not isinstance(password, str) or not password.strip():
+                logging.error("Provider dashboard push skipped: PROVIDER_DASHBOARD_PASSWORD is missing or empty")
+                return
 
             # Token retrieval (you said this works)
             url = "https://keycloak.maggioli-research.gr/auth/realms/upcast-dev/protocol/openid-connect/token"
@@ -3677,7 +3722,11 @@ async def push_provider_dashboard_message(action, object):
                         if response.status_code == 200:
                             logging.debug(f"Successful push to provider dashboard. Status: {st}, Response: {resp}")
                         else:
-                            logging.error(f"Error pushing to provider dashboard. Status: {st}, Response: {resp}")
+                            logging.error(
+                                "Error pushing to provider dashboard. "
+                                f"Status: {st}, Response: {resp}, "
+                                f"negotiation_id: {negotiation_id}, distribution_url: {distribution_url}, payload: {payload}"
+                            )
                             # Try to parse error response
                             try:
                                 error_data = response.json()

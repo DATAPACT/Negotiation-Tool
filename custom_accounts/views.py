@@ -775,7 +775,7 @@ def update_policy(request):
         api_response = response.json()
 
         try:
-            _update_contract_if_present(policy, api_response)
+            _update_contract_if_present(policy, api_response, access_token=token)
         except Exception as exc:
             return JsonResponse(
                 {"error": "Failed to update contract", "details": str(exc)},
@@ -877,7 +877,7 @@ def create_policy(request):
         print(response.status_code)
 
         try:
-            _update_contract_if_present(policy, api_response)
+            _update_contract_if_present(policy, api_response, access_token=token)
         except Exception as exc:
             return JsonResponse(
                 {"error": "Failed to update contract", "details": str(exc)},
@@ -1203,7 +1203,7 @@ def filter_dicts_with_none_values(data):
         return data
 
 
-def _update_contract_if_present(policy_payload, api_response=None):
+def _update_contract_if_present(policy_payload, api_response=None, access_token=None):
     """
     Push updated agreement data to the contract service when a contract id is available.
     """
@@ -1264,7 +1264,16 @@ def _update_contract_if_present(policy_payload, api_response=None):
     policy_payload["contract_info"] = contract_info  # keep payload consistent for subsequent calls
 
     try:
-        contract_service_interface.update_contract(contract_id, contract_info)
+        # Old code:
+        # contract_service_interface.update_contract(contract_id, contract_info)
+        #
+        # New code:
+        # forward the same authentication token when updating contract-service.
+        contract_service_interface.update_contract(
+            contract_id,
+            contract_info,
+            access_token=access_token,
+        )
     except Exception as exc:
         print(f"Failed to update contract {contract_id}: {exc}")
         raise
@@ -1346,7 +1355,8 @@ def _payload_diff(old: Dict[str, Any], new: Dict[str, Any]) -> Dict[str, Any]:
     return changes
 
 
-async def save_signature_into_contract(user_id: str, user_role: str, negotiation_id: str, signature_data: str):
+async def save_signature_into_contract(user_id: str, user_role: str, negotiation_id: str, signature_data: str,
+                                       access_token: Optional[str] = None):
     """
     Sends a signature payload to the agreement service.
     Raises requests.exceptions.RequestException on failure.
@@ -1361,7 +1371,11 @@ async def save_signature_into_contract(user_id: str, user_role: str, negotiation
 
     try:
 
-        res = await contract_service_interface.sign_contract(negotiation_id, dataform)
+        res = await contract_service_interface.sign_contract(
+            negotiation_id,
+            dataform,
+            access_token=access_token,
+        )
     except requests.exceptions.RequestException as exc:
         raise RuntimeError(f"Agreement API error: {exc}")
 
@@ -1394,7 +1408,7 @@ async def save_signature(request):
         print("to sign a signature to contract!!")
 
         ret = await save_signature_into_contract(user_id=user_id, user_role=user_role, negotiation_id=negotiation_id,
-                                                 signature_data=signature_data)
+                                                 signature_data=signature_data, access_token=token)
 
         if ret["contract_id"]:
 
@@ -1665,7 +1679,8 @@ def generate_legal_agreement(request):
     try:
         contract_obj = contract_service_interface.create_contract(
             user_id=str(user_id),
-            json_data=body
+            json_data=body,
+            access_token=token,
         )
 
         print(f"\nthe contract {contract_obj.get('contract_id')} has been created.\n")
@@ -1690,6 +1705,7 @@ def generate_legal_agreement(request):
 
 async def download_contract(request):
     user_id = request.session.get("user_id")
+    access_token = request.session.get("access_token")
     if not user_id:
         return JsonResponse({"error": "Unauthorized"}, status=401)
 
@@ -1700,7 +1716,8 @@ async def download_contract(request):
     try:
         pdf_bytes = await contract_service_interface.down_contract(
             user_id=str(user_id),
-            negotiation_id=negotiation_id
+            negotiation_id=negotiation_id,
+            access_token=access_token,
         )
     except requests.exceptions.RequestException as exc:
         return JsonResponse({"error": f"Agreement API error: {exc}"}, status=502)
