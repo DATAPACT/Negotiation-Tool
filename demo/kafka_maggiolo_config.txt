@@ -1,7 +1,0 @@
-KAFKA_CONFIG = {
-    'bootstrap.servers': 'dev.upcast.maggioli-research.gr:9094',
-    'security.protocol': 'SASL_PLAINTEXT',
-    'sasl.mechanism': 'PLAIN',
-    'sasl.username': 'user2',
-    'sasl.password': 'b]e+w0}C'
-}
