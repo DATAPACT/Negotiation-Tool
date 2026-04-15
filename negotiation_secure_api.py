@@ -120,6 +120,7 @@ else:  # Assumption: The database is stored in mongodb cloud.
     MONGO_URI = f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}/?retryWrites=true&w=majority&appName=Cluster0"
 
 DJANGO_BASE_URL = os.getenv("DJANGO_BASE_URL")
+API_AUTHENTICATION_URL = os.getenv("API_AUTHENTICATION_URL")
 CONTRACT_BASE_URL = os.getenv("API_CONTRACT_SERVICE_URL")
 LOGIN_URL = f"{DJANGO_BASE_URL}/negotiation/login"
 DEFAULT_CONTRACT_TYPE = os.getenv("CONTRACT_DEFAULT_TYPE", "dsa")
@@ -150,6 +151,15 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 blacklist = {}
 
 router = APIRouter()
+
+
+def build_authentication_service_url(path: str) -> str:
+    # Keep all authentication checks on the dedicated authentication service.
+    base_url = (API_AUTHENTICATION_URL or "").rstrip("/")
+    if not base_url:
+        raise HTTPException(status_code=500, detail="API_AUTHENTICATION_URL environment variable not set")
+    normalized_path = path if path.startswith("/") else f"/{path}"
+    return f"{base_url}{normalized_path}"
 
 
 # Password Hashing Functions
@@ -230,21 +240,41 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    # Check if the token is blacklisted
-    if await is_token_blacklisted(token):
-        raise credentials_exception
-
     try:
-        # Decode the token
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
+        verify_url = build_authentication_service_url("/user/verify-token/")
+
+        # Old code validated the JWT with the negotiation service SECRET_KEY.
+        # Now we ask the dedicated authentication service to validate its own token.
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            verify_response = await client.post(
+                verify_url,
+                content=token,
+                headers={"Content-Type": "text/plain"},
+            )
+
+        if verify_response.status_code != 200:
             raise credentials_exception
+
+        verify_payload = verify_response.json()
+        verified_user = verify_payload.get("user") or {}
+        email = verified_user.get("username_email")
+        verified_user_id = verified_user.get("id")
+
+        if not email:
+            raise credentials_exception
+    except HTTPException:
+        raise
     except Exception:
         raise credentials_exception
 
-    # Fetch the user from the database
+    # Keep using the shared Mongo user document because the rest of the
+    # negotiation code expects the local Pydantic User model with ObjectId-backed ids.
     user = await users_collection.find_one({"username_email": email})
+    if user is None and verified_user_id:
+        try:
+            user = await users_collection.find_one({"_id": ObjectId(verified_user_id)})
+        except Exception:
+            user = None
     if user is None:
         raise credentials_exception
 
@@ -762,13 +792,25 @@ async def logout_user(request: Request):
     if not token or not token.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="No token provided")
 
-    token = token.split("Bearer ")[1]
-    payload = decode_access_token(token)  # Validate and decode token
+    access_token = token.split("Bearer ")[1]
+    logout_url = build_authentication_service_url("/user/logout/")
 
-    # Add token to the blacklist with its expiry
-    expiry = payload.get("exp", datetime.utcnow() + timedelta(seconds=0))
-    blacklist[token] = expiry
-    return {"message": "Successfully logged out"}
+    # Old code blacklisted the token locally in negotiation-api.
+    # Now logout is delegated to the dedicated authentication service.
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        response = await client.post(
+            logout_url,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+    if response.status_code != 200:
+        try:
+            detail = response.json().get("detail", "Logout failed")
+        except Exception:
+            detail = "Logout failed"
+        raise HTTPException(status_code=response.status_code, detail=detail)
+
+    return response.json()
 
 
 # Decode token helper
@@ -3684,77 +3726,25 @@ async def verify_token(token: str = Body(..., description="JWT token to verify")
     Raises:
         HTTPException: If token is invalid, expired, or blacklisted
     """
-    try:
-        # Check if the token is blacklisted
-        if await is_token_blacklisted(token):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token has been revoked",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    verify_url = build_authentication_service_url("/user/verify-token/")
 
-        # Decode and validate the token
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            email: str = payload.get("sub")
-            exp: int = payload.get("exp")
-
-            if email is None:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid token: missing subject",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-
-        except jwt.ExpiredSignatureError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token has expired",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        except jwt.InvalidTokenError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        # Fetch the user from the database
-        user = await users_collection.find_one({"username_email": email})
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        # Convert ObjectId to string and remove password for security
-        user_response = {
-            "id": str(user["_id"]),
-            "username_email": user["username_email"],
-            "type": user.get("type"),
-            "is_admin": user.get("is_admin", False)
-        }
-
-        # Calculate token expiration time
-        expiration_time = datetime.fromtimestamp(exp, tz=timezone.utc)
-
-        return {
-            "valid": True,
-            "user": user_response,
-            "expires_at": expiration_time.isoformat(),
-            "message": "Token is valid"
-        }
-
-    except HTTPException:
-        # Re-raise HTTP exceptions as-is
-        raise
-    except Exception as e:
-        error_message = traceback.format_exc()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to verify token: {str(e)}. Traceback: {error_message}"
+    # Old code verified the JWT locally with negotiation-api's SECRET_KEY.
+    # Now this endpoint proxies validation to the authentication service.
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        response = await client.post(
+            verify_url,
+            content=token,
+            headers={"Content-Type": "text/plain"},
         )
+
+    if response.status_code != 200:
+        try:
+            detail = response.json().get("detail", "Token verification failed")
+        except Exception:
+            detail = "Token verification failed"
+        raise HTTPException(status_code=response.status_code, detail=detail)
+
+    return response.json()
 
 
 @router.get("/user/verify-token/")
@@ -3768,26 +3758,18 @@ async def verify_token_get(current_user: User = Depends(get_current_user)):
     Returns:
         dict: User information and token validity status
     """
-    try:
-        user_response = {
-            "id": str(current_user.id),
-            "username_email": current_user.username_email,
-            "type": current_user.type,
-            "is_admin": getattr(current_user, 'is_admin', False)
-        }
+    user_response = {
+        "id": str(current_user.id),
+        "username_email": current_user.username_email,
+        "type": current_user.type,
+        "is_admin": getattr(current_user, 'is_admin', False)
+    }
 
-        return {
-            "valid": True,
-            "user": user_response,
-            "message": "Token is valid"
-        }
-
-    except Exception as e:
-        error_message = traceback.format_exc()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to verify token: {str(e)}. Traceback: {error_message}"
-        )
+    return {
+        "valid": True,
+        "user": user_response,
+        "message": "Token is valid"
+    }
 
 
 def delivery_report(err, msg):

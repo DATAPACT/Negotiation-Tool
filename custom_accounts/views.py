@@ -57,6 +57,10 @@ API_BASE_URL = os.environ.get("API_BASE_URL")
 if not API_BASE_URL:
     raise ValueError("API_BASE_URL environment variable is not set.")
 
+API_AUTHENTICATION_URL = os.environ.get("API_AUTHENTICATION_URL")
+if not API_AUTHENTICATION_URL:
+    raise ValueError("API_AUTHENTICATION_URL environment variable is not set.")
+
 DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
 if not DJANGO_BASE_URL:
     raise ValueError("DJANGO_BASE_URL environment variable is not set.")
@@ -84,8 +88,10 @@ def set_auto_login_session(request):
         if not token:
             return JsonResponse({"error": "Missing token"}, status=400)
 
-        # Call FastAPI to verify the token
-        verify_url = f"{API_BASE_URL}/user/verify-token/"
+        # Call the dedicated authentication service to verify the token.
+        # Old code:
+        # verify_url = f"{API_BASE_URL}/user/verify-token/"
+        verify_url = f"{API_AUTHENTICATION_URL}/user/verify-token/"
         verify_res = requests.post(verify_url, data=token, headers={"Content-Type": "text/plain"})
 
         if verify_res.status_code != 200:
@@ -119,7 +125,10 @@ def signin(request):
             messages.error(request, "Please enter both username and password.")
             return redirect("login")
 
-        url = f"{API_BASE_URL}/user/login/"
+        # Login must go to the authentication service, not the negotiation API.
+        # Old code:
+        # url = f"{API_BASE_URL}/user/login/"
+        url = f"{API_AUTHENTICATION_URL}/user/login/"
         print(f'Attempting to log in to {url} with username: {username}')
         data = {
             "username": username,
@@ -228,7 +237,10 @@ def register(request):
             messages.error(request, "The confirmation password does not match.")
             return redirect("register")
 
-        endpoint_url = f"{API_BASE_URL}/user/register/"
+        # Registration is handled by the external authentication service.
+        # Old code:
+        # endpoint_url = f"{API_BASE_URL}/user/register/"
+        endpoint_url = f"{API_AUTHENTICATION_URL}/user/register/"
 
         try:
             response = requests.post(f"{endpoint_url}?master_password_input={master_password}",
@@ -284,7 +296,10 @@ def signout(request):
     user_id = request.session.get("user_id")
     user_type = request.session.get("user_type")
 
-    endpoint_url = f"{API_BASE_URL}/user/logout/"
+    # Logout must invalidate the token in the authentication service.
+    # Old code:
+    # endpoint_url = f"{API_BASE_URL}/user/logout/"
+    endpoint_url = f"{API_AUTHENTICATION_URL}/user/logout/"
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -374,8 +389,10 @@ def negotiation(request):
     # If URL parameters provided, verify token and override session
     if url_token and url_user_id:
         try:
-            # Verify token with FastAPI
-            verify_url = f"{API_BASE_URL}/user/verify-token/"
+            # Verify the incoming token with the dedicated authentication service.
+            # Old code:
+            # verify_url = f"{API_BASE_URL}/user/verify-token/"
+            verify_url = f"{API_AUTHENTICATION_URL}/user/verify-token/"
             verify_res = requests.post(verify_url, data=url_token, headers={"Content-Type": "text/plain"})
 
             if verify_res.status_code == 200:
@@ -1401,7 +1418,10 @@ async def save_signature(request):
 def get_users_details(token, consumer_id, provider_id):
     contacts = {}
 
-    _url = f"{API_BASE_URL}/user/details/"
+    # User profile data comes from the authentication service.
+    # Old code:
+    # _url = f"{API_BASE_URL}/user/details/"
+    _url = f"{API_AUTHENTICATION_URL}/user/details/"
 
     headers = {
         "Authorization": f"Bearer {token}",
