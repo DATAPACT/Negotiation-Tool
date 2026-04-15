@@ -116,6 +116,23 @@ class ContractAPIService():
             headers["Authorization"] = f"Bearer {access_token}"
         return headers
 
+    def _raise_contract_service_error(self, exc: requests.exceptions.RequestException):
+        # Old code returned only the generic requests exception text, which hid
+        # the detail payload returned by contract-service on 4xx/5xx responses.
+        # Keep the upstream body when available so debugging the real backend
+        # failure is straightforward from Negotiation-Tool logs and responses.
+        detail = f"Error calling agreement API: {exc}"
+        response = getattr(exc, "response", None)
+        if response is not None:
+            response_body = ""
+            try:
+                response_body = response.text.strip()
+            except Exception:
+                response_body = ""
+            if response_body:
+                detail = f"{detail}. Contract service response: {response_body}"
+        raise HTTPException(status_code=502, detail=detail)
+
     @property
     def contracts_collection(self):
         return _get_db().contracts
@@ -244,10 +261,7 @@ class ContractAPIService():
             )
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            raise HTTPException(
-                status_code=502,
-                detail=f"Error calling agreement API: {e}"
-            )
+            self._raise_contract_service_error(e)
 
         result = response.json()
         # inject generated natural language document
@@ -272,10 +286,7 @@ class ContractAPIService():
             )
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            raise HTTPException(
-                status_code=502,
-                detail=f"Error calling agreement API: {e}"
-            )
+            self._raise_contract_service_error(e)
 
         return response.json()
 
@@ -294,10 +305,7 @@ class ContractAPIService():
             )
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            raise HTTPException(
-                status_code=502,
-                detail=f"Error calling agreement API: {e}"
-            )
+            self._raise_contract_service_error(e)
 
         return response.json()
 
