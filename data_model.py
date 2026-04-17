@@ -24,7 +24,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from pydantic import Field, EmailStr
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from rdflib import Graph
 from starlette.responses import JSONResponse
 
@@ -57,6 +57,9 @@ class PartyType(str, Enum):
     PROVIDER = 'provider'
 
 class User(MongoObject):
+    keycloak_sub: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     name: Optional[str] = None
     type: Optional[PartyType] = None
     username_email: Optional[EmailStr] = None
@@ -68,6 +71,28 @@ class User(MongoObject):
     vat_no: Optional[str] = Field(default=None)  # VAT account if possible
     position_title: Optional[str] = Field(default=None)
     phone: Optional[str] = Field(default=None)
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_name_fields(cls, values):
+        if not isinstance(values, dict):
+            return values
+
+        first_name = (values.get("first_name") or "").strip()
+        last_name = (values.get("last_name") or "").strip()
+        name = (values.get("name") or "").strip()
+
+        if first_name or last_name:
+            values["first_name"] = first_name or None
+            values["last_name"] = last_name or None
+            values["name"] = " ".join(part for part in [first_name, last_name] if part) or None
+        elif name:
+            parts = name.split(None, 1)
+            values["first_name"] = parts[0]
+            values["last_name"] = parts[1] if len(parts) > 1 else None
+            values["name"] = name
+
+        return values
 
 class UpcastResourceDescriptionObject(BaseModel):
     title: Optional[str] = None

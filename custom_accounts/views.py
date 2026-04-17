@@ -12,14 +12,18 @@
 import difflib
 import html
 import json
+import logging
 import os
 import re
+import threading
 import textwrap
 import unicodedata
+from urllib.parse import urlencode
 from copy import deepcopy
 from datetime import datetime
 from difflib import SequenceMatcher
 
+import jwt
 import requests
 from bs4 import BeautifulSoup
 from django.contrib import messages
@@ -28,8 +32,11 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
+from jwt import PyJWKClient
+from pymongo import MongoClient as PyMongoClient
 from typing import List, Dict, Optional, Any
 
 from PolicyEngine.Parsers import ODRLParser
@@ -52,23 +59,148 @@ from privux import settings
 import uuid
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 API_BASE_URL = os.environ.get("API_BASE_URL")
 if not API_BASE_URL:
     raise ValueError("API_BASE_URL environment variable is not set.")
 
-API_AUTHENTICATION_URL = os.environ.get("API_AUTHENTICATION_URL")
-if not API_AUTHENTICATION_URL:
-    raise ValueError("API_AUTHENTICATION_URL environment variable is not set.")
+API_USER_MANAGEMENT_URL = os.environ.get("API_USER_MANAGEMENT_URL")
+if not API_USER_MANAGEMENT_URL:
+    raise ValueError("API_USER_MANAGEMENT_URL environment variable is not set.")
 
 DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
 if not DJANGO_BASE_URL:
     raise ValueError("DJANGO_BASE_URL environment variable is not set.")
 
+_jwks_client: PyJWKClient | None = None
+_jwks_lock = threading.Lock()
+_mongo_client = None
+_mongo_lock = threading.Lock()
+
+
+def _build_full_name(first_name: Optional[str], last_name: Optional[str]) -> Optional[str]:
+    parts = [part.strip() for part in [first_name or "", last_name or ""] if part and part.strip()]
+    return " ".join(parts) or None
+
+
+def _get_jwks_client(url: str) -> PyJWKClient:
+    global _jwks_client
+    if _jwks_client is None:
+        with _jwks_lock:
+            if _jwks_client is None:
+                _jwks_client = PyJWKClient(url, cache_keys=True)
+    return _jwks_client
+
+
+def _get_mongo_users():
+    global _mongo_client
+    if _mongo_client is None:
+        with _mongo_lock:
+            if _mongo_client is None:
+                mongo_user = os.environ.get("MONGO_USER", "root")
+                mongo_password = os.environ.get("MONGO_PASSWORD", "rootpassword")
+                mongo_host = os.environ.get("MONGO_HOST", "mongo")
+                mongo_port = os.environ.get("MONGO_PORT", "27017")
+                uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}"
+                _mongo_client = PyMongoClient(uri)
+    return _mongo_client["upcast"]["users"]
+
+
+def _build_keycloak_url(path: str) -> str:
+    issuer = settings.KEYCLOAK_ISSUER.rstrip("/")
+    return f"{issuer}{path}"
+
+
+def _verify_negotiation_token(token: str) -> Dict[str, Any]:
+    verify_url = f"{API_BASE_URL}/user/verify-token/"
+    verify_res = requests.post(
+        verify_url,
+        data=token,
+        headers={"Content-Type": "text/plain"},
+        timeout=10,
+    )
+    verify_res.raise_for_status()
+    verified_data = verify_res.json()
+    user = verified_data.get("user")
+    if not user:
+        raise ValueError("Invalid response from verification")
+    return user
+
+
+def _decode_keycloak_token(token: str) -> Dict[str, Any]:
+    keycloak_issuer = settings.KEYCLOAK_ISSUER
+    if not keycloak_issuer:
+        raise ValueError("KEYCLOAK_ISSUER is not configured")
+
+    jwks_url = f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/certs"
+    jwks_client = _get_jwks_client(jwks_url)
+    signing_key = jwks_client.get_signing_key_from_jwt(token)
+
+    # Old code in Django delegated token verification to negotiation-api.
+    #
+    # New code:
+    # Django validates the Keycloak token locally during login/session setup so
+    # it can store the Keycloak access token directly without a second roundtrip
+    # to negotiation-api.
+    return jwt.decode(
+        token,
+        signing_key.key,
+        algorithms=["RS256"],
+        issuer=keycloak_issuer.rstrip("/"),
+        options={"verify_aud": False},
+    )
+
+
+def _resolve_local_session_user_from_claims(claims: Dict[str, Any]) -> Dict[str, Any]:
+    keycloak_sub = claims.get("sub")
+    if not keycloak_sub:
+        raise ValueError("Keycloak token missing subject")
+
+    email = claims.get("email") or claims.get("preferred_username")
+    if not email:
+        raise ValueError("Keycloak token missing email")
+
+    users_collection = _get_mongo_users()
+    user = users_collection.find_one({"keycloak_sub": keycloak_sub})
+    if user is None:
+        user = users_collection.find_one({"username_email": email})
+
+    if user is None:
+        raise ValueError("User exists in Keycloak but is not registered in Negotiation-Tool")
+
+    update_fields = {}
+    if user.get("keycloak_sub") != keycloak_sub:
+        update_fields["keycloak_sub"] = keycloak_sub
+    first_name = (claims.get("given_name") or user.get("first_name") or "").strip() or None
+    last_name = (claims.get("family_name") or user.get("last_name") or "").strip() or None
+    display_name = _build_full_name(first_name, last_name) or claims.get("name") or claims.get("preferred_username")
+    if display_name and user.get("name") != display_name:
+        update_fields["name"] = display_name
+    if first_name and user.get("first_name") != first_name:
+        update_fields["first_name"] = first_name
+    if last_name and user.get("last_name") != last_name:
+        update_fields["last_name"] = last_name
+    if update_fields:
+        users_collection.update_one({"_id": user["_id"]}, {"$set": update_fields})
+        user.update(update_fields)
+
+    return {
+        "id": str(user["_id"]),
+        "username_email": user.get("username_email"),
+        "type": user.get("type"),
+        "name": user.get("name"),
+        "first_name": user.get("first_name"),
+        "last_name": user.get("last_name"),
+    }
+
+
 User = get_user_model()
 
 
 def index(request):
+    if request.session.get("access_token"):
+        return redirect("datacontrollernegotiation")
     return render(request, "common/index.html")
 
 
@@ -88,25 +220,21 @@ def set_auto_login_session(request):
         if not token:
             return JsonResponse({"error": "Missing token"}, status=400)
 
-        # Call the dedicated authentication service to verify the token.
         # Old code:
-        # verify_url = f"{API_BASE_URL}/user/verify-token/"
-        verify_url = f"{API_AUTHENTICATION_URL}/user/verify-token/"
-        verify_res = requests.post(verify_url, data=token, headers={"Content-Type": "text/plain"})
-
-        if verify_res.status_code != 200:
-            return JsonResponse({"error": "Token verification failed"}, status=401)
-
-        verified_data = verify_res.json()
-        user = verified_data.get("user")
-
-        if not user:
-            return JsonResponse({"error": "Invalid response from verification"}, status=500)
+        # verify_url = f"{API_AUTHENTICATION_URL}/user/verify-token/"
+        #
+        # New code:
+        # the raw Keycloak access token is verified locally in Django, which
+        # resolves the local business user for the current session without
+        # calling negotiation-api during login/session setup.
+        claims = _decode_keycloak_token(token)
+        user = _resolve_local_session_user_from_claims(claims)
 
         # Save in session
         request.session["access_token"] = token
         request.session["user_id"] = user.get("id")
         request.session["user_type"] = user.get("type")
+        request.session["is_sso"] = False
 
         return JsonResponse({"success": True})
 
@@ -116,27 +244,40 @@ def set_auto_login_session(request):
 
 def signin(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        email = request.POST.get("email") or request.POST.get("username")
         password = request.POST.get("password")
 
-        print("\n\n\n username", username)
+        print("\n\n\n email", email)
         print("password", password)
-        if not username or not password:
-            messages.error(request, "Please enter both username and password.")
+        if not email or not password:
+            messages.error(request, "Please enter both email and password.")
             return redirect("login")
 
-        # Login must go to the authentication service, not the negotiation API.
-        # Old code:
-        # url = f"{API_BASE_URL}/user/login/"
-        url = f"{API_AUTHENTICATION_URL}/user/login/"
-        print(f'Attempting to log in to {url} with username: {username}')
-        data = {
-            "username": username,
-            "password": password,
-        }
+        if not settings.KEYCLOAK_ISSUER or not settings.KEYCLOAK_CLIENT_ID:
+            messages.error(request, "Keycloak login is not configured.")
+            return redirect("login")
 
         try:
-            response = requests.post(url, data=data)
+            token_url = _build_keycloak_url("/protocol/openid-connect/token")
+            data = {
+                "client_id": settings.KEYCLOAK_CLIENT_ID,
+                "grant_type": "password",
+                # Keycloak's token endpoint still expects the field name
+                # `username`, but the UI now explicitly asks the user for email.
+                "username": email,
+                "password": password,
+            }
+            if settings.KEYCLOAK_CLIENT_SECRET:
+                data["client_secret"] = settings.KEYCLOAK_CLIENT_SECRET
+
+            # Old code:
+            # url = f"{API_BASE_URL}/user/login/"
+            #
+            # New code:
+            # login is delegated to Keycloak. Negotiation-Tool stores the
+            # Keycloak access token directly instead of asking negotiation-api
+            # to mint an internal JWT.
+            response = requests.post(token_url, data=data, timeout=10)
             print(f"Response status code: {response.status_code}")
             print(f"Response content: {response.content}")
         except requests.RequestException as e:
@@ -145,20 +286,36 @@ def signin(request):
 
         if response.status_code == 200:
             resp_data = response.json()
+            access_token = resp_data.get("access_token")
+            if not access_token:
+                messages.error(request, "Keycloak did not return an access token.")
+                return redirect("login")
+
+            try:
+                claims = _decode_keycloak_token(access_token)
+                user = _resolve_local_session_user_from_claims(claims)
+            except Exception as exc:
+                logger.error("Keycloak login succeeded but local user resolution failed: %s", exc)
+                messages.error(request, "Login succeeded, but the user is not authorized in Negotiation-Tool.")
+                return redirect("login")
+
             # Save token and user info in session
             try:
                 # Rotate session to avoid stale cached baselines across logins
                 request.session.cycle_key()
             except Exception:
                 pass
-            request.session["access_token"] = resp_data.get("access_token")
-            request.session["user_id"] = resp_data.get("user_id")
-            request.session["user_type"] = resp_data.get("user_type")
+            request.session["access_token"] = access_token
+            request.session["refresh_token"] = resp_data.get("refresh_token")
+            request.session["user_id"] = user.get("id")
+            request.session["user_type"] = user.get("type")
+            request.session["is_sso"] = False
             return redirect("datacontrollernegotiation")
         else:
             # Extract API error message if any, or default message
             try:
-                detail = response.json().get("detail", "Invalid username or password.")
+                body = response.json()
+                detail = body.get("error_description") or body.get("detail") or body.get("error") or "Invalid username or password."
             except Exception:
                 detail = "Invalid username or password."
 
@@ -194,7 +351,9 @@ def signin(request):
 def register(request):
     if request.method == "POST":
         print("Registering user...")
-        user_name = request.POST.get("username")
+        first_name = (request.POST.get("first_name") or "").strip()
+        last_name = (request.POST.get("last_name") or "").strip()
+        user_name = _build_full_name(first_name, last_name)
         email = request.POST.get("email")
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirmpassword")
@@ -210,6 +369,8 @@ def register(request):
         phone = request.POST.get("phone")
 
         data = {
+            "first_name": first_name,
+            "last_name": last_name,
             "name": user_name,
             "type": user_type,
             "username_email": email,
@@ -225,22 +386,28 @@ def register(request):
 
         master_password = os.getenv("MASTER_PASSWORD", "master_password")
 
-        if user_name is None or user_name == "":
-            messages.error(request, "Username cannot be empty.")
+        if not first_name:
+            messages.error(request, "First name cannot be empty.")
             return redirect("register")
 
-        if len(user_name) < 4 or len(user_name) > 20:
-            messages.error(request, "Username should be between 4 and 20 charcters.")
+        if not last_name:
+            messages.error(request, "Last name cannot be empty.")
             return redirect("register")
 
         if password != confirm_password:
             messages.error(request, "The confirmation password does not match.")
             return redirect("register")
 
-        # Registration is handled by the external authentication service.
         # Old code:
+        # endpoint_url = f"{API_AUTHENTICATION_URL}/user/register/"
+        #
+        # New code:
+        # user registration is handled by user-management-service. Keycloak is
+        # the authentication authority, while profile creation lives in the
+        # dedicated user-management service.
+
+        endpoint_url = f"{API_USER_MANAGEMENT_URL}/user/register/"
         # endpoint_url = f"{API_BASE_URL}/user/register/"
-        endpoint_url = f"{API_AUTHENTICATION_URL}/user/register/"
 
         try:
             response = requests.post(f"{endpoint_url}?master_password_input={master_password}",
@@ -291,30 +458,23 @@ def datacontrollerhome(request):
 
 
 def signout(request):
-    # Ensure user is authenticated via token in session
-    token = request.session.get("access_token")
-    user_id = request.session.get("user_id")
-    user_type = request.session.get("user_type")
-
-    # Logout must invalidate the token in the authentication service.
     # Old code:
-    # endpoint_url = f"{API_BASE_URL}/user/logout/"
-    endpoint_url = f"{API_AUTHENTICATION_URL}/user/logout/"
+    # endpoint_url = f"{API_AUTHENTICATION_URL}/user/logout/"
+    #
+    # New code:
+    # authentication logout is handled by Keycloak. Negotiation-Tool clears its
+    # local session and redirects to Keycloak logout when configured.
+    request.session.flush()
 
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "user-id": user_id
-    }
+    if settings.KEYCLOAK_ISSUER:
+        params = {
+            "client_id": settings.KEYCLOAK_CLIENT_ID,
+            "post_logout_redirect_uri": request.build_absolute_uri(reverse("login")),
+        }
+        logout_url = f"{_build_keycloak_url('/protocol/openid-connect/logout')}?{urlencode(params)}"
+        return redirect(logout_url)
 
-    try:
-        response = requests.post(endpoint_url, headers=headers)
-        response.raise_for_status()  # Raise an error for bad responses
-
-        return redirect("login")
-
-    except Exception as e:
-        print(f"Error logging out: {e}")
-        return JsonResponse({'error': 'Error logging out'}, status=500)
+    return redirect("login")
 
 
 ####################policy editor###########################################
@@ -386,27 +546,20 @@ def negotiation(request):
     url_user_id = request.GET.get("user_id")
     url_user_type = request.GET.get("user_type")
 
-    # If URL parameters provided, verify token and override session
-    if url_token and url_user_id:
+    # If a Keycloak access token is provided, verify it and override the
+    # current session with the resolved local user identity.
+    if url_token:
         try:
-            # Verify the incoming token with the dedicated authentication service.
-            # Old code:
-            # verify_url = f"{API_BASE_URL}/user/verify-token/"
-            verify_url = f"{API_AUTHENTICATION_URL}/user/verify-token/"
-            verify_res = requests.post(verify_url, data=url_token, headers={"Content-Type": "text/plain"})
-
-            if verify_res.status_code == 200:
-                # Token is valid, override session with new credentials
-                request.session["access_token"] = url_token
-                request.session["user_id"] = url_user_id
-                request.session["user_type"] = url_user_type or "provider"
-                print(f"✅ Session updated from URL parameters for user {url_user_id}")
-                token = url_token
-                user_id = url_user_id
-                user_type = url_user_type or "provider"
-            else:
-                print(f"❌ Token verification failed: {verify_res.status_code}")
-                return redirect("login")
+            claims = _decode_keycloak_token(url_token)
+            user = _resolve_local_session_user_from_claims(claims)
+            request.session["access_token"] = url_token
+            request.session["user_id"] = user.get("id")
+            request.session["user_type"] = user.get("type")
+            request.session["is_sso"] = False
+            print(f"✅ Session updated from URL parameters for user {user.get('id')}")
+            token = url_token
+            user_id = user.get("id")
+            user_type = user.get("type")
         except Exception as e:
             print(f"❌ Error verifying token: {e}")
             return redirect("login")
@@ -1432,10 +1585,13 @@ async def save_signature(request):
 def get_users_details(token, consumer_id, provider_id):
     contacts = {}
 
-    # User profile data comes from the authentication service.
     # Old code:
-    # _url = f"{API_BASE_URL}/user/details/"
-    _url = f"{API_AUTHENTICATION_URL}/user/details/"
+    # _url = f"{API_AUTHENTICATION_URL}/user/details/"
+    #
+    # New code:
+    # user profile data is served by user-management-service, while Keycloak
+    # remains responsible for authentication.
+    _url = f"{API_USER_MANAGEMENT_URL}/user/details/"
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -2370,3 +2526,70 @@ def get_agent_record(request):
         # You can log the error or handle it as needed
         print(f'Error fetching agent record for negotiation id {negotiation_id}: {e}')
         return None
+
+
+@csrf_exempt  # Keycloak JWT validation provides the request authenticity here.
+def sso_login(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        body = json.loads(request.body)
+        token = body.get("token")
+        if not token:
+            return JsonResponse({"error": "Missing token"}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    keycloak_issuer = settings.KEYCLOAK_ISSUER
+    if not keycloak_issuer:
+        return JsonResponse({"error": "SSO not configured"}, status=503)
+
+    jwks_url = f"{keycloak_issuer}/protocol/openid-connect/certs"
+
+    try:
+        jwks_client = _get_jwks_client(jwks_url)
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+        decode_kwargs = {
+            "algorithms": ["RS256"],
+            "issuer": keycloak_issuer,
+        }
+        client_id = settings.KEYCLOAK_CLIENT_ID
+        if client_id:
+            decode_kwargs["audience"] = client_id
+        else:
+            decode_kwargs["options"] = {"verify_aud": False}
+        payload = jwt.decode(token, signing_key.key, **decode_kwargs)
+    except Exception as exc:
+        logger.warning("[SSO] Token validation failed — %s: %s", type(exc).__name__, exc)
+        return JsonResponse({"error": "Invalid token"}, status=401)
+
+    sub = payload.get("sub")
+    if not sub:
+        return JsonResponse({"error": "Invalid token claims"}, status=401)
+
+    email = payload.get("email", "")
+    name = payload.get("name") or payload.get("preferred_username") or f"kc_{sub}"
+
+    # If the user already exists locally, keep the existing business role/type.
+    user_type = "provider"
+    try:
+        existing_user = _get_mongo_users().find_one({"username_email": email}) if email else None
+        if existing_user and existing_user.get("type"):
+            user_type = existing_user["type"]
+    except Exception as exc:
+        logger.warning("[SSO] Local user prefetch failed: %s", exc)
+
+    try:
+        claims = _decode_keycloak_token(token)
+        user = _resolve_local_session_user_from_claims(claims)
+    except Exception as exc:
+        logger.error("[SSO] Local user resolution failed: %s", exc)
+        return JsonResponse({"error": "User is not authorized in Negotiation-Tool"}, status=401)
+
+    request.session["access_token"] = token
+    request.session["user_id"] = user.get("id")
+    request.session["user_type"] = user.get("type", user_type)
+    request.session["is_sso"] = True
+
+    return JsonResponse({"status": "ok", "redirect_url": reverse("datacontrollernegotiation")})

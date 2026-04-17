@@ -110,7 +110,7 @@ class ContractAPIService():
 
     def _build_auth_headers(self, access_token: Optional[str], extra_headers: Optional[Dict[str, str]] = None):
         # Old code sent only custom headers/content-type to contract-service.
-        # New code forwards the same bearer token obtained from authentication-service.
+        # New code forwards the same bearer token received by the caller.
         headers = dict(extra_headers or {})
         if access_token:
             headers["Authorization"] = f"Bearer {access_token}"

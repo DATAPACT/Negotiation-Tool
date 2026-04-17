@@ -18,6 +18,24 @@ load_dotenv()
 
 API_BASE_URL = os.environ.get("API_BASE_URL")
 DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
+KEYCLOAK_ISSUER = os.environ.get("KEYCLOAK_ISSUER", "")
+if not KEYCLOAK_ISSUER:
+    import warnings
+    warnings.warn(
+        "KEYCLOAK_ISSUER is not set. SSO login will fail until it is configured.",
+        stacklevel=2,
+    )
+KEYCLOAK_CLIENT_ID = os.environ.get("KEYCLOAK_CLIENT_ID", "")
+KEYCLOAK_CLIENT_SECRET = os.environ.get("KEYCLOAK_CLIENT_SECRET", "")
+
+_frame_ancestors_env = os.environ.get("FRAME_ANCESTORS", "")
+if not _frame_ancestors_env:
+    import warnings
+    warnings.warn(
+        "FRAME_ANCESTORS is not set. Keycloak iframe SSO will not work until it is configured.",
+        stacklevel=2,
+    )
+FRAME_ANCESTORS = _frame_ancestors_env.split() if _frame_ancestors_env else []
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,10 +45,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-e+dfmqm))kmz9k*e4dt(0=)(=uxc0z9hzmfar1-pif#1r=npin"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-e+dfmqm))kmz9k*e4dt(0=)(=uxc0z9hzmfar1-pif#1r=npin")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in {"1", "true", "yes", "on"}
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "10.22.12.250", "UOS-24012.ecs.soton.ac.uk", "dips.soton.ac.uk"]
 
@@ -77,6 +95,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # user custom
     "custom_accounts.redirect_user_middleware.UserRedirectMiddleware",
+    "custom_accounts.redirect_user_middleware.FrameAncestorsMiddleware",
 ]
 
 ROOT_URLCONF = "privux.urls"
@@ -93,6 +112,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "custom_accounts.context_processors.sso_config",
             ],
         },
     },
@@ -167,11 +187,26 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-# Allow embedding in iframes from any origin
-# X_FRAME_OPTIONS = "SAMEORIGIN"
-X_FRAME_OPTIONS = "ALLOWALL"
+# Keep SAMEORIGIN as the legacy fallback header.
+# The actual iframe allowlist is enforced by FrameAncestorsMiddleware via CSP.
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 AUTH_USER_MODEL = "custom_accounts.User"
+
+SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
+SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "False").lower() in {"1", "true", "yes", "on"}
+CSRF_COOKIE_SAMESITE = os.environ.get("CSRF_COOKIE_SAMESITE", "Lax")
+CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE", "False").lower() in {"1", "true", "yes", "on"}
+
+# Browsers reject SameSite=None cookies unless Secure is also true. For the
+# current direct HTTP test flow we must coerce that invalid combination to Lax,
+# otherwise the session cookie is dropped and every post-login redirect looks
+# unauthenticated.
+if SESSION_COOKIE_SAMESITE == "None" and not SESSION_COOKIE_SECURE:
+    SESSION_COOKIE_SAMESITE = "Lax"
+
+if CSRF_COOKIE_SAMESITE == "None" and not CSRF_COOKIE_SECURE:
+    CSRF_COOKIE_SAMESITE = "Lax"
 
 CSRF_TRUSTED_ORIGINS = [
     'https://dips.soton.ac.uk',
