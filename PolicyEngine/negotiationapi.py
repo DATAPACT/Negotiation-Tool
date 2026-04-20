@@ -153,7 +153,7 @@ host = "cluster0.btnpvyy.mongodb.net"
 MONGO_DETAILS = f"mongodb+srv://{user}:{password}@{host}/?retryWrites=true&w=majority&appName=Cluster0"
 
 client = AsyncIOMotorClient(MONGO_DETAILS)
-db = client.upcast
+db = client.datapack
 negotiations_collection = db.negotiations
 requests_collection = db.requests
 offers_collection = db.offers

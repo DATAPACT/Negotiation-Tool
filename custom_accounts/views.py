@@ -84,6 +84,21 @@ def _build_full_name(first_name: Optional[str], last_name: Optional[str]) -> Opt
     return " ".join(parts) or None
 
 
+def _guess_user_type_from_claims(claims: Dict[str, Any]) -> str:
+    email = (claims.get("email") or claims.get("preferred_username") or "").lower()
+    preferred_username = (claims.get("preferred_username") or "").lower()
+    role_values = []
+    realm_access = claims.get("realm_access") or {}
+    role_values.extend(str(role).lower() for role in (realm_access.get("roles") or []))
+    resource_access = claims.get("resource_access") or {}
+    for client_access in resource_access.values():
+        role_values.extend(str(role).lower() for role in ((client_access or {}).get("roles") or []))
+
+    if "provider" in role_values or "provider" in email or "provider" in preferred_username:
+        return "provider"
+    return "consumer"
+
+
 def _get_jwks_client(url: str) -> PyJWKClient:
     global _jwks_client
     if _jwks_client is None:
@@ -112,20 +127,20 @@ def _build_keycloak_url(path: str) -> str:
     return f"{issuer}{path}"
 
 
-def _verify_negotiation_token(token: str) -> Dict[str, Any]:
-    verify_url = f"{API_BASE_URL}/user/verify-token/"
-    verify_res = requests.post(
-        verify_url,
-        data=token,
-        headers={"Content-Type": "text/plain"},
-        timeout=10,
-    )
-    verify_res.raise_for_status()
-    verified_data = verify_res.json()
-    user = verified_data.get("user")
-    if not user:
-        raise ValueError("Invalid response from verification")
-    return user
+# def _verify_negotiation_token(token: str) -> Dict[str, Any]:
+#     verify_url = f"{API_BASE_URL}/user/verify-token/"
+#     verify_res = requests.post(
+#         verify_url,
+#         data=token,
+#         headers={"Content-Type": "text/plain"},
+#         timeout=10,
+#     )
+#     verify_res.raise_for_status()
+#     verified_data = verify_res.json()
+#     user = verified_data.get("user")
+#     if not user:
+#         raise ValueError("Invalid response from verification")
+#     return user
 
 
 def _decode_keycloak_token(token: str) -> Dict[str, Any]:
@@ -167,7 +182,32 @@ def _resolve_local_session_user_from_claims(claims: Dict[str, Any]) -> Dict[str,
         user = users_collection.find_one({"username_email": email})
 
     if user is None:
-        raise ValueError("User exists in Keycloak but is not registered in Negotiation-Tool")
+        first_name = (claims.get("given_name") or "").strip() or "miss value"
+        last_name = (claims.get("family_name") or "").strip() or "miss value"
+        display_name = _build_full_name(first_name, last_name) or claims.get("name") or email or "miss value"
+        user_type = _guess_user_type_from_claims(claims)
+        placeholder_user = {
+            "keycloak_sub": keycloak_sub,
+            "first_name": first_name,
+            "last_name": last_name,
+            "name": display_name,
+            "type": user_type,
+            "username_email": email,
+            "password": None,
+            "organization": ["miss value"],
+            "incorporation": "miss value",
+            "address": "miss value",
+            "vat_no": "miss value",
+            "position_title": "miss value",
+            "phone": "miss value",
+        }
+        logger.warning(
+            "Keycloak user %s (%s) is not registered in Negotiation-Tool MongoDB. Creating placeholder local user so login can continue.",
+            keycloak_sub,
+            email,
+        )
+        insert_result = users_collection.insert_one(placeholder_user)
+        user = users_collection.find_one({"_id": insert_result.inserted_id})
 
     update_fields = {}
     if user.get("keycloak_sub") != keycloak_sub:

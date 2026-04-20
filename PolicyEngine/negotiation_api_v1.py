@@ -15,7 +15,7 @@ app = FastAPI(
 
 # MongoDB connection
 client = AsyncIOMotorClient("mongodb://localhost:27017")
-db = client.upcast_database
+db = client.datapack
 
 
 class UpcastPolicyObject(BaseModel):

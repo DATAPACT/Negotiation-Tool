@@ -82,6 +82,8 @@ print(f'MONGO_PASSWORD {MONGO_PASSWORD}')
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 print(f'MONGO_HOST {MONGO_HOST}')
 MONGO_PORT = os.getenv("MONGO_PORT")
+MONGO_DB = os.getenv("MONGO_DB", "datapack")
+print(f'MONGO_DB {MONGO_DB}')
 if MONGO_PORT: # Assumption: A local or remote installation of MongoDB is provided.
     MONGO_PORT = int(MONGO_PORT)
     MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}"
@@ -95,7 +97,7 @@ print(f'MONGO_URI {MONGO_URI}')
 
 client = AsyncIOMotorClient(MONGO_URI)
 print(f'client {client}')
-db = client.upcast
+db = client[MONGO_DB]
 print(f'db {db}')
 negotiations_collection = db.negotiations
 requests_collection = db.requests

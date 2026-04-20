@@ -30,6 +30,8 @@ from starlette.responses import JSONResponse
 from starlette.responses import Response
 from jwt import PyJWKClient
 
+
+
 from data_model import User, UpcastNegotiationObject, UpcastPolicyObject, PolicyDiffObject, PolicyDiffResponse, \
     UpcastPolicyConverter, PolicyType, \
     PartyType, NegotiationStatus, pydantic_to_dict, Preference, PolicyKey, RecommenderAgentRecord, \
@@ -41,6 +43,8 @@ from recommender.agent import new_offer, new_request
 secure = True
 
 import logging
+logger = logging.getLogger(__name__)
+
 
 logging.basicConfig(
     level=logging.INFO,  # You can change this to DEBUG for more detailed output
@@ -123,6 +127,8 @@ MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 print(f'MONGO_HOST {MONGO_HOST}')
 MONGO_PORT = os.getenv("MONGO_PORT")
 print(f'MONGO_PORT {MONGO_PORT}')
+MONGO_DB = os.getenv("MONGO_DB", "datapack")
+print(f'MONGO_DB {MONGO_DB}')
 if MONGO_PORT:  # Assumption: A local or remote installation of MongoDB is provided.
     MONGO_PORT = int(MONGO_PORT)
     MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}"
@@ -139,7 +145,7 @@ DEFAULT_CONTRACT_VALIDITY_PERIOD = int(os.getenv("CONTRACT_VALIDITY_PERIOD", "12
 
 client = AsyncIOMotorClient(MONGO_URI)
 print(f'MONGO_URI {MONGO_URI}')
-db = client.upcast
+db = client[MONGO_DB]
 print(f'db {db}')
 negotiations_collection = db.negotiations
 requests_collection = db.requests
@@ -277,7 +283,42 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         user = await users_collection.find_one({"username_email": email})
     if user is None:
-        raise credentials_exception
+        first_name = (payload.get("given_name") or "").strip() or "miss value"
+        last_name = (payload.get("family_name") or "").strip() or "miss value"
+        display_name = " ".join(part for part in [first_name, last_name] if part) or payload.get("name") or email or "miss value"
+        email_lower = email.lower()
+        preferred_username = str(payload.get("preferred_username") or "").lower()
+        role_values = []
+        realm_access = payload.get("realm_access") or {}
+        role_values.extend(str(role).lower() for role in (realm_access.get("roles") or []))
+        resource_access = payload.get("resource_access") or {}
+        for client_access in resource_access.values():
+            role_values.extend(str(role).lower() for role in ((client_access or {}).get("roles") or []))
+        inferred_type = "provider" if (
+            "provider" in role_values or "provider" in email_lower or "provider" in preferred_username
+        ) else "consumer"
+        placeholder_user = {
+            "keycloak_sub": sub,
+            "first_name": first_name,
+            "last_name": last_name,
+            "name": display_name,
+            "type": inferred_type,
+            "username_email": email,
+            "password": None,
+            "organization": ["miss value"],
+            "incorporation": "miss value",
+            "address": "miss value",
+            "vat_no": "miss value",
+            "position_title": "miss value",
+            "phone": "miss value",
+        }
+        result = await users_collection.insert_one(placeholder_user)
+        logger.warning(
+            "Keycloak user %s (%s) is not registered in Negotiation-Tool MongoDB. Creating placeholder local user so API access can continue.",
+            sub,
+            email,
+        )
+        user = await users_collection.find_one({"_id": result.inserted_id})
 
     update_fields = {}
     if user.get("keycloak_sub") != sub:

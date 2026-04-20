@@ -36,6 +36,7 @@ MONGO_USER = os.getenv("MONGO_USER")
 MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 MONGO_PORT = os.getenv("MONGO_PORT")
+MONGO_DB = os.getenv("MONGO_DB", "datapack")
 if MONGO_PORT:  # Assumption: A local or remote installation of MongoDB is provided.
     MONGO_PORT = int(MONGO_PORT)
     MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}"
@@ -44,7 +45,7 @@ else:  # Assumption: The database is stored in mongodb cloud.
 
 
 # client = AsyncIOMotorClient(MONGO_URI)
-# db = client.upcast
+# db = client.datapack
 # contracts_collection = db.contracts
 # users_collection = db.users
 # negotiations_collection = db.negotiations
@@ -100,7 +101,7 @@ def _get_db():
     if _client is None or _client_loop is not loop or (_client_loop and _client_loop.is_closed()):
         _client = AsyncIOMotorClient(MONGO_URI)
         _client_loop = loop
-    return _client.upcast
+    return _client[MONGO_DB]
 
 
 class ContractAPIService():

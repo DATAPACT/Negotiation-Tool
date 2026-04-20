@@ -128,7 +128,7 @@ else: # Assumption: The database is stored in mongodb cloud.
 
 client = AsyncIOMotorClient(MONGO_URI)
 # print(f'MONGO_URI {MONGO_URI}')
-db = client.upcast
+db = client.datapack
 print(f'db {db}')
 negotiations_collection = db.negotiations
 requests_collection = db.requests
