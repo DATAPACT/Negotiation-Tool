@@ -35,9 +35,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
-from jwt import PyJWKClient
 from pymongo import MongoClient as PyMongoClient
 from typing import List, Dict, Optional, Any
+from keycloak_auth.auth import decode_keycloak_token
+from keycloak_auth.user_mapping import build_full_name, resolve_or_create_local_user_sync
 
 from PolicyEngine.Parsers import ODRLParser
 from PolicyEngine.Translators import LogicTranslator
@@ -73,39 +74,8 @@ DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
 if not DJANGO_BASE_URL:
     raise ValueError("DJANGO_BASE_URL environment variable is not set.")
 
-_jwks_client: PyJWKClient | None = None
-_jwks_lock = threading.Lock()
 _mongo_client = None
 _mongo_lock = threading.Lock()
-
-
-def _build_full_name(first_name: Optional[str], last_name: Optional[str]) -> Optional[str]:
-    parts = [part.strip() for part in [first_name or "", last_name or ""] if part and part.strip()]
-    return " ".join(parts) or None
-
-
-def _guess_user_type_from_claims(claims: Dict[str, Any]) -> str:
-    email = (claims.get("email") or claims.get("preferred_username") or "").lower()
-    preferred_username = (claims.get("preferred_username") or "").lower()
-    role_values = []
-    realm_access = claims.get("realm_access") or {}
-    role_values.extend(str(role).lower() for role in (realm_access.get("roles") or []))
-    resource_access = claims.get("resource_access") or {}
-    for client_access in resource_access.values():
-        role_values.extend(str(role).lower() for role in ((client_access or {}).get("roles") or []))
-
-    if "provider" in role_values or "provider" in email or "provider" in preferred_username:
-        return "provider"
-    return "consumer"
-
-
-def _get_jwks_client(url: str) -> PyJWKClient:
-    global _jwks_client
-    if _jwks_client is None:
-        with _jwks_lock:
-            if _jwks_client is None:
-                _jwks_client = PyJWKClient(url, cache_keys=True)
-    return _jwks_client
 
 
 def _get_mongo_users():
@@ -147,83 +117,16 @@ def _decode_keycloak_token(token: str) -> Dict[str, Any]:
     keycloak_issuer = settings.KEYCLOAK_ISSUER
     if not keycloak_issuer:
         raise ValueError("KEYCLOAK_ISSUER is not configured")
-
-    jwks_url = f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/certs"
-    jwks_client = _get_jwks_client(jwks_url)
-    signing_key = jwks_client.get_signing_key_from_jwt(token)
-
-    # Old code in Django delegated token verification to negotiation-api.
-    #
-    # New code:
-    # Django validates the Keycloak token locally during login/session setup so
-    # it can store the Keycloak access token directly without a second roundtrip
-    # to negotiation-api.
-    return jwt.decode(
+    return decode_keycloak_token(
         token,
-        signing_key.key,
-        algorithms=["RS256"],
         issuer=keycloak_issuer.rstrip("/"),
-        options={"verify_aud": False},
+        jwks_url=f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/certs",
+        verify_aud=False,
     )
 
 
 def _resolve_local_session_user_from_claims(claims: Dict[str, Any]) -> Dict[str, Any]:
-    keycloak_sub = claims.get("sub")
-    if not keycloak_sub:
-        raise ValueError("Keycloak token missing subject")
-
-    email = claims.get("email") or claims.get("preferred_username")
-    if not email:
-        raise ValueError("Keycloak token missing email")
-
-    users_collection = _get_mongo_users()
-    user = users_collection.find_one({"keycloak_sub": keycloak_sub})
-    if user is None:
-        user = users_collection.find_one({"username_email": email})
-
-    if user is None:
-        first_name = (claims.get("given_name") or "").strip() or "miss value"
-        last_name = (claims.get("family_name") or "").strip() or "miss value"
-        display_name = _build_full_name(first_name, last_name) or claims.get("name") or email or "miss value"
-        user_type = _guess_user_type_from_claims(claims)
-        placeholder_user = {
-            "keycloak_sub": keycloak_sub,
-            "first_name": first_name,
-            "last_name": last_name,
-            "name": display_name,
-            "type": user_type,
-            "username_email": email,
-            "password": None,
-            "organization": ["miss value"],
-            "incorporation": "miss value",
-            "address": "miss value",
-            "vat_no": "miss value",
-            "position_title": "miss value",
-            "phone": "miss value",
-        }
-        logger.warning(
-            "Keycloak user %s (%s) is not registered in Negotiation-Tool MongoDB. Creating placeholder local user so login can continue.",
-            keycloak_sub,
-            email,
-        )
-        insert_result = users_collection.insert_one(placeholder_user)
-        user = users_collection.find_one({"_id": insert_result.inserted_id})
-
-    update_fields = {}
-    if user.get("keycloak_sub") != keycloak_sub:
-        update_fields["keycloak_sub"] = keycloak_sub
-    first_name = (claims.get("given_name") or user.get("first_name") or "").strip() or None
-    last_name = (claims.get("family_name") or user.get("last_name") or "").strip() or None
-    display_name = _build_full_name(first_name, last_name) or claims.get("name") or claims.get("preferred_username")
-    if display_name and user.get("name") != display_name:
-        update_fields["name"] = display_name
-    if first_name and user.get("first_name") != first_name:
-        update_fields["first_name"] = first_name
-    if last_name and user.get("last_name") != last_name:
-        update_fields["last_name"] = last_name
-    if update_fields:
-        users_collection.update_one({"_id": user["_id"]}, {"$set": update_fields})
-        user.update(update_fields)
+    user = resolve_or_create_local_user_sync(_get_mongo_users(), claims, logger)
 
     return {
         "id": str(user["_id"]),
@@ -2585,21 +2488,16 @@ def sso_login(request):
     if not keycloak_issuer:
         return JsonResponse({"error": "SSO not configured"}, status=503)
 
-    jwks_url = f"{keycloak_issuer}/protocol/openid-connect/certs"
-
     try:
-        jwks_client = _get_jwks_client(jwks_url)
-        signing_key = jwks_client.get_signing_key_from_jwt(token)
-        decode_kwargs = {
-            "algorithms": ["RS256"],
-            "issuer": keycloak_issuer,
-        }
         client_id = settings.KEYCLOAK_CLIENT_ID
-        if client_id:
-            decode_kwargs["audience"] = client_id
-        else:
-            decode_kwargs["options"] = {"verify_aud": False}
-        payload = jwt.decode(token, signing_key.key, **decode_kwargs)
+        payload = decode_keycloak_token(
+            token,
+            issuer=keycloak_issuer,
+            jwks_url=f"{keycloak_issuer}/protocol/openid-connect/certs",
+            audience=client_id or None,
+            verify_aud=bool(client_id),
+            logger=logger,
+        )
     except Exception as exc:
         logger.warning("[SSO] Token validation failed — %s: %s", type(exc).__name__, exc)
         return JsonResponse({"error": "Invalid token"}, status=401)

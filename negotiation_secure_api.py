@@ -28,8 +28,8 @@ from pydantic import Field
 from rdflib import Graph
 from starlette.responses import JSONResponse
 from starlette.responses import Response
-from jwt import PyJWKClient
-
+from keycloak_auth.auth import decode_keycloak_token
+from keycloak_auth.user_mapping import resolve_or_create_local_user_async
 
 
 from data_model import User, UpcastNegotiationObject, UpcastPolicyObject, PolicyDiffObject, PolicyDiffResponse, \
@@ -87,10 +87,14 @@ KEYCLOAK_JWKS_URL = os.getenv("KEYCLOAK_JWKS_URL") or (
     f"{KEYCLOAK_ISSUER}/protocol/openid-connect/certs" if KEYCLOAK_ISSUER else ""
 )
 KEYCLOAK_AUDIENCE = os.getenv("KEYCLOAK_AUDIENCE", "")
+KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "")
+KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET", "")
 KEYCLOAK_TOKEN_URL = os.getenv("KEYCLOAK_TOKEN_URL") or (
     f"{KEYCLOAK_ISSUER}/protocol/openid-connect/token" if KEYCLOAK_ISSUER else f"{root_path}/user/login/"
 )
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=KEYCLOAK_TOKEN_URL)
+# Swagger UI works more reliably when it posts credentials to a local endpoint
+# that can inject Keycloak client settings such as client_id/client_secret.
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=root_path + "/user/login/")
 
 # Define Kafka broker configuration
 # kafka_conf = {
@@ -166,8 +170,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 blacklist = {}
 
 router = APIRouter()
-_jwks_client: Optional[PyJWKClient] = PyJWKClient(KEYCLOAK_JWKS_URL, cache_keys=True) if KEYCLOAK_JWKS_URL else None
-
 def build_contract_service_headers(access_token: Optional[str], extra_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
     # Old code called contract-service without bearer authentication.
     # New code forwards the same token received by negotiation-api.
@@ -256,20 +258,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     )
 
     try:
-        if not KEYCLOAK_ISSUER or not KEYCLOAK_JWKS_URL or _jwks_client is None:
+        if not KEYCLOAK_ISSUER or not KEYCLOAK_JWKS_URL:
             raise HTTPException(status_code=503, detail="Keycloak authentication is not configured")
-
-        signing_key = _jwks_client.get_signing_key_from_jwt(token)
-        decode_kwargs = {
-            "algorithms": ["RS256"],
-            "issuer": KEYCLOAK_ISSUER,
-        }
-        if KEYCLOAK_AUDIENCE:
-            decode_kwargs["audience"] = KEYCLOAK_AUDIENCE
-        else:
-            decode_kwargs["options"] = {"verify_aud": False}
-
-        payload = jwt.decode(token, signing_key.key, **decode_kwargs)
+        payload = decode_keycloak_token(
+            token,
+            issuer=KEYCLOAK_ISSUER,
+            jwks_url=KEYCLOAK_JWKS_URL,
+            audience=KEYCLOAK_AUDIENCE or None,
+            verify_aud=bool(KEYCLOAK_AUDIENCE),
+            logger=logger,
+        )
         email: Optional[str] = payload.get("email")
         sub: Optional[str] = payload.get("sub")
         if email is None or sub is None:
@@ -279,65 +277,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except Exception:
         raise credentials_exception
 
-    user = await users_collection.find_one({"keycloak_sub": sub})
-    if user is None:
-        user = await users_collection.find_one({"username_email": email})
-    if user is None:
-        first_name = (payload.get("given_name") or "").strip() or "miss value"
-        last_name = (payload.get("family_name") or "").strip() or "miss value"
-        display_name = " ".join(part for part in [first_name, last_name] if part) or payload.get("name") or email or "miss value"
-        email_lower = email.lower()
-        preferred_username = str(payload.get("preferred_username") or "").lower()
-        role_values = []
-        realm_access = payload.get("realm_access") or {}
-        role_values.extend(str(role).lower() for role in (realm_access.get("roles") or []))
-        resource_access = payload.get("resource_access") or {}
-        for client_access in resource_access.values():
-            role_values.extend(str(role).lower() for role in ((client_access or {}).get("roles") or []))
-        inferred_type = "provider" if (
-            "provider" in role_values or "provider" in email_lower or "provider" in preferred_username
-        ) else "consumer"
-        placeholder_user = {
-            "keycloak_sub": sub,
-            "first_name": first_name,
-            "last_name": last_name,
-            "name": display_name,
-            "type": inferred_type,
-            "username_email": email,
-            "password": None,
-            "organization": ["miss value"],
-            "incorporation": "miss value",
-            "address": "miss value",
-            "vat_no": "miss value",
-            "position_title": "miss value",
-            "phone": "miss value",
-        }
-        result = await users_collection.insert_one(placeholder_user)
-        logger.warning(
-            "Keycloak user %s (%s) is not registered in Negotiation-Tool MongoDB. Creating placeholder local user so API access can continue.",
-            sub,
-            email,
-        )
-        user = await users_collection.find_one({"_id": result.inserted_id})
-
-    update_fields = {}
-    if user.get("keycloak_sub") != sub:
-        update_fields["keycloak_sub"] = sub
-
-    first_name = (payload.get("given_name") or user.get("first_name") or "").strip() or None
-    last_name = (payload.get("family_name") or user.get("last_name") or "").strip() or None
-    display_name = " ".join(part for part in [first_name, last_name] if part) or payload.get("name") or user.get("name")
-
-    if first_name and user.get("first_name") != first_name:
-        update_fields["first_name"] = first_name
-    if last_name and user.get("last_name") != last_name:
-        update_fields["last_name"] = last_name
-    if display_name and user.get("name") != display_name:
-        update_fields["name"] = display_name
-
-    if update_fields:
-        await users_collection.update_one({"_id": user["_id"]}, {"$set": update_fields})
-        user.update(update_fields)
+    user = await resolve_or_create_local_user_async(
+        users_collection,
+        payload,
+        logger,
+        include_audit_fields=False,
+    )
 
     return User(**user)
 
@@ -721,12 +666,32 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     # Old code authenticated users against MongoDB and issued a local JWT.
     #
     # New code:
-    # login is handled by Keycloak, so callers must obtain their access token
-    # from Keycloak directly.
-    raise HTTPException(
-        status_code=501,
-        detail=f"Login is handled by Keycloak. Use {KEYCLOAK_TOKEN_URL}.",
-    )
+    # negotiation-api proxies Swagger/UI password login to Keycloak so docs can
+    # still use the built-in "Authorize" flow while injecting the correct
+    # Keycloak client settings.
+    if not KEYCLOAK_TOKEN_URL or not KEYCLOAK_CLIENT_ID:
+        raise HTTPException(status_code=503, detail="Keycloak login is not configured")
+
+    form_payload = {
+        "client_id": KEYCLOAK_CLIENT_ID,
+        "grant_type": "password",
+        "username": form_data.username,
+        "password": form_data.password,
+    }
+    if KEYCLOAK_CLIENT_SECRET:
+        form_payload["client_secret"] = KEYCLOAK_CLIENT_SECRET
+
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        response = await client.post(KEYCLOAK_TOKEN_URL, data=form_payload)
+
+    if response.status_code >= 400:
+        try:
+            detail = response.json().get("error_description") or response.json().get("detail") or "Incorrect username or password"
+        except Exception:
+            detail = response.text or "Incorrect username or password"
+        raise HTTPException(status_code=response.status_code, detail=detail)
+
+    return response.json()
 
 
 @router.post("/user/logout/")
