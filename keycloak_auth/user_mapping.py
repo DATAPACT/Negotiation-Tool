@@ -26,6 +26,7 @@ def guess_user_type_from_claims(claims: Dict[str, Any]) -> str:
 def _build_placeholder_user(claims: Dict[str, Any]) -> Dict[str, Any]:
     keycloak_sub = claims["sub"]
     email = claims.get("email") or claims.get("preferred_username") or f"{keycloak_sub}@missing.local"
+    username = (claims.get("preferred_username") or "").strip() or email
     first_name = (claims.get("given_name") or "").strip() or "miss value"
     last_name = (claims.get("family_name") or "").strip() or "miss value"
     display_name = build_full_name(first_name, last_name) or claims.get("name") or email or "miss value"
@@ -34,6 +35,7 @@ def _build_placeholder_user(claims: Dict[str, Any]) -> Dict[str, Any]:
         "first_name": first_name,
         "last_name": last_name,
         "name": display_name,
+        "username": username,
         "type": guess_user_type_from_claims(claims),
         "username_email": email,
         "password": None,
@@ -50,6 +52,7 @@ def _build_update_fields(user: Dict[str, Any], claims: Dict[str, Any]) -> Dict[s
     update_fields: Dict[str, Any] = {}
     keycloak_sub = claims["sub"]
     email = claims.get("email") or claims.get("preferred_username")
+    username = (claims.get("preferred_username") or "").strip() or None
     first_name = (claims.get("given_name") or user.get("first_name") or "").strip() or None
     last_name = (claims.get("family_name") or user.get("last_name") or "").strip() or None
     display_name = build_full_name(first_name, last_name) or claims.get("name") or claims.get("preferred_username")
@@ -58,6 +61,8 @@ def _build_update_fields(user: Dict[str, Any], claims: Dict[str, Any]) -> Dict[s
         update_fields["keycloak_sub"] = keycloak_sub
     if email and user.get("username_email") != email:
         update_fields["username_email"] = email
+    if username and user.get("username") != username:
+        update_fields["username"] = username
     if first_name and user.get("first_name") != first_name:
         update_fields["first_name"] = first_name
     if last_name and user.get("last_name") != last_name:
@@ -77,12 +82,15 @@ def resolve_or_create_local_user_sync(
         raise ValueError("Keycloak token missing subject")
 
     email = claims.get("email") or claims.get("preferred_username")
+    username = (claims.get("preferred_username") or "").strip() or None
     if not email:
         raise ValueError("Keycloak token missing email")
 
     user = users_collection.find_one({"keycloak_sub": keycloak_sub})
     if user is None:
         user = users_collection.find_one({"username_email": email})
+    if user is None and username:
+        user = users_collection.find_one({"username": username})
 
     if user is None:
         placeholder_user = _build_placeholder_user(claims)
@@ -114,12 +122,15 @@ async def resolve_or_create_local_user_async(
         raise ValueError("Keycloak token missing subject")
 
     email = claims.get("email") or claims.get("preferred_username")
+    username = (claims.get("preferred_username") or "").strip() or None
     if not email:
         raise ValueError("Keycloak token missing email")
 
     user = await users_collection.find_one({"keycloak_sub": keycloak_sub})
     if user is None:
         user = await users_collection.find_one({"username_email": email})
+    if user is None and username:
+        user = await users_collection.find_one({"username": username})
 
     now = datetime.utcnow()
 

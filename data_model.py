@@ -61,6 +61,7 @@ class User(MongoObject):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     name: Optional[str] = None
+    username: Optional[str] = None
     type: Optional[PartyType] = None
     username_email: Optional[EmailStr] = None
     password: Optional[str] = Field(default=None)

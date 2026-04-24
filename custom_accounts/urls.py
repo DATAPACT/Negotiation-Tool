@@ -194,6 +194,8 @@ urlpatterns = [
     path("sso-login", views.sso_login, name="sso_login"),
     # path("activate/<uidb64>/<token>", views.activate, name="activate"),
     path("sign-up", views.register, name="register"),
+    path("check-user-email", views.check_user_email, name="check_user_email"),
+    path("check-username", views.check_username, name="check_username"),
     path("auto-login", views.auto_login, name="autologin"),
     path("auto-login-session", views.set_auto_login_session, name="auto_login_session"),
     # path(

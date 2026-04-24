@@ -28,6 +28,7 @@ from pydantic import Field
 from rdflib import Graph
 from starlette.responses import JSONResponse
 from starlette.responses import Response
+
 from keycloak_auth.auth import decode_keycloak_token
 from keycloak_auth.user_mapping import resolve_or_create_local_user_async
 
@@ -250,7 +251,7 @@ async def verify_master(master_password_input):
     return True
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def verify_access_token_and_resolve_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -727,7 +728,7 @@ async def is_token_blacklisted(token: str):
 
 @router.post("/consumer/recommend", summary="Recommend a request", response_model=Proposal)
 def consumer_recommend(
-        # current_user: User = Depends(get_current_user),
+        # current_user: User = Depends(verify_access_token_and_resolve_user),
         body: RecommenderAgentRecord = Body(..., description="The recommender agent record")
 ):
     result = new_request(body)
@@ -736,7 +737,7 @@ def consumer_recommend(
 
 @router.post("/provider/recommend", summary="Recommend a request", response_model=Proposal)
 def provider_recommend(
-        # current_user: User = Depends(get_current_user),
+        # current_user: User = Depends(verify_access_token_and_resolve_user),
         body: RecommenderAgentRecord = Body(..., description="The recommender agent record")
 ):
     result = new_offer(body)
@@ -744,7 +745,7 @@ def provider_recommend(
 
 
 @router.post("/negotiation/create", summary="Create a negotiation")
-async def create_upcast_negotiation(current_user: User = Depends(get_current_user),
+async def create_upcast_negotiation(current_user: User = Depends(verify_access_token_and_resolve_user),
                                     token: str = Depends(oauth2_scheme),
                                     body: UpcastPolicyObject = Body(..., description="The request object")
                                     ):
@@ -851,7 +852,7 @@ async def create_upcast_negotiation(current_user: User = Depends(get_current_use
 @router.get("/negotiation/{negotiation_id}", summary="Get a negotiation", response_model=UpcastNegotiationObject)
 async def get_upcast_negotiation(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     try:
         #        negotiation = await negotiations_collection.find_one({"_id": ObjectId(negotiation_id), "user_id": ObjectId(current_user.id)})
@@ -881,7 +882,7 @@ async def get_upcast_negotiation(
             response_model=List[UpcastPolicyObject])
 async def get_policies_for_negotiation(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     if secure:
         negotiation = await negotiations_collection.find_one({
@@ -910,7 +911,7 @@ async def get_policies_for_negotiation(
 
 @router.get("/negotiation", summary="Get negotiations")  # , response_model=List[UpcastNegotiationObject])
 async def get_upcast_negotiations(
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     if not current_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -936,7 +937,7 @@ async def get_upcast_negotiations(
 async def list_provider_negotiations(
         account_id: str = Path(..., description="Provider account (user) id"),
         status: Optional[str] = Query(default=None, description="Filter by negotiation status (e.g., agreed, offered, requested, finalized, terminated, accepted, verified, draft)"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     """
     Return negotiations where the given provider account is the provider.
@@ -998,7 +999,7 @@ async def list_provider_negotiations(
 
 @router.put("/negotiation", summary="Update a negotiation")
 async def update_upcast_negotiation(
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
         body: UpcastNegotiationObject = Body(..., description="The negotiation object")
 ):
     if secure:
@@ -1037,7 +1038,7 @@ async def update_upcast_negotiation(
 @router.delete("/negotiation/{negotiation_id}", summary="Delete a negotiation")
 async def delete_upcast_negotiation(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     try:
         if not current_user:
@@ -1071,7 +1072,7 @@ async def delete_upcast_negotiation(
 @router.get("/contract/{negotiation_id}", summary="Get a contract", )
 async def get_upcast_contract(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
         token: str = Depends(oauth2_scheme),
 ):
     try:
@@ -1134,7 +1135,7 @@ async def get_upcast_contract(
 @router.get("/policy/{policy_id}", summary="Get a policy", response_model=UpcastPolicyObject)
 async def get_upcast_policy(
         policy_id: str = Path(..., description="The ID of the policy"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     try:
 
@@ -1164,7 +1165,7 @@ async def get_upcast_policy(
             response_model=UpcastPolicyObject)
 async def get_last_policy(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     try:
         #        negotiation = await negotiations_collection.find_one({"_id": ObjectId(negotiation_id), "$or": [{"consumer_id": ObjectId(current_user.id)}, {"provider_id": ObjectId(current_user.id)}, {"user_id": ObjectId(current_user.id)}]})
@@ -1215,7 +1216,7 @@ async def get_last_policy(
 )
 async def get_penultimate_policy(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: "User" = Depends(get_current_user),
+        current_user: "User" = Depends(verify_access_token_and_resolve_user),
 ):
     try:
         # 1) Validate negotiation_id
@@ -1444,7 +1445,7 @@ async def update_read_only_for_policy(
             response_model=PolicyDiffResponse)
 async def get_last_policy(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     print("testing")
 
@@ -1563,7 +1564,7 @@ async def get_last_policy(
 )
 async def get_penultimate_policy_diff(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
 ):
     try:
         if secure:
@@ -1719,7 +1720,7 @@ async def get_diffs_bet_two_policy(
 
 @router.get("/consumer/request/{request_id}", summary="Get an existing request", response_model=UpcastPolicyObject)
 async def get_upcast_request(
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
         request_id: str = Path(..., description="The ID of the request")
 ):
     request = await policy_collection.find_one({"_id": ObjectId(request_id),
@@ -1738,7 +1739,7 @@ async def get_upcast_request(
 @router.post("/negotiation/create-with-initial", summary="Create a negotiation with initial offer and request")
 async def create_negotiation_with_initial_policies(
         body: NegotiationCreationRequest = Body(..., description="The negotiation creation request"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     """
     Create a negotiation with both an initial offer and request.
@@ -1888,7 +1889,7 @@ async def create_negotiation_with_initial_policies(
 #
 @router.post("/consumer/request/new", summary="Create a new request")
 async def create_new_upcast_request(
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
         token: str = Depends(oauth2_scheme),
         previous_policy_id: Optional[str] = Header(None, description="The ID of the previous offer"),
         body: UpcastPolicyObject = Body(..., description="The request object")
@@ -2068,7 +2069,7 @@ async def create_new_upcast_request(
 async def update_upcast_request(
         request_id: str,
         body: UpcastPolicyObject = Body(..., description="The request object"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     print(f"Updating request with ID: {request_id} for user: {current_user.id}")
     try:
@@ -2155,7 +2156,7 @@ async def update_upcast_request(
 # async def update_upcast_offer(
 #         offer_id: str,
 #         body: UpcastPolicyObject = Body(..., description="The offer object"),
-#         current_user: User = Depends(get_current_user)
+#         current_user: User = Depends(verify_access_token_and_resolve_user)
 # ):
 #     try:
 #         if secure:
@@ -2230,7 +2231,7 @@ async def update_upcast_request(
 @app.put("/provider/offer", summary="Update an existing offer")
 async def update_upcast_offer(
         body: UpcastPolicyObject = Body(..., description="The request object"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     try:
         # Normalise ODRL payload to keep stored policies aligned
@@ -2317,7 +2318,7 @@ async def update_upcast_offer(
 @router.delete("/consumer/request/{request_id}", summary="Delete a request")
 async def delete_upcast_request(
         request_id: str = Path(..., description="The ID of the request"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     if secure:
         request = await policy_collection.find_one({
@@ -2349,7 +2350,7 @@ async def delete_upcast_request(
 
 # @router.get("/consumer/all_policies", summary="Get all policies", response_model=List[UpcastPolicyObject])
 # async def get_all_policies(
-#         current_user: User = Depends(get_current_user)
+#         current_user: User = Depends(verify_access_token_and_resolve_user)
 # ):
 #     offers = await policy_collection.find({"provider_id": {"$exists": True}}).to_list(length=None)
 #
@@ -2360,7 +2361,7 @@ async def delete_upcast_request(
 
 @router.get("/consumer/offer", summary="Get available offers", response_model=List[UpcastPolicyObject])
 async def get_upcast_offers(
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     offers = await policy_collection.find({
         'type': 'offer',
@@ -2379,7 +2380,7 @@ async def get_upcast_offers(
 
 @router.post("/provider/offer/new", summary="Create a new offer")
 async def create_new_upcast_offer(
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
         token: str = Depends(oauth2_scheme),
         body: UpcastPolicyObject = Body(..., description="The offer object")
 ):
@@ -2542,7 +2543,7 @@ async def create_initial_upcast_offer(
 @router.post("/provider/offer/initial_dataset", summary="Create a new initial offer from a dataset",
              response_model=UpcastPolicyObject)
 async def create_initial_upcast_offer_from_dataset(
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
         token: str = Depends(oauth2_scheme),
         body: Dict[str, Any] = Body(..., description="The dataset object"),
 ):
@@ -2641,7 +2642,7 @@ async def create_initial_upcast_offer_from_dataset(
                                                                "from an upcast dataset",
              response_model=UpcastPolicyObject)
 async def create_initial_upcast_offer_from_dataset(
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(verify_access_token_and_resolve_user),
         token: str = Depends(oauth2_scheme),
         body: Dict[str, Any] = Body(..., description="The dataset object"),
 ):
@@ -2811,7 +2812,7 @@ async def create_initial_upcast_offer_from_dataset(
 
 
 @router.get("/users_list", summary="Get all users list")
-async def get_all_users(current_user: User = Depends(get_current_user)):
+async def get_all_users(current_user: User = Depends(verify_access_token_and_resolve_user)):
     users = await users_collection.find().to_list(length=None)
     for user in users:
         user["id"] = str(user.pop("_id"))
@@ -2823,7 +2824,7 @@ async def get_all_users(current_user: User = Depends(get_current_user)):
 @router.get("/provider/offer/{offer_id}", summary="Get an existing offer", response_model=UpcastPolicyObject)
 async def get_upcast_offer(
         offer_id: str = Path(..., description="The ID of the offer"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     print("/provider/offer/{offer_id}  -> get_upcast_offer")
     # Convert offer_id to ObjectId
@@ -2856,7 +2857,7 @@ async def get_upcast_offer(
 @router.delete("/offer/{offer_id}", summary="Delete an offer")
 async def delete_upcast_offer(
         offer_id: str = Path(..., description="The ID of the offer"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     try:
         offer_object_id = ObjectId(offer_id)
@@ -2909,7 +2910,7 @@ async def delete_upcast_offer(
 # @router.get("/contract/{negotiation_id}", summary="Get a contract", response_model=Union[dict, UpcastContractObject])
 # async def get_upcast_contract(
 #         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-#         current_user: User = Depends(get_current_user)
+#         current_user: User = Depends(verify_access_token_and_resolve_user)
 # ):
 #     try:
 #         if secure:
@@ -2944,7 +2945,7 @@ async def delete_upcast_offer(
 #
 # @router.post("/contract/sign", summary="Sign a contract (Under Construction)")
 # async def sign_upcast_contract(
-#     current_user: User = Depends(get_current_user),
+#     current_user: User = Depends(verify_access_token_and_resolve_user),
 #     body: UpcastContractObject = Body(..., description="The contract sign object")
 # ):
 #     # Under Construction
@@ -3005,7 +3006,7 @@ async def get_negotiation_id(offer_id: str, negotiation_id: str):
 async def accept_upcast_request(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
         # offer_id: str = Path(..., description="The ID of the offer"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     # negotiation_id = await get_negotiation_id(offer_id, negotiation_id)
     try:
@@ -3029,7 +3030,7 @@ async def accept_upcast_request(
 async def verify_upcast_request(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
         # offer_id: str = Path(..., description="The ID of the request"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     # negotiation_id = await get_negotiation_id(offer_id, negotiation_id)
     try:
@@ -3052,7 +3053,7 @@ async def verify_upcast_request(
 @router.post("/negotiation/provider/agree/{negotiation_id}", summary="Agree on a request")
 async def agree_upcast_offer(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     # negotiation_id = await get_negotiation_id(request_id, negotiation_id)
     try:
@@ -3076,7 +3077,7 @@ async def agree_upcast_offer(
 async def finalize_upcast_offer(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
         # offer_id: str = Path(..., description="The ID of the offer"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     # negotiation_id = await get_negotiation_id(offer_id, negotiation_id)
     try:
@@ -3111,7 +3112,7 @@ async def finalize_upcast_offer(
 @router.post("/negotiation/terminate/{negotiation_id}", summary="Terminate a negotiation")
 async def terminate_upcast_negotiation(
         negotiation_id: str = Path(..., description="The ID of the negotiation"),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
     try:
         update_result = await negotiations_collection.update_one(
@@ -3654,7 +3655,7 @@ async def verify_token(token: str = Body(..., description="JWT token to verify")
         HTTPException: If token is invalid, expired, or blacklisted
     """
     try:
-        current_user = await get_current_user(token)
+        current_user = await verify_access_token_and_resolve_user(token)
         user = await users_collection.find_one({"_id": ObjectId(str(current_user.id))})
         if user is None:
             raise HTTPException(status_code=401, detail="User not found")
@@ -3674,7 +3675,7 @@ async def verify_token(token: str = Body(..., description="JWT token to verify")
 
 
 @router.get("/user/verify-token/")
-async def verify_token_get(current_user: User = Depends(get_current_user)):
+async def verify_token_get(current_user: User = Depends(verify_access_token_and_resolve_user)):
     """
     Verify the token from Authorization header (GET method).
 
