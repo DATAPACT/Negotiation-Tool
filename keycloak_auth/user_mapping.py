@@ -23,10 +23,15 @@ def guess_user_type_from_claims(claims: Dict[str, Any]) -> str:
     return "consumer"
 
 
-def _claim_attribute_value(claims: Dict[str, Any], key: str) -> Optional[Any]:
-    value = claims.get(key)
-    if value is None:
-        value = (claims.get("attributes") or {}).get(key)
+def _claim_attribute_value(claims: Dict[str, Any], *keys: str) -> Optional[Any]:
+    attributes = claims.get("attributes") or {}
+    value = None
+    for key in keys:
+        value = claims.get(key)
+        if value is None:
+            value = attributes.get(key)
+        if value is not None:
+            break
     if isinstance(value, list):
         if len(value) == 1:
             return value[0]
@@ -59,29 +64,14 @@ def _build_placeholder_user(claims: Dict[str, Any]) -> Dict[str, Any]:
     last_name = (claims.get("family_name") or "").strip() or "miss value"
 
 
-    print("\n\n\n\n\nclaims",  claims)
-
     display_name = build_full_name(first_name, last_name) or claims.get("name") or email or "miss value"
-    user_type = _clean_optional_string(_claim_attribute_value(claims, "type")) or guess_user_type_from_claims(claims)
+    user_type = _clean_optional_string(_claim_attribute_value(claims, "user_type", "type")) or guess_user_type_from_claims(claims)
     organization = _normalize_organization_claim(_claim_attribute_value(claims, "organization")) or ["miss value"]
     incorporation = _clean_optional_string(_claim_attribute_value(claims, "incorporation")) or "miss value"
     address = _clean_optional_string(_claim_attribute_value(claims, "address")) or "miss value"
     vat_no = _clean_optional_string(_claim_attribute_value(claims, "VAT_No")) or "miss value"
-    position_title = _clean_optional_string(_claim_attribute_value(claims, "PositionTitle")) or "miss value"
+    position_title = _clean_optional_string(_claim_attribute_value(claims, "positionTitle", "PositionTitle")) or "miss value"
     phone = _clean_optional_string(_claim_attribute_value(claims, "phone")) or "miss value"
-
-    print("display_name", display_name)
-    print("user_type", user_type)
-    print("organization", organization)
-    print("incorporation", incorporation)
-    print("address", address)
-    print("vat_no", vat_no)
-    print("position_title", position_title)
-    print("phone", phone)
-
-
-
-
     return {
         "keycloak_sub": keycloak_sub,
         "first_name": first_name,
@@ -108,12 +98,12 @@ def _build_update_fields(user: Dict[str, Any], claims: Dict[str, Any]) -> Dict[s
     first_name = (claims.get("given_name") or user.get("first_name") or "").strip() or None
     last_name = (claims.get("family_name") or user.get("last_name") or "").strip() or None
     display_name = build_full_name(first_name, last_name) or claims.get("name") or claims.get("preferred_username")
-    user_type = _clean_optional_string(_claim_attribute_value(claims, "type")) or guess_user_type_from_claims(claims)
+    user_type = _clean_optional_string(_claim_attribute_value(claims, "user_type", "type")) or guess_user_type_from_claims(claims)
     organization = _normalize_organization_claim(_claim_attribute_value(claims, "organization"))
     incorporation = _clean_optional_string(_claim_attribute_value(claims, "incorporation"))
     address = _clean_optional_string(_claim_attribute_value(claims, "address"))
     vat_no = _clean_optional_string(_claim_attribute_value(claims, "VAT_No"))
-    position_title = _clean_optional_string(_claim_attribute_value(claims, "PositionTitle"))
+    position_title = _clean_optional_string(_claim_attribute_value(claims, "positionTitle", "PositionTitle"))
     phone = _clean_optional_string(_claim_attribute_value(claims, "phone"))
 
     if user.get("keycloak_sub") != keycloak_sub:

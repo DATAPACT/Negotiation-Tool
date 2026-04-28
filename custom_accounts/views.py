@@ -77,7 +77,7 @@ if not DJANGO_BASE_URL:
 
 _mongo_client = None
 _mongo_lock = threading.Lock()
-MONGO_DB = os.environ.get("MONGO_DB", "datapack")
+MONGO_DB = os.environ.get("MONGO_DB", "dips_services")
 
 
 def _get_mongo_users():
@@ -175,21 +175,6 @@ def _check_username_exists(username):
     return None
 
 
-# def _verify_negotiation_token(token: str) -> Dict[str, Any]:
-#     verify_url = f"{API_BASE_URL}/user/verify-token/"
-#     verify_res = requests.post(
-#         verify_url,
-#         data=token,
-#         headers={"Content-Type": "text/plain"},
-#         timeout=10,
-#     )
-#     verify_res.raise_for_status()
-#     verified_data = verify_res.json()
-#     user = verified_data.get("user")
-#     if not user:
-#         raise ValueError("Invalid response from verification")
-#     return user
-
 
 def _decode_keycloak_token(token: str) -> Dict[str, Any]:
     keycloak_issuer = settings.KEYCLOAK_ISSUER
@@ -204,6 +189,10 @@ def _decode_keycloak_token(token: str) -> Dict[str, Any]:
 
 
 def _merge_keycloak_userinfo(claims: Dict[str, Any], userinfo: Dict[str, Any]) -> Dict[str, Any]:
+
+    """
+    retrieval a user from Keycloak, and get its attributes, aiming to insert into MongoDB
+    """
     merged = dict(claims)
     attributes = dict((claims.get("attributes") or {}))
 
@@ -219,7 +208,14 @@ def _merge_keycloak_userinfo(claims: Dict[str, Any], userinfo: Dict[str, Any]) -
 
 
 def _enrich_keycloak_claims(token: str, claims: Dict[str, Any]) -> Dict[str, Any]:
+
+    """
+        get users and its attributes
+    """
+
+
     keycloak_issuer = settings.KEYCLOAK_ISSUER
+
     if not keycloak_issuer:
         return claims
 
@@ -229,12 +225,12 @@ def _enrich_keycloak_claims(token: str, claims: Dict[str, Any]) -> Dict[str, Any
             headers={"Authorization": f"Bearer {token}"},
             timeout=10,
         )
-        response.raise_for_status()
-        userinfo = response.json()
 
-        print("\n\n\n\n\n, userinfo", userinfo)
+        response.raise_for_status()
+        userinfo = response.json() # obtain userinfo
 
         if isinstance(userinfo, dict):
+            # merge userinfo into claims
             return _merge_keycloak_userinfo(claims, userinfo)
     except requests.RequestException as exc:
         logger.warning("Keycloak userinfo lookup failed: %s", exc)
@@ -247,6 +243,19 @@ def _enrich_keycloak_claims(token: str, claims: Dict[str, Any]) -> Dict[str, Any
 def _resolve_local_session_user_from_claims(claims: Dict[str, Any]) -> Dict[str, Any]:
     user = resolve_or_create_local_user_sync(_get_mongo_users(), claims, logger)
 
+    print("\n\n\nuser: ", user)
+
+    """
+    {'_id': ObjectId('69ef8157e9f135d39220590f'), 'keycloak_sub': '6c8938a3-c40e-4d0f-8c09-a96138116d86',
+     'first_name': 'Consumer10', 'last_name': 'Datapack', 
+     'name': 'Consumer10 Datapack',
+     'username': 'datapack_consumer10', 
+     'type': 'consumer', 'username_email': 'datapack_consumer10@example.com',
+     'password': None, 
+     'organization': ['SoTON'], 'incorporation': 'University of Queen', 'address': 'University Road',
+     'vat_no': '456454554545', 'position_title': 'Researcher', 'phone': '7894445545'}
+    """
+
     return {
         "id": str(user["_id"]),
         "username": user.get("username"),
@@ -255,6 +264,13 @@ def _resolve_local_session_user_from_claims(claims: Dict[str, Any]) -> Dict[str,
         "name": user.get("name"),
         "first_name": user.get("first_name"),
         "last_name": user.get("last_name"),
+        "organization": user.get("organization"),
+        "incorporation": user.get("incorporation"),
+        "address": user.get("address"),
+        "vat_no": user.get("vat_no"),
+        "position_title": user.get("position_title"),
+        "phone": user.get("phone"),
+
     }
 
 
@@ -317,8 +333,9 @@ def signin(request):
         )
         password = request.POST.get("password")
 
-        print("\n\n\n identifier", identifier)
-        print("password", password)
+        print("\n\nidentifier (username or email: )", identifier)
+        print("\n\npassword: ", password)
+
         if not identifier or not password:
             messages.error(request, "Please enter both username/email and password.")
             return redirect("login")
@@ -342,10 +359,6 @@ def signin(request):
             if settings.KEYCLOAK_CLIENT_SECRET:
                 data["client_secret"] = settings.KEYCLOAK_CLIENT_SECRET
 
-            # Old code:
-            # url = f"{API_BASE_URL}/user/login/"
-            #
-            # New code:
             # login is delegated to Keycloak. Negotiation-Tool stores the
             # Keycloak access token directly instead of asking negotiation-api
             # to mint an internal JWT.
@@ -451,7 +464,7 @@ def register(request):
             "username_email": email,
             "password": password,
             "organization": organization,
-            # "distinctive_title": distinctive_title,
+
             "incorporation": incorporation,
             "address": address,
             "vat_no": vat_no,
@@ -487,10 +500,7 @@ def register(request):
             messages.error(request, "Username already registered, please use another username.")
             return render(request, "register_login/sign-up.html", {"form_data": form_data})
 
-        # Old code:
-        # endpoint_url = f"{API_AUTHENTICATION_URL}/user/register/"
-        #
-        # New code:
+
         # user registration is handled by user-management-service. Keycloak is
         # the authentication authority, while profile creation lives in the
         # dedicated user-management service.
@@ -559,34 +569,13 @@ def check_username(request):
     return JsonResponse({"exists": exists})
 
 
-# def activate(request, uidb64, token):
-#     try:
-#         uid = force_str(urlsafe_base64_decode(uidb64))
-#         registered_user = User.objects.get(pk=uid)
-#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         registered_user = None
-
-#     if registered_user is not None and generate_token.check_token(
-#         registered_user, token
-#     ):
-#         registered_user.is_active = True
-#         registered_user.save()
-#         messages.success(request, "Your Account has been activated!!")
-#         return redirect("login")
-#     else:
-#         # go back to home page
-#         return render(request, "common/index.html")
-
 
 def datacontrollerhome(request):
     return render(request, "admin_organization/index.html")
 
 
 def signout(request):
-    # Old code:
-    # endpoint_url = f"{API_AUTHENTICATION_URL}/user/logout/"
-    #
-    # New code:
+
     # authentication logout is handled by Keycloak. Negotiation-Tool clears its
     # local session and redirects to Keycloak logout when configured.
     request.session.flush()
@@ -905,8 +894,6 @@ def get_negotiation_last_policy(request, negotiation_id=None, return_json=True):
             # insert into odrl_policy
             data["last_policy"]["odrl_policy"]["data"] = output
 
-        # print("\n \n get_negotiation_last_policy ====================\n",
-        #       json.dumps(data["changes"], indent=2))
 
         if return_json:
             return JsonResponse(data)

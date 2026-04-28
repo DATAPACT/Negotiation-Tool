@@ -132,7 +132,7 @@ MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 print(f'MONGO_HOST {MONGO_HOST}')
 MONGO_PORT = os.getenv("MONGO_PORT")
 print(f'MONGO_PORT {MONGO_PORT}')
-MONGO_DB = os.getenv("MONGO_DB", "datapack")
+MONGO_DB = os.getenv("MONGO_DB", "dips_services")
 print(f'MONGO_DB {MONGO_DB}')
 if MONGO_PORT:  # Assumption: A local or remote installation of MongoDB is provided.
     MONGO_PORT = int(MONGO_PORT)
