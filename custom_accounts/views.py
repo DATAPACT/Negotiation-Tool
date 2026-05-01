@@ -38,8 +38,8 @@ from dotenv import load_dotenv
 from pymongo import MongoClient as PyMongoClient
 from typing import List, Dict, Optional, Any
 
-from keycloak_auth.auth import decode_keycloak_token
-from keycloak_auth.user_mapping import build_full_name, resolve_or_create_local_user_sync
+from keycloak_auth.auth import decode_and_enrich_keycloak_claims, decode_keycloak_token
+from keycloak_auth.user_mapping import build_full_name, resolve_local_session_user_sync
 
 from PolicyEngine.Parsers import ODRLParser
 from PolicyEngine.Translators import LogicTranslator
@@ -176,102 +176,21 @@ def _check_username_exists(username):
 
 
 
-def _decode_keycloak_token(token: str) -> Dict[str, Any]:
+def _decode_and_enrich_keycloak_claims(token: str) -> Dict[str, Any]:
     keycloak_issuer = settings.KEYCLOAK_ISSUER
     if not keycloak_issuer:
         raise ValueError("KEYCLOAK_ISSUER is not configured")
-    return decode_keycloak_token(
+    return decode_and_enrich_keycloak_claims(
         token,
         issuer=keycloak_issuer.rstrip("/"),
         jwks_url=f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/certs",
         verify_aud=False,
+        logger=logger,
     )
 
 
-def _merge_keycloak_userinfo(claims: Dict[str, Any], userinfo: Dict[str, Any]) -> Dict[str, Any]:
-
-    """
-    retrieval a user from Keycloak, and get its attributes, aiming to insert into MongoDB
-    """
-    merged = dict(claims)
-    attributes = dict((claims.get("attributes") or {}))
-
-    for key, value in userinfo.items():
-        if key == "attributes" and isinstance(value, dict):
-            attributes.update(value)
-        elif value is not None:
-            merged[key] = value
-
-    if attributes:
-        merged["attributes"] = attributes
-    return merged
-
-
-def _enrich_keycloak_claims(token: str, claims: Dict[str, Any]) -> Dict[str, Any]:
-
-    """
-        get users and its attributes
-    """
-
-
-    keycloak_issuer = settings.KEYCLOAK_ISSUER
-
-    if not keycloak_issuer:
-        return claims
-
-    try:
-        response = requests.get(
-            f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/userinfo",
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=10,
-        )
-
-        response.raise_for_status()
-        userinfo = response.json() # obtain userinfo
-
-        if isinstance(userinfo, dict):
-            # merge userinfo into claims
-            return _merge_keycloak_userinfo(claims, userinfo)
-    except requests.RequestException as exc:
-        logger.warning("Keycloak userinfo lookup failed: %s", exc)
-    except ValueError as exc:
-        logger.warning("Keycloak userinfo payload invalid: %s", exc)
-
-    return claims
-
-
 def _resolve_local_session_user_from_claims(claims: Dict[str, Any]) -> Dict[str, Any]:
-    user = resolve_or_create_local_user_sync(_get_mongo_users(), claims, logger)
-
-    print("\n\n\nuser: ", user)
-
-    """
-    {'_id': ObjectId('69ef8157e9f135d39220590f'), 'keycloak_sub': '6c8938a3-c40e-4d0f-8c09-a96138116d86',
-     'first_name': 'Consumer10', 'last_name': 'Datapack', 
-     'name': 'Consumer10 Datapack',
-     'username': 'datapack_consumer10', 
-     'type': 'consumer', 'username_email': 'datapack_consumer10@example.com',
-     'password': None, 
-     'organization': ['SoTON'], 'incorporation': 'University of Queen', 'address': 'University Road',
-     'vat_no': '456454554545', 'position_title': 'Researcher', 'phone': '7894445545'}
-    """
-
-    return {
-        "id": str(user["_id"]),
-        "username": user.get("username"),
-        "username_email": user.get("username_email"),
-        "type": user.get("type"),
-        "name": user.get("name"),
-        "first_name": user.get("first_name"),
-        "last_name": user.get("last_name"),
-        "organization": user.get("organization"),
-        "incorporation": user.get("incorporation"),
-        "address": user.get("address"),
-        "vat_no": user.get("vat_no"),
-        "position_title": user.get("position_title"),
-        "phone": user.get("phone"),
-
-    }
+    return resolve_local_session_user_sync(_get_mongo_users(), claims, logger)
 
 
 User = get_user_model()
@@ -306,7 +225,7 @@ def set_auto_login_session(request):
         # the raw Keycloak access token is verified locally in Django, which
         # resolves the local business user for the current session without
         # calling negotiation-api during login/session setup.
-        claims = _enrich_keycloak_claims(token, _decode_keycloak_token(token))
+        claims = _decode_and_enrich_keycloak_claims(token)
 
         print("\n claims", claims)
 
@@ -377,7 +296,7 @@ def signin(request):
                 return redirect("login")
 
             try:
-                claims = _enrich_keycloak_claims(access_token, _decode_keycloak_token(access_token))
+                claims = _decode_and_enrich_keycloak_claims(access_token)
                 user = _resolve_local_session_user_from_claims(claims)
             except Exception as exc:
                 logger.error("Keycloak login succeeded but local user resolution failed: %s", exc)
@@ -664,7 +583,7 @@ def negotiation(request):
     # current session with the resolved local user identity.
     if url_token:
         try:
-            claims = _decode_keycloak_token(url_token)
+            claims = _decode_and_enrich_keycloak_claims(url_token)
             user = _resolve_local_session_user_from_claims(claims)
             request.session["access_token"] = url_token
             request.session["user_id"] = user.get("id")
@@ -2688,7 +2607,7 @@ def sso_login(request):
         logger.warning("[SSO] Local user prefetch failed: %s", exc)
 
     try:
-        claims = _enrich_keycloak_claims(token, _decode_keycloak_token(token))
+        claims = _decode_and_enrich_keycloak_claims(token)
         user = _resolve_local_session_user_from_claims(claims)
     except Exception as exc:
         logger.error("[SSO] Local user resolution failed: %s", exc)

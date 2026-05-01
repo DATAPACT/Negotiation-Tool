@@ -679,6 +679,11 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
         "username": form_data.username,
         "password": form_data.password,
     }
+    requested_scopes = [scope for scope in (form_data.scopes or []) if scope]
+    for required_scope in ("openid", "profile", "email"):
+        if required_scope not in requested_scopes:
+            requested_scopes.append(required_scope)
+    form_payload["scope"] = " ".join(requested_scopes)
     if KEYCLOAK_CLIENT_SECRET:
         form_payload["client_secret"] = KEYCLOAK_CLIENT_SECRET
 

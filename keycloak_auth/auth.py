@@ -2,6 +2,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 import jwt
+import requests
 from fastapi import HTTPException, status
 from jwt import PyJWKClient
 
@@ -78,3 +79,78 @@ def collect_keycloak_groups(claims: Dict[str, Any]) -> List[str]:
     if isinstance(groups, list):
         return sorted(str(group) for group in groups if group)
     return []
+
+
+def merge_keycloak_userinfo(claims: Dict[str, Any], userinfo: Dict[str, Any]) -> Dict[str, Any]:
+    merged = dict(claims)
+    attributes = dict((claims.get("attributes") or {}))
+
+    for key, value in userinfo.items():
+        if key == "attributes" and isinstance(value, dict):
+            attributes.update(value)
+        elif value is not None:
+            merged[key] = value
+
+    if attributes:
+        merged["attributes"] = attributes
+    return merged
+
+
+def enrich_keycloak_claims(
+    token: str,
+    claims: Dict[str, Any],
+    *,
+    issuer: str,
+    logger: Optional[logging.Logger] = None,
+    timeout: int = 10,
+) -> Dict[str, Any]:
+    if not issuer:
+        return claims
+
+    try:
+        response = requests.get(
+            f"{issuer.rstrip('/')}/protocol/openid-connect/userinfo",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=timeout,
+        )
+        response.raise_for_status()
+        userinfo = response.json()
+        if isinstance(userinfo, dict):
+            return merge_keycloak_userinfo(claims, userinfo)
+    except requests.RequestException as exc:
+        if logger:
+            logger.warning("Keycloak userinfo lookup failed: %s", exc)
+    except ValueError as exc:
+        if logger:
+            logger.warning("Keycloak userinfo payload invalid: %s", exc)
+
+    return claims
+
+
+def decode_and_enrich_keycloak_claims(
+    token: str,
+    *,
+    issuer: str,
+    jwks_url: str,
+    audience: Optional[str] = None,
+    algorithms: Optional[List[str]] = None,
+    logger: Optional[logging.Logger] = None,
+    verify_aud: bool = True,
+    timeout: int = 10,
+) -> Dict[str, Any]:
+    claims = decode_keycloak_token(
+        token,
+        issuer=issuer,
+        jwks_url=jwks_url,
+        audience=audience,
+        algorithms=algorithms,
+        logger=logger,
+        verify_aud=verify_aud,
+    )
+    return enrich_keycloak_claims(
+        token,
+        claims,
+        issuer=issuer,
+        logger=logger,
+        timeout=timeout,
+    )

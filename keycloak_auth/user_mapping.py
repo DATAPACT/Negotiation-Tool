@@ -66,7 +66,7 @@ def _build_placeholder_user(claims: Dict[str, Any]) -> Dict[str, Any]:
 
     display_name = build_full_name(first_name, last_name) or claims.get("name") or email or "miss value"
     user_type = _clean_optional_string(_claim_attribute_value(claims, "user_type", "type")) or guess_user_type_from_claims(claims)
-    organization = _normalize_organization_claim(_claim_attribute_value(claims, "organization")) or ["miss value"]
+    organization = _normalize_organization_claim(_claim_attribute_value(claims, "organization", "Organization")) or ["miss value"]
     incorporation = _clean_optional_string(_claim_attribute_value(claims, "incorporation")) or "miss value"
     address = _clean_optional_string(_claim_attribute_value(claims, "address")) or "miss value"
     vat_no = _clean_optional_string(_claim_attribute_value(claims, "VAT_No")) or "miss value"
@@ -172,6 +172,33 @@ def resolve_or_create_local_user_sync(
         users_collection.update_one({"_id": user["_id"]}, {"$set": update_fields})
         user.update(update_fields)
     return user
+
+
+def build_session_user(user: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "id": str(user["_id"]),
+        "username": user.get("username"),
+        "username_email": user.get("username_email"),
+        "type": user.get("type"),
+        "name": user.get("name"),
+        "first_name": user.get("first_name"),
+        "last_name": user.get("last_name"),
+        "organization": user.get("organization"),
+        "incorporation": user.get("incorporation"),
+        "address": user.get("address"),
+        "vat_no": user.get("vat_no"),
+        "position_title": user.get("position_title"),
+        "phone": user.get("phone"),
+    }
+
+
+def resolve_local_session_user_sync(
+    users_collection,
+    claims: Dict[str, Any],
+    logger: Optional[logging.Logger] = None,
+) -> Dict[str, Any]:
+    user = resolve_or_create_local_user_sync(users_collection, claims, logger)
+    return build_session_user(user)
 
 
 async def resolve_or_create_local_user_async(
