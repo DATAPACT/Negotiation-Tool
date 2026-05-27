@@ -33,6 +33,9 @@
       {%block jnsonld%}{% endblock %}
       {%block extcss%}{% endblock %}
     <style>
+        body { opacity: 0; }
+        body.loaded { opacity: 1; }
+        body.loaded-animated { opacity: 1; transition: opacity 0.15s ease-in; }
         {%block inpagecss%}{% endblock %}
     </style>
     <title>Negotiation Plugin UI | {%block title%}{% endblock %}</title>
@@ -47,7 +50,7 @@
         <span>Negotiation Plugin</span>
       </a>
 
-      <nav id="navbar" class="navbar">
+      {% if not is_sso %}<nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
 
@@ -67,7 +70,7 @@
 
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav><!-- .navbar -->
+      </nav>{% endif %}<!-- .navbar -->
 
     </div>
   </header><!-- End Header -->
@@ -84,7 +87,7 @@
         <div class="row gy-4">
           <div class="col-lg-5 col-md-12 footer-info">
             <a href="index.html" class="logo d-flex align-items-center">
-              <img src="assets/img/logo.png" alt="">
+              <img src="{% static 'img/logo.png' %}" alt="">
               <span>Negotiation Plugin</span>
             </a>
             <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
@@ -162,6 +165,16 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
+  <script>
+    window.TRUSTED_ORIGINS = {{ SSO_TRUSTED_ORIGINS_JSON|safe }};
+    window.SSO_AUTHENTICATED = {{ request.session.access_token|yesno:"true,false" }};
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.parent === window || window.SSO_AUTHENTICATED) {
+        document.body.classList.add('loaded');
+      }
+    });
+  </script>
+  <script src="{% static 'js/sso.js' %}"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{% static 'js/jquery.quicksearch.js' %}"></script>
 <script src="{% static 'js/bootstrap-datepicker.js' %}"></script>

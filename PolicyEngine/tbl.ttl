@@ -1,0 +1,64 @@
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.com/policy:001> a odrl:Policy ;
+    odrl:duty [ odrl:action [ rdf:value odrl:compensate ;
+                    odrl:refinement [ odrl:leftOperand odrl:payAmount ;
+                            odrl:operator odrl:eq ;
+                            odrl:rightOperand 500.00 ;
+                            odrl:unit "http://dbpedia.org/resource/Euro" ] ] ;
+            odrl:assignee <http://example.com/person:44> ;
+            odrl:assigner <http://example.com/org:43> ] ;
+    odrl:obligation [ odrl:action [ rdf:value odrl:compensate ;
+                    odrl:refinement [ odrl:leftOperand odrl:payAmount ;
+                            odrl:operator odrl:eq ;
+                            odrl:rightOperand 500.00 ;
+                            odrl:unit "http://dbpedia.org/resource/Euro" ] ] ;
+            odrl:assignee <http://example.com/person:44> ;
+            odrl:assigner <http://example.com/org:43> ] ;
+    odrl:permission [ odrl:action [ rdf:value odrl:reproduce ;
+                    odrl:refinement [ odrl:xone ( <http://example.com/p:88/C1> <http://example.com/p:88/C2> ) ] ] ;
+            odrl:assigner <http://example.com/org/paisley-park> ;
+            odrl:target <http://example.com/book/1999> ],
+        [ odrl:action odrl:read ;
+            odrl:constraint [ odrl:leftOperand odrl:dateTime ;
+                    odrl:operator odrl:lt ;
+                    odrl:rightOperand "2024-03-01T00:00:00Z" ] ;
+            odrl:duty [ odrl:action odrl:attribute ;
+                    odrl:constraint [ odrl:leftOperand odrl:dateTime ;
+                            odrl:operator odrl:lt ;
+                            odrl:rightOperand "2024-01-01T00:00:00Z" ] ] ;
+            odrl:target <http://example.com/asset:123> ],
+        [ odrl:action odrl:display ;
+            odrl:assigner <http://example.com/party:0001> ;
+            odrl:target <http://example.com/asset:3333> ],
+        [ odrl:action [ rdf:value odrl:print ;
+                    odrl:refinement [ odrl:leftOperand odrl:resolution ;
+                            odrl:operator odrl:lteq ;
+                            odrl:rightOperand 1200 ;
+                            odrl:unit "http://dbpedia.org/resource/Dots_per_inch" ] ] ;
+            odrl:assigner <http://example.com/org:616> ;
+            odrl:target <http://example.com/document:1234> ],
+        [ odrl:action odrl:use ;
+            odrl:assignee <http://example.com/team/A> ;
+            odrl:assigner <http://example.com/org/sony-books> ;
+            odrl:target <http://example.com/looking-glass.ebook> ] ;
+    odrl:profile <http://example.com/odrl:profile:10> ;
+    odrl:prohibition [ odrl:action <file:///C:/Users/sy2y23/PycharmProjects/PolicyEngine/examples/write> ;
+            odrl:constraint [ odrl:leftOperand odrl:dateTime ;
+                    odrl:operator <file:///C:/Users/sy2y23/PycharmProjects/PolicyEngine/examples/gte> ;
+                    odrl:rightOperand "2024-01-01T00:00:00Z" ] ;
+            odrl:target <http://example.com/asset:123> ] .
+
+<http://example.com/org/sony-books> a vcard:Organization,
+        odrl:Party ;
+    vcard:fn "Sony Books LCC" ;
+    vcard:hasEmail "sony-contact@example.com" .
+
+<http://example.com/team/A> a vcard:Group,
+        odrl:PartyCollection ;
+    vcard:fn "Team A" ;
+    vcard:hasEmail "teamA@example.com" .
+

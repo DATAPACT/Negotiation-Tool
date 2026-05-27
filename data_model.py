@@ -5,11 +5,13 @@ import urllib.parse
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import List, Dict, Optional, Any, Union
-
+from typing import Optional, Union, Dict, Any, Literal
+from datetime import datetime, timedelta
+from pydantic import Field, validator
+from bson import ObjectId
 import requests
 from confluent_kafka import Producer, KafkaException
 import jwt
-from bson import ObjectId
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi import FastAPI
@@ -22,7 +24,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from pydantic import Field, EmailStr
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from rdflib import Graph
 from starlette.responses import JSONResponse
 
@@ -55,10 +57,43 @@ class PartyType(str, Enum):
     PROVIDER = 'provider'
 
 class User(MongoObject):
+    keycloak_sub: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     name: Optional[str] = None
+    username: Optional[str] = None
     type: Optional[PartyType] = None
     username_email: Optional[EmailStr] = None
     password: Optional[str] = Field(default=None)
+    # organization: Optional[str] = Field(default=None)
+    organization: Optional[Union[List[str], str]] = Field(default=None)
+    incorporation: Optional[str] = Field(default=None)
+    address: Optional[str] = Field(default=None)
+    vat_no: Optional[str] = Field(default=None)  # VAT account if possible
+    position_title: Optional[str] = Field(default=None)
+    phone: Optional[str] = Field(default=None)
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_name_fields(cls, values):
+        if not isinstance(values, dict):
+            return values
+
+        first_name = (values.get("first_name") or "").strip()
+        last_name = (values.get("last_name") or "").strip()
+        name = (values.get("name") or "").strip()
+
+        if first_name or last_name:
+            values["first_name"] = first_name or None
+            values["last_name"] = last_name or None
+            values["name"] = " ".join(part for part in [first_name, last_name] if part) or None
+        elif name:
+            parts = name.split(None, 1)
+            values["first_name"] = parts[0]
+            values["last_name"] = parts[1] if len(parts) > 1 else None
+            values["name"] = name
+
+        return values
 
 class UpcastResourceDescriptionObject(BaseModel):
     title: Optional[str] = None
@@ -72,29 +107,40 @@ class UpcastResourceDescriptionObject(BaseModel):
     type_of_data: Optional[str] = None
     data_format: Optional[str] = None
     data_size: Optional[str] = None
-    geographic_scope: Optional[str] = None
-    tags: Optional[str] = None
+    geographic_scope: Optional[Union[List[str], str]] = Field(default=None)
+    categories: Optional[Union[List[str], str]] = Field(default=None) # new field for JOT
+    tags: Optional[Union[List[str], str]] = Field(default=None)
+    languages: Optional[Union[List[str], str]] = Field(default=None)
+    temporal_coverage: Optional[List[str]] = Field(default=None)
     publisher: Optional[str] = None
-    theme: Optional[list] = None
+    theme: Optional[Union[List[str], str]] = Field(default=None)
     distribution: Optional[Dict[str, str]] = None
     created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     raw_object: Optional[Dict] = None
 
+
 class UpcastPolicyObject(MongoObject):
     id: Optional[str] = Field(alias="_id", default=None)
     title: Optional[str] = None
-    type: str  # Assuming PolicyType is a string for this example
+    type: Optional[str] = None  # Assuming PolicyType is a string for this example
     consumer_id: Optional[object]
     user_id: Optional[object] = None
-    provider_id: object
+    provider_id: Optional[object] = None
     data_processing_workflow_object: Optional[Dict]
     natural_language_document: str
     resource_description_object: UpcastResourceDescriptionObject
-    odrl_policy: Dict
+    validity_period: Optional[object] = None
+
+    odrl_policy: Optional[object] = None
     negotiation_id: Optional[object] = None
+    is_read_only: bool = Field(default=False, description="Indicates whether the policy is locked for editing.")
     created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
+
+    contract_id: Optional[object] = None
+    contract_type: Literal["dsa", "pda", "cactus_dsa"] = Field( default="dsa", description="Type of contract.")
+
 
 class PolicyChange(BaseModel):
     from_value: Optional[Any] = Field(None, alias="from")
@@ -107,6 +153,10 @@ class PolicyDiffObject(BaseModel):
     natural_language_document: Optional[PolicyChange] = None
     resource_description_object: Optional[Dict[str, PolicyChange]] = None
     odrl_policy: Optional[Dict[str, PolicyChange]] = None
+    # custom_arrangement_section: Optional[Dict[str, PolicyChange]] = None
+    # custom_definitions: Optional[Dict[str, PolicyChange]] = None
+    class Config:
+        extra = "allow"
 
 class PolicyDiffResponse(BaseModel):
     last_policy: UpcastPolicyObject
@@ -139,7 +189,7 @@ class RecommenderAgentRecord(BaseModel):
 
 class UpcastNegotiationObject(MongoObject):
     title: Optional[str] = None
-    user_id: object
+    user_id: Optional[object] = None
     consumer_id: object
     provider_id: object
     negotiation_status: str  # Assuming NegotiationStatus is a string for this example
@@ -148,6 +198,7 @@ class UpcastNegotiationObject(MongoObject):
     nlp: str  # Natural Language Part
     conflict_status: str  # Any detected conflict
     negotiations: List[object]  # List of UPCAST Request or UPCAST Offer
+    negotiation_contracts: Optional[List[object]] = Field(default_factory=list)
     created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     original_offer_id: Optional[object] = None
@@ -169,6 +220,8 @@ class UpcastContractObject(MongoObject):
     negotiation_id: Optional[object] = None
     created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
+
+
 
 
 class NegotiationCreationRequest(BaseModel):

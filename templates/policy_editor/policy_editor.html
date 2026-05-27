@@ -1,108 +1,101 @@
 <fieldset id="fieldset-odrl" >
+    <div style="display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+        <input type="button" id="viewOdrlDiffButton" class="action-button" value="View ODRL Diff" >
+    </div>
     <div class="row">
         <div class="button-container">
             <input type="button" name="NewRule" id="newRuleButton" class="common-button" value="New Rule"/>
         </div>
-
-        <div id="refinementTarget2Container">
-            <div class="flex">
-                <label for="Target2Dropdown">Target:</label>
-                <select id="Target2Dropdown" class="dropdowns">
-                    {% for target in targets %}
-                        <option value= "{{ target.label }}">{{ target.label }} </option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-        <div class="col-lg-12">
-            <div class="form-card" style="display: none">
-                <div>
-                    <label for="ruleDropdown">Rule:</label>
-                    <select id="ruleDropdown" class="dropdowns" onchange="actionChosen()"></select>
-                </div>
-                <div id="refinementActorContainer">
-                    <div class="flex">
-                        <label for="ActorDropdown">Actor:</label>
-                        <select id="ActorDropdown" class="dropdowns"></select>
-                        <input id="addRefinementActorRow" type="button" class="common-button" value="Refine"/>
+        <div id ="policyEditorContainer">
+            <div class="col-lg-12">
+                <div class="form-card" style="display: none">
+                    <div>
+                        <label for="ruleDropdown">Rule:</label>
+                        <select id="ruleDropdown" class="dropdowns" onchange="actionChosen()"></select>
                     </div>
-                    <div class="refinementActorRow">
-                        <label for="refinementActorDropdown">Refinement:</label>
-                        <select id="refinementActorDropdown" class="refinementActorDropdown"></select>
-                        <label for="operatorRefinementActorDropdown"></label>
-                        <select id="operatorRefinementActorDropdown" class="operatorRefinementActorDropdown"></select>
-                        <label for="refinementActorValue"></label>
-                        <input id="refinementActorValue" type="text" class="refinementActorValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
-                        <input type="button" class="removeRefinementActorRow" value="X"/>
+                    <div id="refinementActorContainer">
+                        <div class="flex">
+                            <label for="ActorDropdown">Actor:</label>
+                            <select id="ActorDropdown" class="dropdowns"></select>
+                            <input id="addRefinementActorRow" type="button" class="common-button" value="Refine"/>
+                        </div>
+                        <div class="refinementActorRow">
+                            <label for="refinementActorDropdown">Refinement:</label>
+                            <select id="refinementActorDropdown" class="refinementActorDropdown"></select>
+                            <label for="operatorRefinementActorDropdown"></label>
+                            <select id="operatorRefinementActorDropdown" class="operatorRefinementActorDropdown"></select>
+                            <label for="refinementActorValue"></label>
+                            <input id="refinementActorValue" type="text" class="refinementActorValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                            <input type="button" class="removeRefinementActorRow" value="X"/>
+                        </div>
                     </div>
-                </div>
-                <div id="refinementActionContainer">
-                    <div class="flex">
-                        <label for="ActionDropdown">Action:</label>
-                        <select id="ActionDropdown" class="dropdowns" onchange="actionChosen()"></select>
-                        <input id="addRefinementActionRow" type="button" class="common-button" value="Refine"/>
+                    <div id="refinementActionContainer">
+                        <div class="flex">
+                            <label for="ActionDropdown">Action:</label>
+                            <select id="ActionDropdown" class="dropdowns" onchange="actionChosen()"></select>
+                            <input id="addRefinementActionRow" type="button" class="common-button" value="Refine"/>
+                        </div>
+                        <div class="refinementActionRow">
+                            <label for="refinementActionDropdown">Refinement:</label>
+                            <select id="refinementActionDropdown" class="refinementActionDropdown"></select>
+                            <label for="operatorRefinementActionDropdown"></label>
+                            <select id="operatorRefinementActionDropdown" class="operatorRefinementActionDropdown"></select>
+                            <label for="refinementActionValue"></label>
+                            <input id="refinementActionValue" type="text" class="refinementActionValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                            <input type="button" class="removeRefinementActionRow" value="X"/>
+                        </div>
                     </div>
-                    <div class="refinementActionRow">
-                        <label for="refinementActionDropdown">Refinement:</label>
-                        <select id="refinementActionDropdown" class="refinementActionDropdown"></select>
-                        <label for="operatorRefinementActionDropdown"></label>
-                        <select id="operatorRefinementActionDropdown" class="operatorRefinementActionDropdown"></select>
-                        <label for="refinementActionValue"></label>
-                        <input id="refinementActionValue" type="text" class="refinementActionValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
-                        <input type="button" class="removeRefinementActionRow" value="X"/>
+                    <div>
+                        <label for="queryTextbox" id="queryTextboxLabel">Enter a Query:</label>
+                        <textarea id="queryTextbox" class="queryTextbox" placeholder="Write your query here."></textarea>
                     </div>
-                </div>
-                <div>
-                    <label for="queryTextbox" id="queryTextboxLabel">Enter a Query:</label>
-                    <textarea id="queryTextbox" class="queryTextbox" placeholder="Write your query here."></textarea>
-                </div>
-                <div id="refinementPurposeContainer">
-                    <div class="flex">
-                        <label for="PurposeDropdown">Purpose:</label>
-                        <select id="PurposeDropdown" class="dropdowns"></select>
-                        <input type="button" id="addRefinementPurposeRow" value="Refine"/>
+                    <div id="refinementPurposeContainer">
+                        <div class="flex">
+                            <label for="PurposeDropdown">Purpose:</label>
+                            <select id="PurposeDropdown" class="dropdowns"></select>
+                            <input type="button" id="addRefinementPurposeRow" value="Refine"/>
+                        </div>
+                        <div class="refinementPurposeRow">
+                            <label for="refinementPurposeDropdown">Refinement:</label>
+                            <select id="refinementPurposeDropdown" class="refinementPurposeDropdown"></select>
+                            <label for="operatorRefinementPurposeDropdown"></label>
+                            <select id="operatorRefinementPurposeDropdown" class="operatorRefinementPurposeDropdown"></select>
+                            <label for="refinementPurposeValue"></label>
+                            <input id="refinementPurposeValue" type="text" class="refinementPurposeValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                            <input type="button" class="removeRefinementPurposeRow" value="X"/>
+                        </div>
                     </div>
-                    <div class="refinementPurposeRow">
-                        <label for="refinementPurposeDropdown">Refinement:</label>
-                        <select id="refinementPurposeDropdown" class="refinementPurposeDropdown"></select>
-                        <label for="operatorRefinementPurposeDropdown"></label>
-                        <select id="operatorRefinementPurposeDropdown" class="operatorRefinementPurposeDropdown"></select>
-                        <label for="refinementPurposeValue"></label>
-                        <input id="refinementPurposeValue" type="text" class="refinementPurposeValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
-                        <input type="button" class="removeRefinementPurposeRow" value="X"/>
+                    <div id="refinementTargetContainer">
+                        <div class="flex">
+                            <label for="TargetDropdown">Target:</label>
+                            <input id="TargetDropdown" type="text" class="dropdowns" placeholder="Enter target value...">
+                            <input id="addRefinementTargetRow" type="button" class="common-button" value="Refine"/>
+                        </div>
+                        <div class="refinementTargetRow">
+                            <label for="refinementTargetDropdown">Refinement:</label>
+                            <select id="refinementTargetDropdown" class="refinementTargetDropdown"></select>
+                            <label for="operatorRefinementTargetDropdown"></label>
+                            <select id="operatorRefinementTargetDropdown" class="operatorRefinementTargetDropdown"></select>
+                            <label for="refinementTargetValue"></label>
+                            <input id="refinementTargetValue" type="text" class="refinementTargetValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
+                            <input type="button" class="removeRefinementTargetRow" value="X"/>
+                        </div>
                     </div>
-                </div>
-                <div id="refinementTargetContainer">
-                    <div class="flex">
-                        <label for="TargetDropdown">Target:</label>
-                        <select id="TargetDropdown" class="dropdowns" disabled></select>
-                        <input id="addRefinementTargetRow" type="button" class="common-button" value="Refine"/>
+                    <div id="constraintsContainer">
+                        <input id="addConstraintRow" type="button" class="common-button" value="Add Constraint"/>
+                        <div class="constraintRow">
+                            <label for="constraintDropdown">Constraint:</label>
+                            <select id="constraintDropdown" class="constraintDropdown"></select>
+                            <label for="operatorDropdown"></label>
+                            <select id="operatorDropdown" class="operatorDropdown"></select>
+                            <label for="constraintValue"></label>
+                            <input id="constraintValue" type="text" class="constraintValue" placeholder="Value e.g., '2024-12-12', 'http://example.org/'">
+                            <input type="button" class="removeRow" value="Remove"/>
+                        </div>
                     </div>
-                    <div class="refinementTargetRow">
-                        <label for="refinementTargetDropdown">Refinement:</label>
-                        <select id="refinementTargetDropdown" class="refinementTargetDropdown"></select>
-                        <label for="operatorRefinementTargetDropdown"></label>
-                        <select id="operatorRefinementTargetDropdown" class="operatorRefinementTargetDropdown"></select>
-                        <label for="refinementTargetValue"></label>
-                        <input id="refinementTargetValue" type="text" class="refinementTargetValue" placeholder="Value e.g., '2020-12-12', 'http://example.org/'">
-                        <input type="button" class="removeRefinementTargetRow" value="X"/>
+                    <div class="form-actions">
+                        <input type="button" class="remove-form-button" value="Remove Rule"/>
                     </div>
-                </div>
-                <div id="constraintsContainer">
-                    <input id="addConstraintRow" type="button" class="common-button" value="Add Constraint"/>
-                    <div class="constraintRow">
-                        <label for="constraintDropdown">Constraint:</label>
-                        <select id="constraintDropdown" class="constraintDropdown"></select>
-                        <label for="operatorDropdown"></label>
-                        <select id="operatorDropdown" class="operatorDropdown"></select>
-                        <label for="constraintValue"></label>
-                        <input id="constraintValue" type="text" class="constraintValue" placeholder="Value e.g., '2024-12-12', 'http://example.org/'">
-                        <input type="button" class="removeRow" value="Remove"/>
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <input type="button" class="remove-form-button" value="Remove Rule"/>
                 </div>
             </div>
         </div>
@@ -119,32 +112,159 @@
 
 <script>
 
+
+
+    // Re-register a form if the user changes its #ruleDropdow
+    // update id of rules
+    function rebuildBucket(ruleType) {
+        // Find every .form-card whose dropdown's value maps to ruleType
+        const $all = $('#policyEditorContainer .form-card').filter(function () {
+            const val = $(this).find('#ruleDropdown').val();
+            return val && val.split('/').pop().toLowerCase() === ruleType;
+        });
+
+        // Replace the registry array with the DOM-ordered list
+        policyFormRegistry[ruleType] = $all.toArray();
+        updatePolicyUUIDs(ruleType);          // renumber in the new order
+    }
+
+    function reRegisterPolicyForm($form) {
+        // Old rule-type (if the form already has an ID)
+        const oldType = $form.attr('data-policy-id')?.split('-')[0];
+
+        // New rule-type chosen in the dropdown
+        const ruleTypeRaw = $form.find('#ruleDropdown').val();
+        if (!ruleTypeRaw) return;                               // nothing selected
+        const newType = ruleTypeRaw.split('/').pop().toLowerCase();
+
+        // — Remove from the old bucket —
+        if (oldType && policyFormRegistry[oldType]) {
+            policyFormRegistry[oldType] = policyFormRegistry[oldType]
+                .filter(f => !$(f).is($form));
+            updatePolicyUUIDs(oldType);                         // close gaps
+        }
+        // — Add to the new bucket, and update Ids —
+        rebuildBucket(newType)
+    }
+
+
+    // === UUID Management for Policy Forms ===
+    const policyFormRegistry = {};
+
+    function assignPolicyUUID($form) {
+
+        const ruleTypeRaw = $form.find('#ruleDropdown').val();
+        console.log('ruleTypeRaw for form:', ruleTypeRaw);  // Add this
+
+
+        if (!ruleTypeRaw) {
+            console.warn('Rule type not set — skipping UUID assignment.');
+            return;
+        }
+
+        let ruleType = ruleTypeRaw.split('/').pop().toLowerCase();
+
+        if (!ruleType) return;
+
+        if (!policyFormRegistry[ruleType]) {
+            policyFormRegistry[ruleType] = [];
+        }
+
+        if (!policyFormRegistry[ruleType].includes($form[0])) {
+            policyFormRegistry[ruleType].push($form[0]);
+        }
+
+        // Rebuild to sync with DOM order (important when using prependTo)
+        rebuildBucket(ruleType);
+    }
+
+    function updatePolicyUUIDs(ruleType) {
+        const forms = policyFormRegistry[ruleType] || [];
+
+        forms.forEach((form, index) => {
+            const $form = $(form);
+            const uuid = `${ruleType}-${index + 1}`;
+            $form.attr('data-policy-id', uuid);
+            console.log(`Updated ${ruleType} form UUID to: ${uuid}`);
+        });
+    }
+
+    // a global function to remove a policy form
+    window.removePolicyForm = function($formToRemove) {
+
+        const ruleTypeRaw = $formToRemove.find('#ruleDropdown').val();
+        const ruleType = ruleTypeRaw?.split('/').pop().toLowerCase(); // ✅ Extract local name
+        if (!ruleType || !policyFormRegistry[ruleType]) return;
+
+        policyFormRegistry[ruleType] = policyFormRegistry[ruleType].filter(
+        form => !$(form).is($formToRemove)
+        );
+
+        const formCard_id = $formToRemove.attr('data-policy-id');
+        $formToRemove.remove();
+
+        updatePolicyUUIDs(ruleType);
+        {#alert(` Policy : ${formCard_id} is removed`);#}
+    };
+
+
+    window.logFormCardIDs = function() {
+            const $policyEditor = $('#policyEditorContainer');
+
+            console.log('.form-card elements and their data-policy-id values:');
+            $policyEditor.find('.form-card').each(function (index) {
+                const id = $(this).attr('data-policy-id');
+                console.log(`Form ${index + 1}: data-policy-id =`, id);
+            });
+    };
+
     $(document).ready(function () {
 
         function loadJsonDataNewRule($fieldset, data) {
-            var $originalForm = $fieldset.find('.form-card').first();
+            {#var $originalForm = $fieldset.find('.form-card').first();#}
+
+            var $originalForm = $('.form-card[style*="display: none"]').first();
+
             //var $originalForm = $('.form-card').first();
             var $newForm = $originalForm.clone();
 
             $newForm.css('display', '');
 
-            $newForm.appendTo('.col-lg-12');
+            $newForm.prependTo('.col-lg-12');
             _actions_for_dropdown_form("Actor", $newForm);
             _actions_for_dropdown_form("Action", $newForm);
             _actions_for_dropdown_form("Purpose", $newForm);
             _actions_for_dropdown_form("Target", $newForm);
             // Populate HTML components within the duplicated form
             $newForm.find('#ruleDropdown').val(data.rule);
-            
+
+
+            // //Assign UUID
+            assignPolicyUUID($newForm);
+
+            //Reassign if rule changes later
+            $newForm.find('#ruleDropdown').on('change', function () {
+                const $form = $(this).closest('.form-card');
+                const oldRuleType = $form.attr('data-policy-id')?.split('-')[0];
+                // Remove the form from its old type bucket, then re-register
+                if (oldRuleType) {
+                    policyFormRegistry[oldRuleType] =
+                        (policyFormRegistry[oldRuleType] || []).filter(f => !$(f).is($form));
+                    updatePolicyUUIDs(oldRuleType);
+                }
+                // Re-register in new type
+                assignPolicyUUID($form);
+
+            });
+
+
             $newForm.find('#ActorDropdown').val(data.actor);
             
             $newForm.find('#ActionDropdown').val(data.action);
             
             $newForm.find('#PurposeDropdown').val(data.purpose);
-            
-            $newForm.find('#TargetDropdown').val($('#Target2Dropdown').val()); 
 
-            $newForm.find('#TargetDropdown').prop("disabled", true); 
+            $newForm.find('#TargetDropdown').val(data.target);
             
             console.log('target value', data.target);
 
@@ -161,7 +281,7 @@
 
             if (Object.keys(data).length > 0)
             {
-                //console.log(data)
+                console.log(data)
                 // Load constraints
                 data.constraints.forEach(function (constraint) {
                     var newConstraintRow = $('<div class="constraintRow">').append(
@@ -206,7 +326,12 @@
 
         } 
 
-        
+        // Works for every rule dropdown, present or future
+        $(document).on('change', '.form-card #ruleDropdown', function () {
+            const $form = $(this).closest('.form-card');
+            reRegisterPolicyForm($form);                // keep IDs in sync
+        });
+
         // ODRL Policy Section
 
 
@@ -257,7 +382,6 @@
         // Fill all dropdowns on page load
         fillDropdown('ruleDropdown',   {{ rules|safe }} );
         fillDropdown('ActionDropdown', {{ actions|safe }} );
-        fillDropdown('TargetDropdown', {{ targets|safe }} );
         fillDropdown('PurposeDropdown', {{ purposes|safe }} );
         fillDropdown('constraintDropdown', {{ constraints|safe }} );
         fillDropdown('operatorDropdown', {{ operators|safe }} );
@@ -267,15 +391,6 @@
         fillDropdown('operatorRefinementPurposeDropdown', {{ operators|safe }} );
         fillDropdown('operatorRefinementDropdown', {{ operators|safe }} );
         fillDropdown('ActorDropdown', {{ actors|safe }} );
-
-        $("#Target2Dropdown").on("change", function () {
-            var newTarget = $(this).val(); // Get the selected value
-            console.log("Target change fired " + newTarget);
-        
-            // Update all elements with id TargetDropdown
-            $(".form-card #TargetDropdown").val(newTarget).trigger("change");
-            console.log('new target', $("#TargetDropdown").val(newTarget));
-        });
 
         // Remove refinement row
         $('#refinementContainer').on('click', '.removeRefinementRow', function () {
@@ -298,10 +413,22 @@
             $form.find('.removeRow').click(function () {
                 $(this).parent().remove();
             });
+
+            /*
             $form.find('.remove-form-button').click(function() {
                 var formCard = $(this).closest('.form-card');
                 if (formCard.length > 0) {
                     formCard.remove();
+                }
+            });
+            */
+
+            // Remove current  rule
+            $form.find('.remove-form-button').click(function () {
+                const $formCard = $(this).closest('.form-card');
+                if ($formCard.length > 0) {
+
+                    removePolicyForm($formCard);  //
                 }
             });
                 // Add new constraint row within the form

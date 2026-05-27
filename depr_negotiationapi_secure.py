@@ -110,6 +110,7 @@ class UpcastPolicyObject(MongoObject):
     resource_description_object: UpcastResourceDescriptionObject
     odrl_policy: Dict
     negotiation_id: Optional[object] = None
+    is_read_only: bool = Field(default=False, description="Indicates whether the policy is locked for editing.")
     created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
@@ -170,7 +171,7 @@ else: # Assumption: The database is stored in mongodb cloud.
     MONGO_URI = f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}/?retryWrites=true&w=majority&appName=Cluster0"
 
 client = AsyncIOMotorClient(MONGO_URI)
-db = client.upcast
+db = client.datapack
 negotiations_collection = db.negotiations
 requests_collection = db.requests
 offers_collection = db.offers

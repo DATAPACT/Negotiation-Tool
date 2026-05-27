@@ -18,6 +18,7 @@ from django.urls import path
 
 urlpatterns = [
     path('get_text_diff/', views.get_text_diff, name='get_text_diff'),
+    path('compare_last_changes/', views.get_text_diffs_for_agreement, name='compare_last_changes'),
     # path("user/home", views.userhome, name="userhome"),
     path("organization/home", views.datacontrollerhome, name="datacontrollerhome"),
     path(
@@ -61,6 +62,21 @@ urlpatterns = [
         "organization/negotiationlastpolicy",
         views.get_negotiation_last_policy,
         name="datacontrollergetnegotiationlastpolicy",
+    ),
+    path(
+        "organization/penultimatepolicy",
+        views.get_penultimate_policy,
+        name="datacontrollergetpenultimatepolicy",
+    ),
+    path(
+        "organization/penultimatepolicydiff",
+        views.get_penultimate_policy_diff,
+        name="datacontrollergetpenultimatepolicydiff",
+    ),
+    path(
+        "organization/downloadcontract",
+        views.download_contract,
+        name="datacontrollerdownloadcontract",
     ),
     path(
         "organization/createpolicy",
@@ -175,8 +191,11 @@ urlpatterns = [
     # ),
     path("login", views.signin, name="login"),
     path("logout", views.signout, name="logout"),
+    path("sso-login", views.sso_login, name="sso_login"),
     # path("activate/<uidb64>/<token>", views.activate, name="activate"),
     path("sign-up", views.register, name="register"),
+    path("check-user-email", views.check_user_email, name="check_user_email"),
+    path("check-username", views.check_username, name="check_username"),
     path("auto-login", views.auto_login, name="autologin"),
     path("auto-login-session", views.set_auto_login_session, name="auto_login_session"),
     # path(
@@ -195,4 +214,18 @@ urlpatterns = [
     #     name="view_responses_controller_processor_odrl_single",
     # ),
     path("", views.index, name="index"),
+
+    path(
+            "organization/gather_agreement_inputs",
+            views.gather_agreement_inputs,
+
+            name= "datacontrollercreateagreement",
+        ),
+
+    path(
+        "organization/generate_legal_agreement",
+        views.generate_legal_agreement,
+        name="datacontrollergenerateagreement",
+    ),
+
 ]

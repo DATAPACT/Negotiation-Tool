@@ -1,0 +1,3056 @@
+{
+  "AllConnections": {
+    "scopeNote": "Non-Normative",
+    "type": [
+      "NamedIndividual",
+      "Concept",
+      "PartyScope"
+    ],
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "For example, may be used to indicate all “friends” of the Party. Note that “group” scope is also assumed.",
+    "definition": "Specifies that the scope of the relationship is all of the first-level connections of the Party.",
+    "label": "All First-Level Connections"
+  },
+  "Ticket": {
+    "disjointWith": [
+      "Privacy",
+      "Assertion",
+      "Offer",
+      "Request",
+      "Agreement"
+    ],
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ],
+    "label": "Ticket",
+    "note": "A Ticket Policy MUST contain a target Asset and at least one of a Permission or Prohibition rule.  The Ticket MAY contain the Party with Assigner function and MUST NOT contain an Assignee. The Ticket Policy will grant the terms of the Policy to the holder of that Ticket. The holder of the Ticket MAY remain unknown or MAY have to be identified at some later stage.",
+    "subClassOf": "Policy",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A Policy that grants the holder a Rule over an Asset from an assigner."
+  },
+  "deprecatedTerms": {
+    "member": [
+      "write",
+      "All",
+      "commercialize",
+      "UndefinedTerm",
+      "proximity",
+      "inheritAllowed",
+      "appendTo",
+      "AllGroups",
+      "pay",
+      "AllConnections",
+      "share",
+      "extractChar",
+      "support",
+      "writeTo",
+      "lease",
+      "append",
+      "extractPage",
+      "ignore",
+      "Group",
+      "attachSource",
+      "copy",
+      "timedCount",
+      "All2ndConnections",
+      "payeeParty",
+      "inheritRelation",
+      "device",
+      "extractWord",
+      "shareAlike",
+      "AssetScope",
+      "lend",
+      "system",
+      "undefined",
+      "PartyScope",
+      "license",
+      "preview",
+      "attachPolicy",
+      "secondaryUse",
+      "scope",
+      "adHocShare",
+      "Individual",
+      "export"
+    ],
+    "prefLabel": "Deprecated Terms",
+    "type": "Collection"
+  },
+  "ShareAlike": {
+    "scopeNote": "Non-Normative",
+    "label": "Share Alike",
+    "definition": "Derivative works be licensed under the same terms or compatible terms as the original work.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "includedIn": "use",
+    "note": "This term is defined by Creative Commons."
+  },
+  "extractWord": {
+    "deprecated": "true",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "definition": "The act of extracting (replicating) unchanged words from the asset.",
+    "note": "This original term and URI from the ONIX specification should be used: http://www.editeur.org/onix-pl/extract-word .",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Extract word"
+  },
+  "Privacy": {
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "scopeNote": "Non-Normative",
+    "definition": "A Policy that expresses a Rule over an Asset containing personal information.",
+    "disjointWith": [
+      "Offer",
+      "Assertion",
+      "Ticket",
+      "Request",
+      "Agreement"
+    ],
+    "subClassOf": "Policy",
+    "label": "Privacy Policy",
+    "note": "A Privacy Policy  MUST contain a target Asset, a Party with Assigner  is, a Party with Assignee function, and at least one of a Permission or Prohibition rule that MUST include a Duty. The target Asset SHOULD contain or relate to personal information about the Assignee. The Duty MUST describe obligations on the Assigner about managing the Asset. The Assignee is being granted the terms of the Privacy policy from the Assigner.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "Distribution": {
+    "scopeNote": "Non-Normative",
+    "includedIn": "use",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "This term is defined by Creative Commons.",
+    "definition": "Distribution, public display, and publicly performance.",
+    "label": "Distribution",
+    "type": [
+      "Action",
+      "Concept"
+    ]
+  },
+  "absoluteTemporalPosition": {
+    "scopeNote": "Non-Normative",
+    "definition": "The absolute temporal positions in a media stream the target Asset has to fit.",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "note": "Use with Actions including the target Asset in a larger media stream. The fragment part of a Media Fragment URI (https://www.w3.org/TR/media-frags/) may be used for the right operand. See the Left Operand realativeTemporalPosition. <br />Example: The MP3 music file must be positioned between second 192 and 250 of the temporal length of a stream.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "broaderTransitive": "absolutePosition",
+    "label": "Absolute Temporal Asset Position"
+  },
+  "compensatingParty": {
+    "definition": "The Party that is the provider of the compensation.",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "note": "Maybe specified as part of the compensate duty action.",
+    "subPropertyOf": "function",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Compensating Party"
+  },
+  "relation": {
+    "type": [
+      "Concept",
+      "ObjectProperty",
+      "Property"
+    ],
+    "range": "Asset",
+    "note": "Sub-properties of relation are used to define the nature of that link.",
+    "label": "Relation",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b26",
+    "definition": "Relation is an abstract property which creates an explicit link between an Action and an Asset."
+  },
+  "acceptTracking": {
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "scopeNote": "Non-Normative",
+    "label": "Accept Tracking",
+    "definition": "To accept that the use of the Asset may be tracked.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "The collected information may be tracked by the Assigner, or may link to a Party with the role 'trackingParty' function.",
+    "includedIn": "use"
+  },
+  "attribute": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Attribute",
+    "definition": "To attribute the use of the Asset.",
+    "note": "May link to an Asset with the attribution information. May link to a Party with the  role “attributedParty” function.",
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative"
+  },
+  "consentedParty": {
+    "note": "Maybe specified as part of the obtainConsent action.",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Consented Party",
+    "scopeNote": "Non-Normative",
+    "subPropertyOf": "function",
+    "definition": "The Party who obtains the consent."
+  },
+  "informedParty": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Maybe specified as part of the inform action.",
+    "definition": "The Party to be informed of all uses.",
+    "label": "Informed Party",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "scopeNote": "Non-Normative",
+    "subPropertyOf": "function"
+  },
+  "compensatedParty": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The Party is the recipient of the compensation.",
+    "label": "Compensated Party",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "scopeNote": "Non-Normative",
+    "subPropertyOf": "function",
+    "note": "Maybe specified as part of the compensate duty action."
+  },
+  "invalid": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Used to indicate the policy is void for Conflict Strategy.",
+    "type": [
+      "ConflictTerm",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "scopeNote": "Non-Normative",
+    "definition": "The policy is void.",
+    "label": "Void Policy"
+  },
+  "profile": {
+    "definition": "The identifier(s) of an ODRL Profile that the Policy conforms to.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "domain": "Policy",
+    "label": "Profile",
+    "type": [
+      "Property",
+      "Concept"
+    ],
+    "note": "The profile property is mandatory if the Policy is using an ODRL Profile."
+  },
+  "lease": {
+    "label": "Lease",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true",
+    "definition": "The act of making available the asset to a third-party for a fixed period of time with exchange of value."
+  },
+  "gt": {
+    "type": [
+      "Operator",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "label": "Greater than",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Indicating that a given value is greater than the right operand of the Constraint."
+  },
+  "copy": {
+    "sameAs": "reproduce",
+    "definition": "The act of making an exact reproduction of the asset.",
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "exactMatch": "reproduce",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "label": "Copy"
+  },
+  "gteq": {
+    "type": [
+      "Operator",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "definition": "Indicating that a given value is greater than or equal to the right operand of the Constraint.",
+    "label": "Greater than or equal to",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "include": {
+    "definition": "To include other related assets in the Asset.",
+    "includedIn": "use",
+    "note": "For example: bio picture must be included in the attribution. Use of a relation sub-property is required for the related assets.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Include",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "ignore": {
+    "type": [
+      "UndefinedTerm",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "label": "Ignore Undefined Actions",
+    "deprecated": "true",
+    "definition": "The Action is to be ignored and is not part of the policy – and the policy remains valid.",
+    "note": "Used to support actions not known to the policy system.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "obtainConsent": {
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "note": "May be used as a Duty to ensure that the Assigner or a Party is authorized to approve such actions on a case-by-case basis. May link to a Party with the role “consentingParty” function.",
+    "scopeNote": "Non-Normative",
+    "definition": "To obtain verifiable consent to perform the requested action in relation to the Asset.",
+    "label": "Obtain Consent",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "relativePosition": {
+    "label": "Relative Asset Position",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A point in space or time defined with coordinates relative to full measures the positioning of the target Asset.",
+    "note": "Example: The upper left corner of a picture may be constrained to a specific position of the canvas rendering it.",
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "scopeNote": "Non-Normative"
+  },
+  "Duty": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "subClassOf": "Rule",
+    "disjointWith": [
+      "Prohibition",
+      "Permission"
+    ],
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "label": "Duty",
+    "definition": "The obligation to perform an Action"
+  },
+  "product": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "note": "Example: May only be used in the XYZ Magazine.",
+    "definition": "Category of product or service setting a context for exercising the action of the Rule.",
+    "label": "Product Context",
+    "scopeNote": "Non-Normative"
+  },
+  "spatialCoordinates": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "scopeNote": "Non-Normative",
+    "broaderTransitive": "spatial",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A set of coordinates setting the borders of a geospatial area used for exercising the action of the Rule. The coordinates MUST include longitude and latitude, they MAY include altitude and the geodetic datum.",
+    "label": "Geospatial Coordinates",
+    "note": "The default values are the altitude of earth's surface at this location and the WGS 84 datum."
+  },
+  "assignerOf": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Identifies an ODRL Policy for which the identified Party undertakes the assigner functional role.",
+    "range": "Policy",
+    "label": "Assigner Of",
+    "domain": "Party",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "note": "When assignerOf has been asserted between a metadata expression and an ODRL Policy, the Party being identified MUST be inferred to undertake the assigner functional role of all the Rules of that Policy."
+  },
+  "install": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Install",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "definition": "To load the computer program Asset onto a storage device which allows operating or running the Asset.",
+    "includedIn": "use",
+    "scopeNote": "Non-Normative"
+  },
+  "commercialize": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true",
+    "exactMatch": "CommercialUse",
+    "definition": "The act of using the asset in a business environment.",
+    "label": "Commercialize",
+    "type": [
+      "Action",
+      "Concept"
+    ]
+  },
+  "includedIn": {
+    "type": [
+      "TransitiveProperty",
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "label": "Included In",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "An Action transitively asserts that another Action that encompasses its operational semantics.",
+    "note": "The purpose is to explicitly assert that the semantics of the referenced instance of an other Action encompasses (includes) the semantics of this instance of Action. The includedIn property is transitive, and as such, the Actions form ancestor relationships.",
+    "range": "Action",
+    "domain": "Action"
+  },
+  "contractedParty": {
+    "label": "Contracted Party",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "subPropertyOf": "function",
+    "scopeNote": "Non-Normative",
+    "definition": "The Party who is being contracted."
+  },
+  "duties": {
+    "member": [
+      "duty",
+      "consequence",
+      "remedy",
+      "Duty",
+      "obligation"
+    ],
+    "type": "Collection",
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "prefLabel": "Duty"
+  },
+  "DerivativeWorks": {
+    "definition": "Distribution of derivative works.",
+    "scopeNote": "Non-Normative",
+    "label": "Derivative Works",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "includedIn": "use",
+    "note": "This term is defined by Creative Commons."
+  },
+  "display": {
+    "scopeNote": "Non-Normative",
+    "label": "Display",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "definition": "To create a static and transient rendition of an Asset.",
+    "note": "For example, displaying an image on a screen. If the action is to be performed to a wider audience than just the Assignees, then the Recipient constraint is recommended to be used.",
+    "includedIn": "play",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "function": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "definition": "Function is an abstract property whose sub-properties define the functional roles which may be fulfilled by a party in relation to a Rule.",
+    "range": "Party",
+    "label": "Function",
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b32",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "consentingParty": {
+    "subPropertyOf": "function",
+    "label": "Consenting Party",
+    "note": "Maybe specified as part of the obtainConsent action.",
+    "definition": "The Party to obtain consent from.",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative"
+  },
+  "deliveryChannel": {
+    "label": "Delivery Channel",
+    "note": "Example: the asset may be distributed only on mobile networks.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "definition": "The delivery channel used for exercising the action of the Rule."
+  },
+  "reproduce": {
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Reproduce",
+    "definition": "To make duplicate copies the Asset in any material form.",
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ]
+  },
+  "print": {
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "includedIn": "use",
+    "definition": "To create a tangible and permanent rendition of an Asset.",
+    "note": "For example, creating a permanent, fixed (static), and directly perceivable representation of the Asset, such as printing onto paper.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Print"
+  },
+  "assetParty": {
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "member": [
+      "partOf",
+      "source"
+    ],
+    "prefLabel": "Asset and Party",
+    "type": "Collection"
+  },
+  "refinement": {
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b44",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "definition": "Constraint used to refine the semantics of an Action, or Party/Asset Collection",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Example: the Action print is only permitted on 50% of the asset.",
+    "label": "Refinement",
+    "range": "n58f53108bb944b3dbe7181a280cc3092b48"
+  },
+  "Assertion": {
+    "disjointWith": [
+      "Privacy",
+      "Offer",
+      "Request",
+      "Ticket"
+    ],
+    "note": "For example, a party (an assignee or assigner) can claim what terms they have over an Asset. An Assertion Policy does not grant such permissions/prohibitions but only asserts the parties claims. An Assetion Policy  MUST contain a target Asset, a Party with any functional role, and at least one of a Permission or Prohibition rule.",
+    "subClassOf": "Policy",
+    "scopeNote": "Non-Normative",
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Assertion",
+    "definition": "A Policy that asserts a Rule over an Asset from parties."
+  },
+  "assigneeOf": {
+    "label": "Assignee Of",
+    "note": "When assigneeOf has been asserted between a metadata expression and an ODRL Policy, the Party being identified MUST be inferred to undertake the assignee functional role of all the Rules of that Policy.",
+    "domain": "Party",
+    "type": [
+      "Concept",
+      "ObjectProperty",
+      "Property"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "range": "Policy",
+    "definition": "Identifies an ODRL Policy for which the identified Party undertakes the assignee functional role."
+  },
+  "Operator": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "definition": "Operator for constraint expression.",
+    "label": "Operator",
+    "note": "Instances of the Operator class representing relational operators."
+  },
+  "nextPolicy": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "label": "Next Policy",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "includedIn": "use",
+    "note": "Useful for downstream policies.",
+    "definition": "To grant the specified Policy to a third party for their use of the Asset."
+  },
+  "constraintLeftOperandCommon": {
+    "member": [
+      "resolution",
+      "event",
+      "timeInterval",
+      "spatialCoordinates",
+      "delayPeriod",
+      "virtualLocation",
+      "product",
+      "purpose",
+      "absoluteSpatialPosition",
+      "spatial",
+      "language",
+      "absoluteSize",
+      "absolutePosition",
+      "media",
+      "meteredTime",
+      "version",
+      "absoluteTemporalPosition",
+      "elapsedTime",
+      "industry",
+      "count",
+      "recipient",
+      "relativeSpatialPosition",
+      "relativeSize",
+      "fileFormat",
+      "unitOfCount",
+      "systemDevice",
+      "relativeTemporalPosition",
+      "deliveryChannel",
+      "payAmount",
+      "percentage",
+      "relativePosition",
+      "dateTime"
+    ],
+    "scopeNote": "ODRL Common Vocabulary Terms",
+    "type": "Collection",
+    "prefLabel": "Constraint Left Operands"
+  },
+  "isA": {
+    "definition": "A set-based operator indicating that a given value is an instance of the right operand of the Constraint.",
+    "type": [
+      "Operator",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "label": "Is a",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "Prohibition": {
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Prohibition",
+    "disjointWith": [
+      "Permission",
+      "Duty"
+    ],
+    "definition": "The inability to perform an Action over an Asset.",
+    "subClassOf": "Rule"
+  },
+  "Party": {
+    "label": "Party",
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "The Party entity could be a person, group of people, organisation, or agent. An agent is a person or thing that takes an active role or produces a specified effect. To describe more details about the Party, it is recommended to use W3C vCard Ontology [[vcard-rdf]] or FOAF Vocabulary [[foaf]].",
+    "definition": "An entity or a collection of entities that undertake Roles in a Rule.",
+    "subClassOf": "n58f53108bb944b3dbe7181a280cc3092b7"
+  },
+  "trackingParty": {
+    "subPropertyOf": "function",
+    "note": "May be specified as part of the acceptTracking action.",
+    "label": "Tracking Party",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "scopeNote": "Non-Normative",
+    "definition": "The Party who is tracking usage.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "AssetCollection": {
+    "label": "Asset Collection",
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "subClassOf": "Asset",
+    "definition": "An Asset that is collection of individual resources"
+  },
+  "partyRolesCommon": {
+    "member": [
+      "consentedParty",
+      "contractingParty",
+      "compensatedParty",
+      "trackingParty",
+      "compensatingParty",
+      "attributingParty",
+      "informedParty",
+      "attributedParty",
+      "contractedParty",
+      "consentingParty",
+      "informingParty",
+      "trackedParty"
+    ],
+    "type": "Collection",
+    "scopeNote": "ODRL Common Vocabulary Terms",
+    "prefLabel": "Party Functions"
+  },
+  "Constraint": {
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Constraint",
+    "definition": "A boolean expression that refines the semantics of an Action and Party/Asset Collection or declare the conditions applicable to a Rule."
+  },
+  "inform": {
+    "includedIn": "use",
+    "label": "Inform",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "note": "May link to a Party with the role 'informedParty' function.",
+    "definition": "To inform that an action has been performed on or in relation to the Asset.",
+    "type": [
+      "Action",
+      "Concept"
+    ]
+  },
+  "language": {
+    "label": "Language",
+    "definition": "A natural language used by the target Asset.",
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "note": "Example: the asset can only be translated into Greek. Must use [[bcp47]] codes for language values.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative"
+  },
+  "version": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "note": "Example: Single Paperback or Multiple Issues or version 2.0 or higher.",
+    "label": "Version",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The version of the target Asset."
+  },
+  "writeTo": {
+    "deprecated": "true",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The act of adding data to the Asset.",
+    "label": "Write to",
+    "exactMatch": "modify"
+  },
+  "obligation": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "range": "Duty",
+    "note": "The Duty is a requirement which must be fulfilled.",
+    "definition": "Relates an individual Duty to a Policy.",
+    "label": "Obligation",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "domain": "Policy"
+  },
+  "LeftOperand": {
+    "definition": "Left operand for a constraint expression.",
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Left Operand",
+    "note": "Instances of the LeftOperand class are used as the leftOperand of a Constraint."
+  },
+  "stream": {
+    "label": "Stream",
+    "definition": "To deliver the Asset in real-time.",
+    "scopeNote": "Non-Normative",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "note": "The Asset maybe utilised in real-time as it is being delivered. If the action is to be performed to a wider audience than just the Assignees, then the Recipient constraint is recommended to be used.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "aggregate": {
+    "definition": "To use the Asset or parts of it as part of a composite collection.",
+    "label": "Aggregate",
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative"
+  },
+  "logicalConstraints": {
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "member": [
+      "LogicalConstraint",
+      "operand"
+    ],
+    "type": "Collection",
+    "prefLabel": "Logical Constraint"
+  },
+  "transform": {
+    "label": "Transform",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative",
+    "note": "Typically used to convert the Asset into a different format for consumption on/transfer to a third party system.",
+    "includedIn": "use",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "To convert the Asset into a different format."
+  },
+  "Agreement": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "subClassOf": "Policy",
+    "disjointWith": [
+      "Privacy",
+      "Offer",
+      "Request",
+      "Assertion",
+      "Ticket"
+    ],
+    "definition": "A Policy that grants the assignee a Rule over an Asset from an assigner.",
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "label": "Agreement",
+    "note": "An Agreement Policy MUST contain at least one Permission or Prohibition rule, a Party with Assigner function, and a Party with Assignee function (in the same Permission or Prohibition). The Agreement Policy will grant the terms of the Policy from the Assigner to the Assignee."
+  },
+  "duty": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Has Duty",
+    "range": "Duty",
+    "definition": "Relates an individual Duty to a Permission.",
+    "note": "A Duty is a pre-condition which must be fulfilled in order to receive the Permission.",
+    "domain": "Permission"
+  },
+  "uid": {
+    "type": [
+      "Property",
+      "Concept"
+    ],
+    "definition": "An unambiguous identifier",
+    "label": "Unique Identifier",
+    "note": "Used by the Policy, Rule, Asset, Party, Constraint, and Logical Constraint Classes.",
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b16",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "isAllOf": {
+    "label": "Is all of",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "Operator"
+    ],
+    "definition": "A set-based operator indicating that a given value is all of the right operand of the Constraint.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "use": {
+    "label": "Use",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "To use the Asset",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "note": "Use is the most generic action for all non-third-party usage. More specific types of the use action can be expressed by more targetted actions."
+  },
+  "index": {
+    "definition": "To record the Asset in an index.",
+    "note": "For example, to include a link to the Asset in a search engine database.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative",
+    "label": "Index",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "includedIn": "use"
+  },
+  "extract": {
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "includedIn": "reproduce",
+    "scopeNote": "Non-Normative",
+    "label": "Extract",
+    "note": "A new asset is created and may have very little in common with the original Asset. (Note that the notion of whether or not the change is significant enough to qualify as a new asset is subjective). To the extracted Asset a next policy may be applied.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "To extract parts of the Asset and to use it as a new Asset."
+  },
+  "unit": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "domain": "Constraint",
+    "definition": "The unit of measurement of the value of the rightOperand or rightOperandReference of a Constraint.",
+    "type": "Property",
+    "label": "Unit"
+  },
+  "policySubClasses": {
+    "prefLabel": "Policy Subclasses",
+    "member": [
+      "Offer",
+      "Set",
+      "Agreement"
+    ],
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "type": "Collection"
+  },
+  "archive": {
+    "note": "Temporal constraints may be used for temporal conditions.",
+    "definition": "To store the Asset (in a non-transient form).",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Archive"
+  },
+  "constraintRelationalOperators": {
+    "member": [
+      "hasPart",
+      "isAnyOf",
+      "gt",
+      "isAllOf",
+      "lteq",
+      "gteq",
+      "isA",
+      "lt",
+      "isPartOf",
+      "neq",
+      "isNoneOf",
+      "eq"
+    ],
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "prefLabel": "Constraint Operators",
+    "type": "Collection"
+  },
+  "policySubClassesCommon": {
+    "member": [
+      "Request",
+      "Privacy",
+      "Ticket",
+      "Assertion"
+    ],
+    "prefLabel": "Policy Subclasses",
+    "scopeNote": "ODRL Common Vocabulary Terms",
+    "type": "Collection"
+  },
+  "distribute": {
+    "scopeNote": "Non-Normative",
+    "definition": "To supply the Asset to third-parties.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "includedIn": "use",
+    "label": "Distribute",
+    "note": "It is recommended to use nextPolicy to express the allowable usages by third-parties.",
+    "type": [
+      "Action",
+      "Concept"
+    ]
+  },
+  "Offer": {
+    "subClassOf": "Policy",
+    "disjointWith": [
+      "Ticket",
+      "Privacy",
+      "Request",
+      "Agreement",
+      "Assertion"
+    ],
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "An Offer Policy MUST contain at least one Permission or Prohibition rule and a Party with Assigner function (in the same Permission or Prohibition). The Offer Policy MAY contain a Party with Assignee function, but MUST not grant any privileges to that Party.",
+    "definition": "A Policy that proposes a Rule over an Asset from an assigner.",
+    "label": "Offer"
+  },
+  "system": {
+    "exactMatch": "systemDevice",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "definition": "An identified computing system used for exercising the action of the Rule.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "System",
+    "deprecated": "true",
+    "note": "See System Device"
+  },
+  "Set": {
+    "disjointWith": [
+      "Agreement",
+      "Privacy",
+      "Offer",
+      "Request",
+      "Assertion",
+      "Ticket"
+    ],
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ],
+    "label": "Set",
+    "subClassOf": "Policy",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A Policy that expresses a Rule over an Asset.",
+    "note": "A Set Policy MUST contain a target Asset, and at least one Rule. A Set Policy is the default Policy subclass. The Set is aimed at scenarios where there is an open criteria for the semantics of the policy expressions and typically refined by other systems/profiles that process the information at a later time. No privileges are granted to any Party (if defined)."
+  },
+  "appendTo": {
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The act of appending data to the Asset without modifying the Asset in any other way.",
+    "label": "Append To",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "exactMatch": "modify"
+  },
+  "attachPolicy": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true",
+    "label": "Attach policy",
+    "definition": "The act of keeping the policy notice with the asset.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "exactMatch": "Notice"
+  },
+  "implies": {
+    "domain": "Action",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "The property asserts that an instance of Action entails that the other instance of Action is not prohibited.",
+    "definition": "An Action asserts that another Action is not prohibited to enable its operational semantics.",
+    "label": "Implies",
+    "range": "Action"
+  },
+  "pay": {
+    "definition": "The act of paying a financial amount to a party for use of the asset.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Pay",
+    "exactMatch": "compensate",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true"
+  },
+  "assigner": {
+    "definition": "The Party is the issuer of the Rule.",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b58",
+    "label": "Assigner",
+    "range": "Party",
+    "subPropertyOf": "function",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "inheritFrom": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "note": "The child policy will inherit Rules from the parent policy",
+    "domain": "Policy",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Relates a (child) policy to another (parent) policy from which terms are inherited.",
+    "label": "Inherits From",
+    "range": "Policy"
+  },
+  "digitize": {
+    "definition": "To produce a digital copy of (or otherwise digitize) the Asset from its analogue form.",
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative",
+    "label": "Digitize",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "translate": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Translate",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "note": "A new derivative Asset is created by that action.",
+    "includedIn": "use",
+    "scopeNote": "Non-Normative",
+    "definition": "To translate the original natural language of an Asset into another natural language."
+  },
+  "core": {
+    "type": [
+      "Concept",
+      "Thing"
+    ],
+    "definition": "Identifier for the ODRL Core Profile",
+    "label": "ODRL Core Profile",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "prohibition": {
+    "definition": "Relates an individual Prohibition to a Policy.",
+    "label": "Has Prohibition",
+    "range": "Prohibition",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "domain": "Policy"
+  },
+  "payeeParty": {
+    "scopeNote": "Non-Normative",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Payee Party",
+    "definition": "The Party is the recipient of the payment.",
+    "deprecated": "true",
+    "exactMatch": "compensatedParty"
+  },
+  "absolutePosition": {
+    "definition": "A point in space or time defined with absolute coordinates for the positioning of the target Asset.",
+    "label": "Absolute Asset Position",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "scopeNote": "Non-Normative",
+    "note": "Example: The upper left corner of a picture may be constrained to a specific position of the canvas rendering it."
+  },
+  "attributingParty": {
+    "definition": "The Party who undertakes the attribution.",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "label": "Attributing Party",
+    "subPropertyOf": "function",
+    "note": "Maybe specified as part of the attribute action."
+  },
+  "proximity": {
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "proximity",
+    "type": [
+      "Property",
+      "Concept",
+      "DatatypeProperty"
+    ],
+    "note": "This original term and URI from the OMA specification should be used: http://www.openmobilealliance.com/oma-dd/proximity .",
+    "definition": "An value indicating the closeness or nearness."
+  },
+  "percentage": {
+    "definition": "A percentage amount of the target Asset relevant for exercising the action of the Rule. Right operand value MUST be an xsd:decimal from 0 to 100.",
+    "scopeNote": "Non-Normative",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "note": "Example: Extract less than or equal to 50%.",
+    "label": "Asset Percentage",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "relativeTemporalPosition": {
+    "scopeNote": "Non-Normative",
+    "label": "Relative Temporal Asset Position",
+    "broaderTransitive": "relativePosition",
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A point in space or time defined with coordinates relative to full measures the positioning of the target Asset.",
+    "note": "See also Absolute Temporal Asset Position. <br />Example: The MP3 music file must be positioned between the positions at 33% and 48% of the temporal length of a stream. "
+  },
+  "target": {
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "label": "Target",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "range": "Asset",
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b29",
+    "definition": "The target property indicates the Asset that is the primary subject to which the Rule action directly applies.",
+    "subPropertyOf": "relation"
+  },
+  "conflictConcepts": {
+    "member": [
+      "perm",
+      "prohibit",
+      "conflict",
+      "ConflictTerm",
+      "invalid"
+    ],
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "prefLabel": "Policy Conflict Strategy",
+    "type": "Collection"
+  },
+  "systemDevice": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Example: The system device can be identified by a unique code created from the used hardware.",
+    "exactMatch": [
+      "device",
+      "system"
+    ],
+    "definition": "An identified computing system or computing device used for exercising the action of the Rule.",
+    "label": "System Device"
+  },
+  "hasPolicy": {
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "range": "Policy",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "The Asset being identified MUST be inferred to be the target Asset of all of the Rules of the Policy.",
+    "label": "Target Policy",
+    "domain": "Asset",
+    "definition": "Identifies an ODRL Policy for which the identified Asset is the target Asset to all the Rules."
+  },
+  "relativeSize": {
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Relative Asset Size",
+    "note": "Example: The image can be resized in width to a maximum of 200%. Note: See the Left Operand absoluteSize. ",
+    "scopeNote": "Non-Normative",
+    "definition": "Measure(s) of one or two axes for 2D-objects or measure(s) of one to tree axes for 3D-objects - expressed as percentages of full values - of the target Asset."
+  },
+  "informingParty": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "label": "Informing Party",
+    "note": "Maybe specified as part of the inform action.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "definition": "The Party who provides the inform use data.",
+    "subPropertyOf": "function"
+  },
+  "Permission": {
+    "disjointWith": [
+      "Duty",
+      "Prohibition"
+    ],
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ],
+    "definition": "The ability to perform an Action over an Asset.",
+    "label": "Permission",
+    "subClassOf": "Rule",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "isAnyOf": {
+    "type": [
+      "Operator",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "label": "Is any of",
+    "definition": "A set-based operator indicating that a given value is any of the right operand of the Constraint.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "spatial": {
+    "note": "A code value for the area and source of the code must be presented in the Right Operand. <br />Example: the [[iso3166]] Country Codes or the Getty Thesaurus of Geographic Names. ",
+    "label": "Geospatial Named Area",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "definition": "A named and identified geospatial area with defined borders which is used for exercising the action of the Rule. An IRI MUST be used to represent this value.",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "undefined": {
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "deprecated": "true",
+    "definition": "Relates the strategy used for handling undefined actions to a Policy.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Handle Undefined Term",
+    "note": "If no strategy is specified, the default is invalid.",
+    "range": "UndefinedTerm"
+  },
+  "inheritRelation": {
+    "note": "For example, this may indicate the business scenario, such as subscription, or prior arrangements between the parties (that are not machine representable).",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "label": "Inherit Relation",
+    "definition": "Indentifies the type of inheritance.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true"
+  },
+  "media": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Example media types: electronic, print, advertising, marketing. Note: The used type should not be an IANA MediaType as they are focused on technical characteristics. ",
+    "definition": "Category of a media asset setting a context for exercising the action of the Rule.",
+    "label": "Media Context",
+    "scopeNote": "Non-Normative"
+  },
+  "Request": {
+    "disjointWith": [
+      "Assertion",
+      "Agreement",
+      "Privacy",
+      "Ticket",
+      "Offer"
+    ],
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "label": "Request",
+    "subClassOf": "Policy",
+    "note": "A Request Policy  MUST contain a target Asset, a Party with Assignee function, and at least one of a Permission or Prohibition rule. The Request MAY also contain the Party with Assigner function if this is known. No privileges are granted to any Party.",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A Policy that proposes a Rule over an Asset from an assignee."
+  },
+  "consequence": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "range": "Duty",
+    "note": "The consequence property is utilised to express the repercussions of not fulfilling an agreed Policy obligation or duty for a Permission. If either of these fails to be fulfilled, then this will result in the consequence Duty also becoming a new requirement, meaning that the original obligation or duty, as well as the consequence Duty must all be fulfilled",
+    "domain": "Duty",
+    "subPropertyOf": "failure",
+    "definition": "Relates a Duty to another Duty, the latter being a consequence of not fulfilling the former.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Consequence"
+  },
+  "export": {
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "exactMatch": "transform",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The act of transforming the asset into a new form.",
+    "deprecated": "true",
+    "label": "Export"
+  },
+  "lteq": {
+    "label": "Less than or equal to",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "Operator"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Indicating that a given value is less than or equal to the right operand of the Constraint."
+  },
+  "annotate": {
+    "label": "Annotate",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "definition": "To add explanatory notations/commentaries to the Asset without modifying the Asset in any other way.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative"
+  },
+  "AllGroups": {
+    "label": "All Group Connections",
+    "type": [
+      "Concept",
+      "PartyScope",
+      "NamedIndividual"
+    ],
+    "note": "For example, may be used to indicate all groups that the Party is a member of. Note that “group” scope is also assumed.",
+    "scopeNote": "Non-Normative",
+    "definition": "Specifies that the scope of the relationship is all of the group connections of the Party.",
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "All2ndConnections": {
+    "type": [
+      "NamedIndividual",
+      "Concept",
+      "PartyScope"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "definition": "Specifies that the scope of the relationship is all of the second-level connections to the Party.",
+    "deprecated": "true",
+    "note": "For example, may be used to indicate all “friends of friends” of the Party. Note that “group” scope is also assumed.",
+    "label": "All Second-level Connections"
+  },
+  "eq": {
+    "type": [
+      "NamedIndividual",
+      "Operator",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Equal to",
+    "definition": "Indicating that a given value equals the right operand of the Constraint."
+  },
+  "leftOperand": {
+    "range": "LeftOperand",
+    "domain": "Constraint",
+    "definition": "The left operand in a constraint expression.",
+    "type": [
+      "Property",
+      "Concept"
+    ],
+    "label": "Has Left Operand",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "count": {
+    "scopeNote": "Non-Normative",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "definition": "Numeric count of executions of the action of the Rule.",
+    "label": "Count",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "operand": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "note": "Sub-properties of operand are used for Logical Constraints.",
+    "label": "Operand",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Operand is an abstract property for a logical relationship.",
+    "domain": "LogicalConstraint"
+  },
+  "trackedParty": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "label": "Tracked Party",
+    "definition": "The Party whose usage is being tracked.",
+    "scopeNote": "Non-Normative",
+    "subPropertyOf": "function",
+    "note": "May be specified as part of the acceptTracking action."
+  },
+  "Attribution": {
+    "note": "This term is defined by Creative Commons.",
+    "definition": "Credit be given to copyright holder and/or author.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "label": "Attribution",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "permissions": {
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "member": [
+      "Permission",
+      "permission"
+    ],
+    "type": "Collection",
+    "prefLabel": "Permission"
+  },
+  "LogicalConstraint": {
+    "definition": "A logical expression that refines the semantics of an Action and Party/Asset Collection or declare the conditions applicable to a Rule.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Logical Constraint",
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ]
+  },
+  "virtualLocation": {
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "An identified location of the IT communication space which is relevant for exercising the action of the Rule.",
+    "scopeNote": "Non-Normative",
+    "note": "Example: an Internet domain or IP address range.",
+    "label": "Virtual IT Communication Location"
+  },
+  "ensureExclusivity": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "includedIn": "use",
+    "definition": "To ensure that the Rule on the Asset is exclusive.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Ensure Exclusivity",
+    "note": "If used as a Duty, the assignee should be explicitly indicated as the party that is ensuring the exclusivity of the Rule.",
+    "scopeNote": "Non-Normative"
+  },
+  "industry": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "definition": "A defined industry sector setting a context for exercising the action of the Rule.",
+    "note": "Example: publishing or financial industry.",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Industry Context"
+  },
+  "Rule": {
+    "definition": "An abstract concept that represents the common characteristics of Permissions, Prohibitions, and Duties.",
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Rule is an abstract concept.",
+    "label": "Rule"
+  },
+  "status": {
+    "type": [
+      "Property",
+      "Concept"
+    ],
+    "definition": "the value generated from the leftOperand action or a value related to the leftOperand set as the reference for the comparison.",
+    "domain": "Constraint",
+    "label": "Status",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "sell": {
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "includedIn": "transfer",
+    "scopeNote": "Non-Normative",
+    "label": "Sell",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "To transfer the ownership of the Asset to a third party with compensation and while deleting the original asset."
+  },
+  "resolution": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "label": "Rendition Resolution",
+    "definition": "Resolution of the rendition of the target Asset.",
+    "note": "Example: the image may be printed at 1200dpi.",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "conflict": {
+    "domain": "Policy",
+    "note": "If no strategy is specified, the default is invalid.",
+    "label": "Handle Policy Conflicts",
+    "range": "ConflictTerm",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "definition": "The conflict-resolution strategy for a Policy.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "attributedParty": {
+    "definition": "The Party to be attributed.",
+    "note": "Maybe specified as part of the attribute action.",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "scopeNote": "Non-Normative",
+    "subPropertyOf": "function",
+    "label": "Attributed Party",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "CommercialUse": {
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "This term is defined by Creative Commons.",
+    "definition": "Exercising rights for commercial purposes.",
+    "label": "Commercial Use",
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ]
+  },
+  "prohibitions": {
+    "member": [
+      "Prohibition",
+      "prohibition"
+    ],
+    "type": "Collection",
+    "prefLabel": "Prohibition",
+    "scopeNote": "ODRL Core Vocabulary Terms"
+  },
+  "watermark": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "To apply a watermark to the Asset.",
+    "label": "Watermark",
+    "includedIn": "use",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "scopeNote": "Non-Normative"
+  },
+  "constraints": {
+    "member": [
+      "dataType",
+      "leftOperand",
+      "unit",
+      "refinement",
+      "operator",
+      "constraint",
+      "rightOperand",
+      "RightOperand",
+      "LeftOperand",
+      "Constraint",
+      "status",
+      "rightOperandReference",
+      "Operator"
+    ],
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "prefLabel": "Constraint",
+    "type": "Collection"
+  },
+  "license": {
+    "exactMatch": "grantUse",
+    "type": [
+      "AnnotationProperty",
+      "Action",
+      "Concept"
+    ],
+    "definition": "The act of granting the right to use the asset to a third-party.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true",
+    "label": "License"
+  },
+  "absoluteSize": {
+    "label": "Absolute Asset Size",
+    "note": "Example: The image can be resized in width to a maximum of 1000px.",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Measure(s) of one or two axes for 2D-objects or measure(s) of one to tree axes for 3D-objects of the target Asset."
+  },
+  "recipient": {
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "note": "The Right Operand must identify one or more specific Parties or category/ies of the Party.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The party receiving the result/outcome of exercising the action of the Rule.",
+    "label": "Recipient",
+    "scopeNote": "Non-Normative"
+  },
+  "absoluteSpatialPosition": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "definition": "The absolute spatial positions of four corners of a rectangle on a 2D-canvas or the eight corners of a cuboid in a 3D-space for the target Asset to fit.",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Absolute Spatial Asset Position",
+    "broaderTransitive": "absolutePosition",
+    "note": "Example: The upper left corner of a picture may be constrained to a specific position of the canvas rendering it. Note: see also the Left Operand Relative Spatial Asset Position. "
+  },
+  "rightOperand": {
+    "note": "When used with set-based operators, a list of values may be used.",
+    "domain": "Constraint",
+    "type": [
+      "Property",
+      "Concept",
+      "DatatypeProperty"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The value of the right operand in a constraint expression.",
+    "range": "n58f53108bb944b3dbe7181a280cc3092b51",
+    "label": "Has Right Operand"
+  },
+  "actionsCommon": {
+    "member": [
+      "obtainConsent",
+      "DerivativeWorks",
+      "reproduce",
+      "install",
+      "CommercialUse",
+      "display",
+      "acceptTracking",
+      "execute",
+      "compensate",
+      "include",
+      "textToSpeech",
+      "concurrentUse",
+      "sell",
+      "read",
+      "nextPolicy",
+      "stream",
+      "Distribution",
+      "uninstall",
+      "move",
+      "annotate",
+      "translate",
+      "reviewPolicy",
+      "ShareAlike",
+      "give",
+      "SourceCode",
+      "ensureExclusivity",
+      "inform",
+      "grantUse",
+      "aggregate",
+      "print",
+      "synchronize",
+      "anonymize",
+      "derive",
+      "archive",
+      "digitize",
+      "watermark",
+      "attribute",
+      "extract",
+      "Sharing",
+      "transform",
+      "Attribution",
+      "modify",
+      "Notice",
+      "present",
+      "Reproduction",
+      "distribute",
+      "index",
+      "delete",
+      "play"
+    ],
+    "scopeNote": "ODRL Common Vocabulary Terms",
+    "type": "Collection",
+    "prefLabel": "Actions for Rules"
+  },
+  "rightOperandReference": {
+    "note": "An IRI that MUST be dereferenced to obtain the actual right operand value. When used with set-based operators, a list of IRIs may be used",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A reference to a web resource providing the value for the right operand of a Constraint.",
+    "type": [
+      "Property",
+      "Concept"
+    ],
+    "label": "Has Right Operand Reference",
+    "domain": "Constraint"
+  },
+  "permission": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "label": "Has Permission",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "domain": "Policy",
+    "range": "Permission",
+    "definition": "Relates an individual Permission to a Policy."
+  },
+  "extractPage": {
+    "note": "This original term and URI from the ONIX specification should be used: http://www.editeur.org/onix-pl/extract-page .",
+    "label": "Extract page",
+    "deprecated": "true",
+    "definition": "The act of extracting (replicating) unchanged pages from the asset.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "source": {
+    "type": [
+      "Property",
+      "Concept"
+    ],
+    "note": "Used by AssetCollection and PartyCollection when constraints are applied.",
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b23",
+    "definition": "Reference to a Asset/PartyCollection",
+    "label": "Source",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "lend": {
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "definition": "The act of making available the asset to a third-party for a fixed period of time without exchange of value.",
+    "label": "Lend"
+  },
+  "present": {
+    "definition": "To publicly perform the Asset.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "scopeNote": "Non-Normative",
+    "note": "The asset can be performed (or communicated) in public.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Present"
+  },
+  "delayPeriod": {
+    "label": "Delay Period",
+    "definition": "A time delay period prior to exercising the action of the Rule. The point in time triggering this period MAY be defined by another temporal Constraint combined by a Logical Constraint (utilising the odrl:andSequence operand). Right operand value MUST be an xsd:duration as defined by [[xmlschema11-2]].",
+    "note": "Only the eq, gt, gteq operators SHOULD be used. <br />Example: <code>delayPeriod eq P60M</code> indicates a delay of 60 Minutes before exercising the action.",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "support": {
+    "definition": "The Action is to be supported as part of the policy – and the policy remains valid.",
+    "type": [
+      "UndefinedTerm",
+      "NamedIndividual",
+      "Concept"
+    ],
+    "note": "Used to support actions not known to the policy system.",
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Support Undefined Actions"
+  },
+  "grantUse": {
+    "definition": "To grant the use of the Asset to third parties.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Grant Use",
+    "scopeNote": "Non-Normative",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "note": "This action enables the assignee to create policies for the use of the Asset for third parties. The nextPolicy is recommended to be agreed with the third party. Use of temporal constraints is recommended.",
+    "includedIn": "use"
+  },
+  "transfer": {
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Transfer Ownership",
+    "definition": "To transfer the ownership of the Asset in perpetuity.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "write": {
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "definition": "The act of writing to the Asset.",
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Write",
+    "exactMatch": "modify"
+  },
+  "constraintLogicalOperands": {
+    "type": "Collection",
+    "member": [
+      "or",
+      "and",
+      "xone",
+      "andSequence"
+    ],
+    "prefLabel": "Logical Constraint Operands",
+    "scopeNote": "ODRL Core Vocabulary Terms"
+  },
+  "relativeSpatialPosition": {
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "label": "Relative Spatial Asset Position",
+    "note": "See also Absolute Spatial Asset Position.",
+    "definition": "The relative spatial positions - expressed as percentages of full values - of four corners of a rectangle on a 2D-canvas or the eight corners of a cuboid in a 3D-space of the target Asset.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "broaderTransitive": "relativePosition"
+  },
+  "partyRoles": {
+    "member": [
+      "assigneeOf",
+      "assignerOf",
+      "assigner",
+      "assignee"
+    ],
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "prefLabel": "Party Functions",
+    "type": "Collection"
+  },
+  "constraintRightOpCommon": {
+    "prefLabel": "Constraint Right Operands",
+    "scopeNote": "ODRL Common Vocabulary Terms",
+    "type": "Collection",
+    "member": "policyUsage"
+  },
+  "uninstall": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "note": "The Asset is no longer accessible to the assignees after it has been used.",
+    "definition": "To unload and delete the computer program Asset from a storage device and disable its readiness for operation.",
+    "label": "Uninstall",
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ]
+  },
+  "give": {
+    "includedIn": "transfer",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Give",
+    "scopeNote": "Non-Normative",
+    "definition": "To transfer the ownership of the Asset to a third party without compensation and while deleting the original asset.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "reviewPolicy": {
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Used when human intervention is required to review the Policy. May link to an Asset which represents the full Policy information.",
+    "scopeNote": "Non-Normative",
+    "definition": "To review the Policy applicable to the Asset.",
+    "label": "Review Policy",
+    "includedIn": "use"
+  },
+  "Group": {
+    "type": [
+      "Concept",
+      "PartyScope",
+      "NamedIndividual"
+    ],
+    "scopeNote": "Non-Normative",
+    "definition": "Specifies that the scope of the relationship is the defined group with multiple individual members.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true",
+    "label": "Group"
+  },
+  "hasPart": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "Operator"
+    ],
+    "label": "Has part",
+    "definition": "A set-based operator indicating that a given value contains the right operand of the Constraint.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "extractChar": {
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Extract character",
+    "definition": "The act of extracting (replicating) unchanged characters from the asset.",
+    "note": "This original term and URI from the ONIX specification should be used: http://www.editeur.org/onix-pl/extract-char ."
+  },
+  "actionConcepts": {
+    "member": [
+      "implies",
+      "includedIn",
+      "action",
+      "Action"
+    ],
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "type": "Collection",
+    "prefLabel": "Action"
+  },
+  "or": {
+    "definition": "The relation is satisfied when at least one of the Constraints is satisfied.",
+    "note": "This property MUST only be used for Logical Constraints, and the list of operand values MUST be Constraint instances.",
+    "label": "Or",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "subPropertyOf": "operand"
+  },
+  "contractingParty": {
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "subPropertyOf": "function",
+    "label": "Contracting Party",
+    "definition": "The Party who is offering the contract."
+  },
+  "AssetScope": {
+    "note": "Instances of the AssetScope class represent the terms for the scope property of Assets.",
+    "label": "Asset Scope",
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "definition": "Scopes for Asset Scope expressions.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true"
+  },
+  "http://www.w3.org/ns/odrl/2/": {
+    "creator": [
+      "Michael Steidl",
+      "Renato Iannella",
+      "Stuart Myles",
+      "Víctor Rodríguez-Doncel"
+    ],
+    "type": "Ontology",
+    "contributor": "W3C Permissions & Obligations Expression Working Group",
+    "license": "Copyright/",
+    "label": "ODRL Version 2.2",
+    "comment": "This is the RDF ontology for ODRL Version 2.2.",
+    "versionInfo": "2.2",
+    "description": "The ODRL Vocabulary and Expression defines a set of concepts and terms (the vocabulary) and encoding mechanism (the expression) for permissions and obligations statements describing digital content usage based on the ODRL Information Model."
+  },
+  "assetRelationsCommon": {
+    "scopeNote": "ODRL Common Vocabulary Terms",
+    "member": "output",
+    "prefLabel": "Asset Relations",
+    "type": "Collection"
+  },
+  "concurrentUse": {
+    "includedIn": "use",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "To create multiple copies of the Asset that are being concurrently used.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative",
+    "label": "Concurrent Use"
+  },
+  "policyConcepts": {
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "type": "Collection",
+    "member": [
+      "profile",
+      "inheritFrom",
+      "Policy",
+      "uid"
+    ],
+    "prefLabel": "Policy"
+  },
+  "Action": {
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ],
+    "label": "Action",
+    "subClassOf": "Action",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Actions may be allowed by Permissions, disallowed by Prohibitions, or made mandatory by Duties.",
+    "definition": "An operation on an Asset."
+  },
+  "operator": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "definition": "The operator function applied to operands of a Constraint",
+    "domain": "Constraint",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Has Operator",
+    "range": "Operator"
+  },
+  "PartyCollection": {
+    "definition": "A Party that is a group of individual entities",
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Party Collection",
+    "subClassOf": "Party"
+  },
+  "synchronize": {
+    "includedIn": "use",
+    "definition": "To use the Asset in timed relations with media (audio/visual) elements of another Asset.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative",
+    "label": "Synchronize",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "execute": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Execute",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "includedIn": "use",
+    "scopeNote": "Non-Normative",
+    "definition": "To run the computer program Asset.",
+    "note": "For example, machine executable code or Java such as a game or application."
+  },
+  "timedCount": {
+    "range": "Literal",
+    "deprecated": "true",
+    "note": "This original term and URI from the OMA specification should be used: http://www.openmobilealliance.com/oma-dd/timed-count .",
+    "type": [
+      "Property",
+      "Concept",
+      "DatatypeProperty"
+    ],
+    "definition": "The number of seconds after which timed metering use of the asset begins.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Timed Count"
+  },
+  "payAmount": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "definition": "The amount of a financial payment. Right operand value MUST be an xsd:decimal. ",
+    "label": "Payment Amount",
+    "note": "Can be used for compensation duties with the unit property indicating the currency of the payment.",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "device": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "An identified device used for exercising the action of the Rule.",
+    "label": "Device",
+    "exactMatch": "systemDevice",
+    "note": "See System Device."
+  },
+  "meteredTime": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "label": "Metered Time",
+    "definition": "An accumulated amount of one to many metered time periods which were used for exercising the action of the Rule. Right operand value MUST be an xsd:duration as defined by [[xmlschema11-2]].",
+    "note": "Only the eq, lt, lteq operators SHOULD be used. See also Elapsed Time. <br />Example: <code>meteredTime lteq P60M</code> indicates an accumulated period of 60 Minutes or less.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative"
+  },
+  "derive": {
+    "definition": "To create a new derivative Asset from this Asset and to edit or modify the derivative.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "note": "A new asset is created and may have significant overlaps with the original Asset. (Note that the notion of whether or not the change is significant enough to qualify as a new asset is subjective). To the derived Asset a next policy may be applied.",
+    "label": "Derive",
+    "includedIn": "use",
+    "scopeNote": "Non-Normative"
+  },
+  "dataType": {
+    "type": [
+      "Property",
+      "Concept"
+    ],
+    "definition": "The datatype of the value of the rightOperand or rightOperandReference of a Constraint.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Datatype",
+    "note": "In RDF encodings, use of the rdf:datatype MUST be used. In JSON-LD encoding, the use of @type MUST be used.",
+    "domain": "Constraint",
+    "range": "Datatype"
+  },
+  "dateTime": {
+    "note": "The use of Timezone information is strongly recommended. The Rule may be exercised before (with operator lt/lteq) or after (with operator gt/gteq) the date(time) defined by the Right operand. <br />Example: <code>dateTime gteq 2017-12-31T06:00Z</code> means the Rule can only be exercised after (and including) 6:00AM on the 31st Decemeber 2017 UTC time.",
+    "label": "Datetime",
+    "definition": "The date (and optional time and timezone) of exercising the action of the Rule. Right operand value MUST be an xsd:date or xsd:dateTime as defined by [[xmlschema11-2]].",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "fileFormat": {
+    "note": "Example: An asset may be transformed into JPEG format.",
+    "scopeNote": "Non-Normative",
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A transformed file format of the target Asset.",
+    "label": "File Format"
+  },
+  "remedy": {
+    "label": "Remedy",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "domain": "Prohibition",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Relates an individual remedy Duty to a Prohibition.",
+    "note": "The remedy property expresses an agreed Duty that must be fulfilled in case that a Prohibition has been violated by being exercised.",
+    "range": "Duty",
+    "subPropertyOf": "failure"
+  },
+  "read": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Read",
+    "definition": "To obtain data from the Asset.",
+    "scopeNote": "Non-Normative",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "includedIn": "use",
+    "note": "For example, the ability to read a record from a database (the Asset)."
+  },
+  "SourceCode": {
+    "includedIn": "use",
+    "note": "This term is defined by Creative Commons.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Source Code",
+    "definition": "Source code (the preferred form for making modifications) must be provided when exercising some rights granted by the license.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative"
+  },
+  "adHocShare": {
+    "definition": "The act of sharing the asset to parties in close proximity to the owner.",
+    "label": "Ad-hoc sharing",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "deprecated": "true",
+    "note": "This original term and URI from the OMA specification should be used: http://www.openmobilealliance.com/oma-dd/adhoc-share .",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "compensate": {
+    "label": "Compensate",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "definition": "To compensate by transfer of some amount of value, if defined, for using or selling the Asset.",
+    "note": "The compensation may use different types of things with a value: (i) the thing is expressed by the value (term) of the Constraint name; (b) the value is expressed by operator, rightOperand, dataType and unit. Typically the assignee will compensate the assigner, but other compensation party roles may be used.",
+    "includedIn": "use"
+  },
+  "inheritAllowed": {
+    "type": [
+      "Property",
+      "Concept",
+      "DatatypeProperty"
+    ],
+    "note": "A boolean value.",
+    "definition": "Indicates if the Policy entity can be inherited.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true",
+    "label": "Inheritance Allowed"
+  },
+  "andSequence": {
+    "note": "This property MUST only be used for Logical Constraints, and the list of operand values MUST be Constraint instances. The order of the list MUST be preserved. The andSequence operator is an example where there may be temporal conditional requirements between the operands. This may lead to situations where the outcome is unresolvable, such as deadlock if one of the Constraints is unable to be satisfied. ODRL Processing systems SHOULD plan for these scenarios and implement mechanisms to resolve them.",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "subPropertyOf": "operand",
+    "definition": "The relation is satisfied when each of the Constraints are satisfied in the order specified.",
+    "label": "And Sequence",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "assetConcepts": {
+    "type": "Collection",
+    "prefLabel": "Asset",
+    "member": [
+      "AssetCollection",
+      "Asset"
+    ],
+    "scopeNote": "ODRL Core Vocabulary Terms"
+  },
+  "partyConcepts": {
+    "member": [
+      "Party",
+      "PartyCollection"
+    ],
+    "type": "Collection",
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "prefLabel": "Party"
+  },
+  "output": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "domain": "Rule",
+    "subPropertyOf": "relation",
+    "scopeNote": "Non-Normative",
+    "definition": "The output property specifies the Asset which is created from the output of the Action.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "range": "Asset",
+    "label": "Output"
+  },
+  "Policy": {
+    "definition": "A non-empty group of Permissions and/or Prohibitions.",
+    "note": "A Policy may contain multiple Rules.",
+    "label": "Policy",
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "ConflictTerm": {
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "definition": "Used to establish strategies to resolve conflicts that arise from the merging of Policies or conflicts between Permissions and Prohibitions in the same Policy.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Instances of ConflictTerm describe strategies for resolving conflicts.",
+    "label": "Conflict Strategy Preference"
+  },
+  "assetRelations": {
+    "member": [
+      "hasPolicy",
+      "target"
+    ],
+    "prefLabel": "Asset Relations",
+    "type": "Collection",
+    "scopeNote": "ODRL Core Vocabulary Terms"
+  },
+  "Notice": {
+    "note": "This term is defined by Creative Commons.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Copyright and license notices be kept intact.",
+    "label": "Notice",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "scopeNote": "Non-Normative"
+  },
+  "neq": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "Operator"
+    ],
+    "definition": "Indicating that a given value is not equal to the right operand of the Constraint.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Not equal to"
+  },
+  "purpose": {
+    "type": [
+      "LeftOperand",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "note": "Example: Educational use.",
+    "scopeNote": "Non-Normative",
+    "label": "Purpose",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A defined purpose for exercising the action of the Rule."
+  },
+  "partOf": {
+    "definition": "Identifies an Asset/PartyCollection that the Asset/Party is a member of.",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b1",
+    "range": "n58f53108bb944b3dbe7181a280cc3092b4",
+    "label": "Part Of",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "secondaryUse": {
+    "label": "Secondary Use",
+    "deprecated": "true",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "definition": "The act of using the asset for a purpose other than the purpose it was intended for.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "event": {
+    "definition": "An identified event setting a context for exercising the action of the Rule.",
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Events are temporal periods of time, and operators can be used to signal before (lt), during (eq) or after (gt) the event. <br />Example: May be taken during the “FIFA World Cup 2020” only.",
+    "label": "Event"
+  },
+  "textToSpeech": {
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "note": "If the action is to be performed to a wider audience than just the Assignees, then the recipient constraint is recommended to be used.",
+    "includedIn": "use",
+    "label": "Text-to-speech",
+    "definition": "To have a text Asset read out loud.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative"
+  },
+  "Reproduction": {
+    "definition": "Making multiple copies.",
+    "scopeNote": "Non-Normative",
+    "includedIn": "use",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "label": "Reproduction",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "This term is defined by Creative Commons."
+  },
+  "Sharing": {
+    "includedIn": "use",
+    "note": "This term is defined by Creative Commons.",
+    "label": "Sharing",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "scopeNote": "Non-Normative",
+    "definition": "Permits commercial derivatives, but only non-commercial distribution.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "anonymize": {
+    "definition": "To anonymize all or parts of the Asset.",
+    "note": "For example, to remove identifying particulars for statistical or for other comparable purposes, or to use the Asset without stating the author/source.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Anonymize"
+  },
+  "attachSource": {
+    "deprecated": "true",
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "definition": "The act of attaching the source of the asset and its derivatives.",
+    "exactMatch": "SourceCode",
+    "label": "Attach source",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "and": {
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "note": "This property MUST only be used for Logical Constraints, and the list of operand values MUST be Constraint instances.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The relation is satisfied when all of the Constraints are satisfied.",
+    "label": "And",
+    "subPropertyOf": "operand"
+  },
+  "Asset": {
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Asset",
+    "note": "The Asset entity can be any form of identifiable resource, such as data/information, content/media, applications, or services. Furthermore, it can be used to represent other Asset entities that are needed to undertake the Policy expression, such as with the Duty entity. To describe more details about the Asset, it is recommended to use Dublin Core [[dcterms]] elements or other content metadata.",
+    "definition": "A resource or a collection of resources that are the subject of a Rule."
+  },
+  "scope": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "label": "Scope",
+    "definition": "The identifier of a scope that provides context to the extent of the entity.",
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Used to define scopes for Assets and Parties."
+  },
+  "xone": {
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "definition": "The relation is satisfied when only one, and not more, of the Constaints is satisfied",
+    "subPropertyOf": "operand",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Only One",
+    "note": "This property MUST only be used for Logical Constraints, and the list of operand values MUST be Constraint instances."
+  },
+  "modify": {
+    "includedIn": "use",
+    "definition": "To change existing content of the Asset. A new asset is not created by this action.",
+    "note": "This action will modify an asset which is typically updated from time to time without creating a new asset. If the result from modifying the asset should be a new asset the actions derive or extract should be used. (Note that the notion of whether or not the change is significant enough to qualify as a new asset is subjective).",
+    "label": "Modify",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative"
+  },
+  "timeInterval": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "LeftOperand"
+    ],
+    "scopeNote": "Non-Normative",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A recurring period of time before the next execution of the action of the Rule. Right operand value MUST be an xsd:duration as defined by [[xmlschema11-2]].",
+    "label": "Recurring Time Interval",
+    "note": "Only the eq operator SHOULD be used. <br />Example: <code>timeInterval eq P7D</code> indicates a recurring 7 day period."
+  },
+  "PartyScope": {
+    "label": "Party Scope",
+    "definition": "Scopes for Party Scope expressions.",
+    "type": [
+      "Class",
+      "Class",
+      "Concept"
+    ],
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Instances of the PartyScope class represent the terms for the scope property of Parties."
+  },
+  "failure": {
+    "definition": "Failure is an abstract property that defines the violation (or unmet) relationship between Rules.",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "domain": "Rule",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "The parent property to sub-properties that express explicit failure contexts.",
+    "label": "Failure",
+    "range": "Rule"
+  },
+  "constraint": {
+    "range": "n58f53108bb944b3dbe7181a280cc3092b41",
+    "label": "Has Constraint",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b38",
+    "note": "Constraints on Rules are used to determine if a rule is Active or not. Example: the Permission rule is only active during the year 2018.",
+    "definition": "Constraint applied to a Rule",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "Individual": {
+    "deprecated": "true",
+    "label": "Individual",
+    "definition": "Specifies that the scope of the relationship is the single Party individual.",
+    "type": [
+      "Concept",
+      "PartyScope",
+      "NamedIndividual"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "UndefinedTerm": {
+    "type": [
+      "Class",
+      "Concept",
+      "Class"
+    ],
+    "definition": "Is used to indicate how to support Actions that are not part of any vocabulary or profile in the policy expression system.",
+    "deprecated": "true",
+    "label": "Undefined Term",
+    "note": "Instances of UndefinedTerm describe strategies for processing unsupported actions.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "isNoneOf": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "Operator"
+    ],
+    "label": "Is none of",
+    "definition": "A set-based operator indicating that a given value is none of the right operand of the Constraint.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "play": {
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "includedIn": "use",
+    "note": "For example, to play a video or audio track. If the action is to be performed to a wider audience than just the Assignees, then the Recipient constraint is recommended to be used.",
+    "label": "Play",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "definition": "To create a sequential and transient rendition of an Asset."
+  },
+  "move": {
+    "definition": "To move the Asset from one digital location to another including deleting the original copy.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "After the Asset has been moved, the original copy must be deleted.",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "includedIn": "use",
+    "scopeNote": "Non-Normative",
+    "label": "Move"
+  },
+  "isPartOf": {
+    "type": [
+      "NamedIndividual",
+      "Operator",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A set-based operator indicating that a given value is contained by the right operand of the Constraint.",
+    "label": "Is part of"
+  },
+  "action": {
+    "label": "Has Action",
+    "type": [
+      "ObjectProperty",
+      "Property",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The operation relating to the Asset for which the Rule is being subjected.",
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b35",
+    "range": "Action"
+  },
+  "ruleConcepts": {
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "member": [
+      "function",
+      "Rule",
+      "relation",
+      "failure"
+    ],
+    "type": "Collection",
+    "prefLabel": "Rule"
+  },
+  "scopeNote": {
+    "type": "AnnotationProperty"
+  },
+  "lt": {
+    "type": [
+      "NamedIndividual",
+      "Operator",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Less than",
+    "definition": "Indicating that a given value is less than the right operand of the Constraint."
+  },
+  "elapsedTime": {
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "A continuous elapsed time period which may be used for exercising of the action of the Rule. Right operand value MUST be an xsd:duration as defined by [[xmlschema11-2]].",
+    "label": "Elapsed Time",
+    "note": "Only the eq, lt, lteq operators SHOULD be used. See also Metered Time. <br />Example: <code>elpasedTime eq P60M</code> indicates a total elapsed time of 60 Minutes.",
+    "scopeNote": "Non-Normative"
+  },
+  "append": {
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "label": "Append",
+    "definition": "The act of adding to the end of an asset.",
+    "exactMatch": "modify",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "deprecated": "true"
+  },
+  "policyUsage": {
+    "type": [
+      "Concept",
+      "NamedIndividual",
+      "RightOperand"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "Indicates the actual datetime the action of the Rule was exercised.",
+    "note": "This can be used to express constraints with a LeftOperand relative to the time the rule is exercised. Operators indicate before (lt, lteq), during (eq) or after (gt, gteq) the usage of the rule. <br />Example: <code>event lt policyUsage</code> expresses that the identified event must have happened before the action of the rule is exercised.",
+    "label": "Policy Rule Usage",
+    "scopeNote": "Non-Normative"
+  },
+  "Collection": {
+    "type": "Class"
+  },
+  "All": {
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "type": [
+      "Concept",
+      "PartyScope",
+      "NamedIndividual"
+    ],
+    "scopeNote": "Non-Normative",
+    "label": "All",
+    "note": "For example, may be used to indicate all the users of a specific social network the party is a member of. Note that “group” scope is also assumed.",
+    "deprecated": "true",
+    "definition": "Specifies that the scope of the relationship is all of the collective individuals within a context."
+  },
+  "unitOfCount": {
+    "type": [
+      "NamedIndividual",
+      "LeftOperand",
+      "Concept"
+    ],
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "scopeNote": "Non-Normative",
+    "definition": "The unit of measure used for counting the executions of the action of the Rule.",
+    "note": "Note: Typically used with Duties to indicate the unit entity to be counted of the Action. <br />Example: A duty to compensate and a unitOfCount constraint of 'perUser' would indicate that the compensation by multiplied by the 'number of users'.",
+    "label": "Unit Of Count"
+  },
+  "preview": {
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "definition": "The act of providing a short preview of the asset.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Preview",
+    "note": "Use a time constraint with the appropriate action.",
+    "deprecated": "true"
+  },
+  "delete": {
+    "type": [
+      "Concept",
+      "Action"
+    ],
+    "includedIn": "use",
+    "label": "Delete",
+    "scopeNote": "Non-Normative",
+    "definition": "To permanently remove all copies of the Asset after it has been used.",
+    "note": "Use a constraint to define under which conditions the Asset must be deleted.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "prohibit": {
+    "definition": "Prohibitions take preference over permissions.",
+    "type": [
+      "ConflictTerm",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "note": "Used to determine policy conflict outcomes.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "label": "Prefer Prohibitions"
+  },
+  "broaderTransitive": {
+    "type": "AnnotationProperty"
+  },
+  "issued": {
+    "type": "AnnotationProperty"
+  },
+  "share": {
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "exactMatch": "Sharing",
+    "label": "Share",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The act of the non-commercial reproduction and distribution of the asset to third-parties.",
+    "deprecated": "true"
+  },
+  "shareAlike": {
+    "exactMatch": "ShareAlike",
+    "label": "Share-alike",
+    "type": [
+      "Action",
+      "Concept"
+    ],
+    "deprecated": "true",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "definition": "The act of distributing any derivative asset under the same terms as the original asset."
+  },
+  "assignee": {
+    "domain": "n58f53108bb944b3dbe7181a280cc3092b55",
+    "type": [
+      "Property",
+      "Concept",
+      "ObjectProperty"
+    ],
+    "range": "Party",
+    "definition": "The Party is the recipient of the Rule.",
+    "label": "Assignee",
+    "subPropertyOf": "function",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/"
+  },
+  "RightOperand": {
+    "label": "Right Operand",
+    "type": [
+      "Concept",
+      "Class",
+      "Class"
+    ],
+    "definition": "Right operand for constraint expression.",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Instances of the RightOperand class are used as the rightOperand of a Constraint."
+  },
+  "ConceptScheme": {
+    "type": "Class"
+  },
+  "subject": {
+    "type": "AnnotationProperty"
+  },
+  "actions": {
+    "scopeNote": "ODRL Core Vocabulary Terms",
+    "type": "Collection",
+    "member": [
+      "transfer",
+      "use"
+    ],
+    "prefLabel": "Actions for Rules"
+  },
+  "note": {
+    "type": "AnnotationProperty"
+  },
+  "perm": {
+    "type": [
+      "ConflictTerm",
+      "Concept",
+      "NamedIndividual"
+    ],
+    "definition": "Permissions take preference over prohibitions.",
+    "label": "Prefer Permissions",
+    "isDefinedBy": "http://www.w3.org/ns/odrl/2/",
+    "note": "Used to determine policy conflict outcomes."
+  },
+  "isVersionOf": {
+    "type": "AnnotationProperty"
+  },
+  "description": {
+    "type": "AnnotationProperty"
+  },
+  "format": {
+    "type": "AnnotationProperty"
+  },
+  "contributor": {
+    "type": "AnnotationProperty"
+  },
+  "broader": {
+    "type": "AnnotationProperty"
+  },
+  "prefLabel": {
+    "type": "AnnotationProperty"
+  },
+  "Concept": {
+    "type": "Class"
+  },
+  "hasTopConcept": {
+    "type": "AnnotationProperty"
+  },
+  "creator": {
+    "type": "AnnotationProperty"
+  },
+  "definition": {
+    "type": "AnnotationProperty"
+  },
+  "member": {
+    "type": "AnnotationProperty"
+  }
+}

@@ -20,7 +20,7 @@ This project is a web application with a REST API and a MongoDB database. It is 
    git clone --recurse-submodules <repository-url>
    cd <repository-directory>
 2. Install the [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-3. Create .env file (see .env.test for the variables that need to be specified).  Note: `API_BASE_URL=http://api:8001/negotiation-api` and `DJANGO_BASE_URL=http://web:8000` when using docker.  If running the django app locally (e.g. for development), `API_BASE_URL=http://localhost:8002/negotiation-api` and `DJANGO_BASE_URL=http://localhost:8000`
+3. Create .env file (see .env.test for the variables that need to be specified).  Note: `API_BASE_URL=http://api:8001/negotiation-api`, `API_CONTRACT_SERVICE_URL= https://dips.soton.ac.uk/contract-service-api`,  and `DJANGO_BASE_URL=http://web:8000` when using docker.  If running the django app locally (e.g. for development), `API_BASE_URL=http://localhost:8002/negotiation-api` and `DJANGO_BASE_URL=http://localhost:8000`
 4. Then run the following command.
 ```bash
 docker compose up
@@ -87,5 +87,6 @@ git push origin <branch-name>
 6. Wait for the pull request to be reviewed and merged
 ## License
 Apache 2.0
+
 
 

@@ -216,3 +216,9 @@ ENV/
 
 /media/ontology
 deneme.py
+/demo/
+docker-compose.yml
+/.vscode/
+.vscode/
+demo/
+

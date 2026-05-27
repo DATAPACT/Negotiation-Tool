@@ -1,0 +1,121 @@
+[{
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+  "uid": "http://example.com/policy:001",
+  "@type": "Policy",
+  "profile": "http://example.com/odrl:profile:10",
+  "permission": [
+    {
+      "target": "http://example.com/asset:123",
+      "action": "read",
+      "constraint": [{
+        "leftOperand": "dateTime",
+        "operator": "lt",
+        "rightOperand": "2024-03-01T00:00:00Z"
+      }]
+      ,
+      "duty": [
+        {
+          "action": "attribute",
+          "constraint": [{
+            "leftOperand": "dateTime",
+            "operator": "lt",
+            "rightOperand": "2024-01-01T00:00:00Z"
+          }]
+        }
+      ]
+    },
+    {
+        "target": "http://example.com/book/1999",
+        "assigner": "http://example.com/user",
+        "assignee": "http://example.com/admin",
+        "action": [{
+           "rdf:value": { "@id": "odrl:reproduce" },
+           "refinement": {
+               "xone": {
+	           "@list": [
+		       { "@id": "http://example.com/p:88/C1" },
+                       { "@id": "http://example.com/p:88/C2" }
+		   ]
+	       }
+            }
+        }]
+    },
+    {
+       "target": "http://example.com/asset:3333",
+       "action": "display",
+       "assigner": "http://example.com/user",
+       "assignee": "http://example.com/admin"
+   },
+   {
+        "target": "http://example.com/looking-glass.ebook",
+        "assigner": {
+            "@type": [ "Party", "vcard:Organization" ],
+            "uid":  "http://example.com/org/sony-books",
+            "vcard:fn": "Sony Books LCC",
+            "vcard:hasEmail": "sony-contact@example.com" },
+        "assignee": {
+            "@type": [ "PartyCollection", "vcard:Group" ],
+            "uid":  "http://example.com/team/A",
+            "vcard:fn": "Team A",
+            "vcard:hasEmail": "teamA@example.com"},
+        "action": "use"
+   },
+   {
+       "target": "http://example.com/document:1234",
+       "assigner": "http://example.com/org:616",
+       "action": [{
+          "rdf:value": { "@id": "odrl:print" },
+          "refinement": [{
+             "leftOperand": "resolution",
+             "operator": "lteq",
+             "rightOperand": { "@value": "1200", "@type": "xsd:integer" },
+             "unit": "http://dbpedia.org/resource/Dots_per_inch"
+          }]
+      }]
+  }],
+  "prohibition": [
+    {
+      "target": "http://example.com/asset:123",
+      "action": "write",
+      "assigner": "http://example.com/user",
+      "assignee": "http://example.com/admin",
+      "constraint": {
+        "leftOperand": "dateTime",
+        "operator": "gte",
+        "rightOperand": "2024-01-01T00:00:00Z"
+      }
+    }
+  ],
+  "obligation": [{
+      "assigner": "http://example.com/org:43",
+      "assignee": "http://example.com/person:44",
+      "action": [{
+          "rdf:value": {
+            "@id": "odrl:compensate"
+          },
+          "refinement": [
+            {
+              "leftOperand": "payAmount",
+              "operator": "eq",
+              "rightOperand": { "@value": "500.00", "@type": "xsd:decimal" },
+              "unit": "http://dbpedia.org/resource/Euro"
+            }]
+        }]
+    }],
+  "duty": [{
+      "assigner": "http://example.com/org:43",
+      "assignee": "http://example.com/person:44",
+      "action": [{
+          "rdf:value": {
+            "@id": "odrl:compensate"
+          },
+          "refinement": [
+            {
+              "leftOperand": "payAmount",
+              "operator": "eq",
+              "rightOperand": { "@value": "500.00", "@type": "xsd:decimal" },
+              "unit": "http://dbpedia.org/resource/Euro"
+            }]
+        }]
+    }]
+}]

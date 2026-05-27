@@ -1,0 +1,84 @@
+name: Sync Negotiation-Manager to DATAPACT Negotiation-Tool repository
+
+on:
+  push:
+    branches:
+      - datapact-main
+
+concurrency:
+  group: sync-negotiation-manager-to-datapact-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'DIPS-Tools/Negotiation-Manager'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify token exists
+        env:
+          TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "SYNC_TOKEN is missing"
+            exit 1
+          fi
+
+      - name: Checkout source repository with PolicyEngine submodule
+        uses: actions/checkout@v4
+        with:
+          repository: DIPS-Tools/Negotiation-Manager
+          ref: datapact-main
+          path: source
+          fetch-depth: 0
+          submodules: recursive
+          token: ${{ secrets.SYNC_TOKEN }}
+          persist-credentials: false
+
+      - name: Checkout target DATAPACT repository
+        uses: actions/checkout@v4
+        with:
+          repository: DATAPACT/Negotiation-Tool
+          ref: main
+          path: target
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN }}
+
+      - name: Copy source files into target and flatten PolicyEngine
+        run: |
+          set -euo pipefail
+
+          # Remove everything from target except its .git directory
+          find target -mindepth 1 -maxdepth 1 ! -name ".git" -exec rm -rf {} +
+
+          # Copy source repo content into target.
+          # Because source was checked out with submodules: recursive,
+          # PolicyEngine now contains real files.
+          rsync -a \
+            --exclude=".git" \
+            --exclude=".gitmodules" \
+            --exclude="**/.git" \
+            source/ target/
+
+          # Make sure target does not keep submodule metadata
+          rm -f target/.gitmodules
+
+      - name: Commit and push flattened repository to DATAPACT main
+        working-directory: target
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to sync"
+            exit 0
+          fi
+
+          git commit -m "Sync Negotiation-Manager with flattened PolicyEngine"
+          git push origin HEAD:main
+

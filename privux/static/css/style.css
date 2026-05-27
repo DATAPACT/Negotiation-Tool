@@ -2422,4 +2422,66 @@ section {
   color: #012970;
 }
 
+/*--------------------------------------------------------------
+# Field Info Modal Styles
+--------------------------------------------------------------*/
+.field-info-modal {
+  display: none !important;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
 
+.field-info-modal.show {
+  display: block !important;
+}
+
+.field-info-modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 10001;
+}
+
+.field-info-modal-content h3 {
+  margin-top: 0;
+  color: #673AB7;
+  font-size: 1.5em;
+  border-bottom: 2px solid #673AB7;
+  padding-bottom: 10px;
+}
+
+.field-info-modal-content p {
+  color: #666;
+  line-height: 1.6;
+  font-size: 1em;
+}
+
+.field-info-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.field-info-close:hover,
+.field-info-close:focus {
+  color: #000;
+  text-decoration: none;
+}
+
+.field-info-icon:hover {
+  color: #673AB7 !important;
+}

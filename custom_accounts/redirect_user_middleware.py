@@ -14,6 +14,19 @@
 
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.conf import settings
+
+
+class FrameAncestorsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        ancestors = settings.FRAME_ANCESTORS
+        csp_value = ("frame-ancestors " + " ".join(ancestors)) if ancestors else "frame-ancestors 'none'"
+        response["Content-Security-Policy"] = csp_value
+        return response
 
 
 class UserRedirectMiddleware:
