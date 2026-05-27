@@ -219,10 +219,6 @@ def set_auto_login_session(request):
         if not token:
             return JsonResponse({"error": "Missing token"}, status=400)
 
-        # Old code:
-        # verify_url = f"{API_AUTHENTICATION_URL}/user/verify-token/"
-        #
-        # New code:
         # the raw Keycloak access token is verified locally in Django, which
         # resolves the local business user for the current session without
         # calling negotiation-api during login/session setup.
@@ -1449,10 +1445,7 @@ def _update_contract_if_present(policy_payload, api_response=None, access_token=
     policy_payload["contract_info"] = contract_info  # keep payload consistent for subsequent calls
 
     try:
-        # Old code:
-        # contract_service_interface.update_contract(contract_id, contract_info)
-        #
-        # New code:
+        
         # forward the same authentication token when updating contract-service.
         contract_service_interface.update_contract(
             contract_id,
@@ -1617,10 +1610,6 @@ async def save_signature(request):
 def get_users_details(token, consumer_id, provider_id):
     contacts = {}
 
-    # Old code:
-    # _url = f"{API_AUTHENTICATION_URL}/user/details/"
-    #
-    # New code:
     # user profile data is served by user-management-service, while Keycloak
     # remains responsible for authentication.
     _url = f"{API_USER_MANAGEMENT_URL}/user/details/"
@@ -1833,18 +1822,6 @@ def gather_agreement_inputs(request):
     payload["agreement_data"] = agreement_display
     return JsonResponse(payload)
 
-
-# old function to generate an agreement (not using Contract Service API)
-# @login_required(login_url="login")
-# def generate_legal_agreement(request):
-#     print("Create contract without API")
-#     policy = json.loads(request.body)
-#
-#     nlp_text = get_contract_text(policy)
-#     # print("generate_legal_agreement->nlp_text : \n", nlp_text)
-#     policy["natural_language_document"] = nlp_text
-#
-#     return JsonResponse(policy)
 
 # to call Contract Service API
 def generate_legal_agreement(request):

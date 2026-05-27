@@ -69,8 +69,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "MiaoHu-Pro"
+          git config user.email "Miao.Hu@soton.ac.uk"
 
           git add -A
 
@@ -79,6 +79,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Sync Negotiation-Manager with flattened PolicyEngine"
+          git commit -m "Sync Negotiation-Manager to DATAPACT Negotiation-Tool (with flattened PolicyEngine)"
           git push origin HEAD:main
 
