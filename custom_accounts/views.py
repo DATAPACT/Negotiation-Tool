@@ -38,7 +38,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient as PyMongoClient
 from typing import List, Dict, Optional, Any
 
-from keycloak_auth.auth import decode_and_enrich_keycloak_claims, decode_keycloak_token
+from keycloak_auth.auth import decode_keycloak_token
 from keycloak_auth.user_mapping import build_full_name, resolve_local_session_user_sync
 
 from PolicyEngine.Parsers import ODRLParser
@@ -177,11 +177,11 @@ def _check_username_exists(username):
 
 
 
-def _decode_and_enrich_keycloak_claims(token: str) -> Dict[str, Any]:
+def _decode_keycloak_claims(token: str) -> Dict[str, Any]:
     keycloak_issuer = settings.KEYCLOAK_ISSUER
     if not keycloak_issuer:
         raise ValueError("KEYCLOAK_ISSUER is not configured")
-    return decode_and_enrich_keycloak_claims(
+    return decode_keycloak_token(
         token,
         issuer=keycloak_issuer.rstrip("/"),
         jwks_url=f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/certs",
@@ -222,7 +222,7 @@ def set_auto_login_session(request):
         # the raw Keycloak access token is verified locally in Django, which
         # resolves the local business user for the current session without
         # calling negotiation-api during login/session setup.
-        claims = _decode_and_enrich_keycloak_claims(token)
+        claims = _decode_keycloak_claims(token)
 
         print("\n claims", claims)
 
@@ -293,7 +293,7 @@ def signin(request):
                 return redirect("login")
 
             try:
-                claims = _decode_and_enrich_keycloak_claims(access_token)
+                claims = _decode_keycloak_claims(access_token)
                 user = _resolve_local_session_user_from_claims(claims)
             except Exception as exc:
                 logger.error("Keycloak login succeeded but local user resolution failed: %s", exc)
@@ -580,7 +580,7 @@ def negotiation(request):
     # current session with the resolved local user identity.
     if url_token:
         try:
-            claims = _decode_and_enrich_keycloak_claims(url_token)
+            claims = _decode_keycloak_claims(url_token)
             user = _resolve_local_session_user_from_claims(claims)
             request.session["access_token"] = url_token
             request.session["user_id"] = user.get("id")
@@ -2586,7 +2586,7 @@ def sso_login(request):
         logger.warning("[SSO] Local user prefetch failed: %s", exc)
 
     try:
-        claims = _decode_and_enrich_keycloak_claims(token)
+        claims = _decode_keycloak_claims(token)
         user = _resolve_local_session_user_from_claims(claims)
     except Exception as exc:
         logger.error("[SSO] Local user resolution failed: %s", exc)

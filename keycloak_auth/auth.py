@@ -79,29 +79,3 @@ def collect_keycloak_groups(claims: Dict[str, Any]) -> List[str]:
     if isinstance(groups, list):
         return sorted(str(group) for group in groups if group)
     return []
-
-
-
-def decode_and_enrich_keycloak_claims(
-    token: str,
-    *,
-    issuer: str,
-    jwks_url: str,
-    audience: Optional[str] = None,
-    algorithms: Optional[List[str]] = None,
-    logger: Optional[logging.Logger] = None,
-    verify_aud: bool = True,
-    timeout: int = 10,
-) -> Dict[str, Any]:
-    claims = decode_keycloak_token(
-        token,
-        issuer=issuer,
-        jwks_url=jwks_url,
-        audience=audience,
-        algorithms=algorithms,
-        logger=logger,
-        verify_aud=verify_aud,
-    )
-
-    return claims
-
