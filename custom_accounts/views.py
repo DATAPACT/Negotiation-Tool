@@ -1445,7 +1445,7 @@ def _update_contract_if_present(policy_payload, api_response=None, access_token=
     policy_payload["contract_info"] = contract_info  # keep payload consistent for subsequent calls
 
     try:
-        
+
         # forward the same authentication token when updating contract-service.
         contract_service_interface.update_contract(
             contract_id,

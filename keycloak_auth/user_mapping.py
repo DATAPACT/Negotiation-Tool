@@ -63,11 +63,11 @@ def _build_placeholder_user(claims: Dict[str, Any]) -> Dict[str, Any]:
     first_name = (claims.get("given_name") or "").strip() or "miss value"
     last_name = (claims.get("family_name") or "").strip() or "miss value"
 
-
     display_name = build_full_name(first_name, last_name) or claims.get("name") or email or "miss value"
     user_type = _clean_optional_string(_claim_attribute_value(claims, "user_type", "type")) or guess_user_type_from_claims(claims)
-    organization = _normalize_organization_claim(_claim_attribute_value(claims, "organization", "Organization")) or ["miss value"]
+    organization = _normalize_organization_claim(_claim_attribute_value(claims, "Organization ", "organization")) or ["miss value"]
     incorporation = _clean_optional_string(_claim_attribute_value(claims, "incorporation")) or "miss value"
+
     address = _clean_optional_string(_claim_attribute_value(claims, "address")) or "miss value"
     vat_no = _clean_optional_string(_claim_attribute_value(claims, "VAT_No")) or "miss value"
     position_title = _clean_optional_string(_claim_attribute_value(claims, "positionTitle", "PositionTitle")) or "miss value"
