@@ -93,6 +93,9 @@ KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET", "")
 KEYCLOAK_TOKEN_URL = os.getenv("KEYCLOAK_TOKEN_URL") or (
     f"{KEYCLOAK_ISSUER}/protocol/openid-connect/token" if KEYCLOAK_ISSUER else f"{root_path}/user/login/"
 )
+KEYCLOAK_LOGOUT_URL = os.getenv("KEYCLOAK_LOGOUT_URL") or (
+    f"{KEYCLOAK_ISSUER}/protocol/openid-connect/logout" if KEYCLOAK_ISSUER else ""
+)
 # Swagger UI works more reliably when it posts credentials to a local endpoint
 # that can inject Keycloak client settings such as client_id/client_secret.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=root_path + "/user/login/")
@@ -171,6 +174,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 blacklist = {}
 
 router = APIRouter()
+
+
+class LogoutRequest(BaseModel):
+    refresh_token: Optional[str] = None
 def build_contract_service_headers(access_token: Optional[str], extra_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
     # Old code called contract-service without bearer authentication.
     # New code forwards the same token received by negotiation-api.
@@ -673,8 +680,9 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     if not KEYCLOAK_TOKEN_URL or not KEYCLOAK_CLIENT_ID:
         raise HTTPException(status_code=503, detail="Keycloak login is not configured")
 
+    client_id = KEYCLOAK_CLIENT_ID or "negotiation-api"
     form_payload = {
-        "client_id": KEYCLOAK_CLIENT_ID,
+        "client_id": client_id,
         "grant_type": "password",
         "username": form_data.username,
         "password": form_data.password,
@@ -701,13 +709,51 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.post("/user/logout/")
-async def logout_user(request: Request):
-    # Old code blacklisted locally-issued JWTs.
-    #
-    # New code:
-    # logout is handled by Keycloak. negotiation-api remains stateless and the
-    # caller should clear its local session.
-    return {"message": "Logout is handled by Keycloak."}
+async def logout_user(
+        request: Request,
+        body: Optional[LogoutRequest] = Body(default=None),
+):
+    # negotiation-api is stateless, but partners still need a concrete API to
+    # invalidate the server-side Keycloak session. The practical credential for
+    # that is the refresh_token returned by /user/login/.
+    if not KEYCLOAK_LOGOUT_URL or not KEYCLOAK_CLIENT_ID:
+        raise HTTPException(status_code=503, detail="Keycloak logout is not configured")
+
+    refresh_token = body.refresh_token if body else None
+    if not refresh_token:
+        try:
+            form = await request.form()
+            refresh_token = form.get("refresh_token")
+        except Exception:
+            refresh_token = None
+
+    if not refresh_token:
+        raise HTTPException(
+            status_code=400,
+            detail="refresh_token is required to perform Keycloak logout",
+        )
+
+    form_payload = {
+        "client_id": KEYCLOAK_CLIENT_ID,
+        "refresh_token": refresh_token,
+    }
+    if KEYCLOAK_CLIENT_SECRET:
+        form_payload["client_secret"] = KEYCLOAK_CLIENT_SECRET
+
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        response = await client.post(KEYCLOAK_LOGOUT_URL, data=form_payload)
+
+    if response.status_code >= 400:
+        try:
+            detail = response.json().get("error_description") or response.json().get("detail") or "Logout failed"
+        except Exception:
+            detail = response.text or "Logout failed"
+        raise HTTPException(status_code=response.status_code, detail=detail)
+
+    return {
+        "message": "Logout successful",
+        "provider": "keycloak",
+    }
 
 
 # Decode token helper
