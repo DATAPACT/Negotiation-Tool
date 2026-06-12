@@ -1,0 +1,457 @@
+services:
+  # Firebase Emulator for local development
+  # Enable/disable with USE_EMULATOR env var (default: true)
+  # Note: To disable, comment out this entire service or set profiles
+  firebase-emulator:
+    build:
+      context: ./emulator
+      dockerfile: Dockerfile.emulator
+    container_name: firebase-emulator-local
+    working_dir: /app
+    ports:
+      - "4000:4000"   # Emulator Suite UI
+      - "4400:4400"   # Emulator Hub
+      - "4500:4500"   # Reserved port
+      - "8080:8080"   # Firestore Emulator
+      - "9099:9099"   # Auth Emulator
+      - "9150:9150"   # Firestore UI WebSocket
+      - "9199:9199"   # Storage Emulator
+    volumes:
+      - ./emulator/firebase.json:/app/firebase.json:ro
+      - ./Consent-Manager/.firebaserc:/app/.firebaserc:ro
+      - ./emulator/firestore.rules:/app/firestore.rules:ro
+      - ./emulator/firestore.indexes.json:/app/firestore.indexes.json:ro
+      - ./emulator/storage.rules:/app/storage.rules:ro
+      - firebase-emulator-data:/app/.firebase
+      - firebase-emulator-cache:/root/.cache/firebase/emulators
+    command: firebase emulators:start --only firestore,auth,storage --project upconsent --import=/app/.firebase/data --export-on-exit=/app/.firebase/data
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+  # UpConsent React App + API
+  consent-app:
+    build:
+      context: ./Consent-Manager
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://${HOST_ADDR}:8019/api
+        VITE_NEGOTIATION_BASE_URL: http://${HOST_ADDR}:8001/negotiation/organization/negotiation
+        VITE_FIRESTORE_EMULATOR_HOST: ${HOST_ADDR}
+        VITE_FIRESTORE_EMULATOR_PORT: 8080
+        VITE_AUTH_EMULATOR_HOST: ${HOST_ADDR}
+        VITE_AUTH_EMULATOR_PORT: 9099
+        VITE_STORAGE_EMULATOR_HOST: ${HOST_ADDR}
+        VITE_STORAGE_EMULATOR_PORT: 9199
+    ports:
+      - "5173:5173"  # Frontend static server
+      - "8019:8019"  # API server
+      - "9229:9229"  # Node inspector for debugging
+    volumes:
+      - ./Consent-Manager/.env:/app/.env:ro
+      - ./Consent-Manager/firebase-admin-key.json:/app/firebase-admin-key.json:ro
+      - ./emulator/firebase-admin-key.local.json:/app/firebase-admin-key.local.json:ro
+      - ./emulator/firebase-credentials.json:/app/firebase-credentials.json:ro
+      # Mount source code for hot reload
+      - ./Consent-Manager/src:/app/src
+      - ./Consent-Manager/server:/app/server
+    container_name: consent-react-local
+    restart: unless-stopped
+    environment:
+      # Emulator configuration (default: true for local dev)
+      - USE_EMULATOR=${USE_EMULATOR:-true}
+      - VITE_USE_EMULATOR=${USE_EMULATOR:-true}
+      - VITE_FIRESTORE_EMULATOR_HOST=${HOST_ADDR}
+      - VITE_FIRESTORE_EMULATOR_PORT=8080
+      - VITE_AUTH_EMULATOR_HOST=${HOST_ADDR}
+      - VITE_AUTH_EMULATOR_PORT=9099
+      - VITE_STORAGE_EMULATOR_HOST=${HOST_ADDR}
+      - VITE_STORAGE_EMULATOR_PORT=9199
+      # External APIs
+      - VITE_NEGOTIATION_BASE_URL=http://${HOST_ADDR}:8001/negotiation/organization/negotiation
+      - API_BASE_URL=http://negotiation-api:8001/negotiation-api
+      - EXTERNAL_API_BASE_URL=http://${HOST_ADDR}:8002/negotiation-api
+      - CONTRACT_SERVICE_URL=http://contract-service:8866
+      # Emulator hosts (only used when USE_EMULATOR=true)
+      - EMULATOR_FIRESTORE_HOST=firebase-emulator:8080
+      - EMULATOR_AUTH_HOST=firebase-emulator:9099
+      - EMULATOR_STORAGE_HOST=firebase-emulator:9199
+    depends_on:
+      - firebase-emulator
+    networks:
+      - dips-local
+    command: ["sh", "-c", "NODE_OPTIONS='--inspect=0.0.0.0:9229 --enable-source-maps' npm run server & npm run serve-static"]
+
+  # Negotiation Plugin - Django Web Interface
+  negotiation-web:
+    build:
+      context: ./Negotiation-Tool
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+      - "5679:5679"  # debugpy port for Django Web
+    volumes:
+      - ./Negotiation-Tool:/app
+      - /app/venv
+    environment:
+      - DJANGO_BASE_URL=http://negotiation-web:8000/
+      - PYTHONPATH=/app
+      - MONGO_USER=root
+      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=dips_services
+      - API_BASE_URL=http://negotiation-api:8001/negotiation-api
+      - API_USER_MANAGEMENT_URL=http://user-management-api:8800
+      - API_CONTRACT_SERVICE_URL=http://contract-service:8866
+      - KEYCLOAK_ISSUER=http://${HOST_ADDR}:9090/realms/dips_services
+      - KEYCLOAK_CLIENT_ID=negotiation-web
+      - KEYCLOAK_CLIENT_SECRET=
+      - FRAME_ANCESTORS=http://${HOST_ADDR}:3000
+      - SESSION_COOKIE_SAMESITE=Lax
+      - SESSION_COOKIE_SECURE=False
+      - CSRF_COOKIE_SAMESITE=Lax
+      - CSRF_COOKIE_SECURE=False
+      - SECRET_KEY=<CHANGE_ME_DJANGO_SECRET_KEY>
+    depends_on:
+      - mongo
+    container_name: negotiation-web-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+    command: python -m debugpy --listen 0.0.0.0:5679 manage.py runserver 0.0.0.0:8000
+
+  # Negotiation Plugin - Secure API (FastAPI)
+  negotiation-api:
+    build:
+      context: ./Negotiation-Tool
+      dockerfile: Dockerfile.api
+    ports:
+      - "8002:8001"
+      - "5678:5678"  # debugpy port for Negotiation API
+    volumes:
+      - ./Negotiation-Tool:/app
+    environment:
+      - MONGO_USER=root
+      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=dips_services
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_SECURITY_PROTOCOL=PLAINTEXT
+      - MASTER_PASSWORD=master_password
+      - API_BASE_URL=http://negotiation-api:8001/negotiation-api
+      - API_USER_MANAGEMENT_URL=http://user-management-api:8800
+      - API_CONTRACT_SERVICE_URL=http://contract-service:8866
+      - KEYCLOAK_ISSUER=http://${HOST_ADDR}:9090/realms/dips_services
+      - KEYCLOAK_JWKS_URL=http://${HOST_ADDR}:9090/realms/dips_services/protocol/openid-connect/certs
+      - KEYCLOAK_AUDIENCE=negotiation-api
+      - KEYCLOAK_CLIENT_ID=negotiation-web
+      - KEYCLOAK_TOKEN_URL=http://${HOST_ADDR}:9090/realms/dips_services/protocol/openid-connect/token
+      - CONSUMER_DASHBOARD_USERNAME=${CONSUMER_DASHBOARD_USERNAME}
+      - CONSUMER_DASHBOARD_PASSWORD=${CONSUMER_DASHBOARD_PASSWORD}
+      - PROVIDER_DASHBOARD_USERNAME=${PROVIDER_DASHBOARD_USERNAME}
+      - PROVIDER_DASHBOARD_PASSWORD=${PROVIDER_DASHBOARD_PASSWORD}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_AGENT_MODEL=${OPENAI_AGENT_MODEL:-gpt-4o-mini}
+    depends_on:
+      - mongo
+      - kafka
+    container_name: negotiation-api-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+     #command: python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m uvicorn negotiation_secure_api:app --host 0.0.0.0 --port 8001
+    command: python -m debugpy --listen 0.0.0.0:5678 -m uvicorn negotiation_secure_api:app --host 0.0.0.0 --port 8001
+
+  # Negotiation Plugin - Legacy API v1
+  negotiation-api-v1:
+    build:
+      context: ./Negotiation-Tool
+      dockerfile: Dockerfile.api
+    ports:
+      - "8007:8001"
+    volumes:
+      - ./Negotiation-Tool:/app
+    environment:
+      - MONGO_USER=root
+      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - MONGO_HOST=mongo-v1
+      - MONGO_PORT=27017
+      - MONGO_DB=dips_services
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_SECURITY_PROTOCOL=PLAINTEXT
+      - MASTER_PASSWORD=master_password
+    depends_on:
+      - mongo-v1
+      - kafka
+    container_name: negotiation-api-v1-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+    command: python negotiationapi_v1.py
+
+  # Contract Service - FastAPI for contract creation and management
+  contract-service:
+    build:
+      context: ./Contract_Service
+      dockerfile: Dockerfile
+    ports:
+      - "8866:8866"
+    volumes:
+      - ./Contract_Service:/app
+    environment:
+      - MONGO_USER=root
+      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_AUTH_SOURCE=admin
+      - KEYCLOAK_ISSUER=http://${HOST_ADDR}:9090/realms/dips_services
+      - KEYCLOAK_JWKS_URL=http://${HOST_ADDR}:9090/realms/dips_services/protocol/openid-connect/certs
+      - KEYCLOAK_AUDIENCE=contract-service
+      - KEYCLOAK_CLIENT_ID=contract-service
+      - KEYCLOAK_ALGORITHMS=RS256
+      - API_USER_MANAGEMENT_URL=http://user-management-api:8800
+      - API_CONTRACT_SERVICE_URL=http://contract-service:8866
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MODEL_NAME=gpt-4o-mini
+    depends_on:
+      - mongo
+    container_name: contract-service-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+  # Authentication Service - FastAPI for auth and user management
+  authentication-service:
+    build:
+      context: ./authentication-service
+      dockerfile: Dockerfile
+    ports:
+      - "8899:8899"
+    volumes:
+      - ./authentication-service:/app
+    environment:
+      - API_AUTHENTICATION_URL=http://authentication-service:8899
+      - MONGO_USER=root
+      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MASTER_PASSWORD=master_password
+      - SECRET_KEY=<CHANGE_ME_DJANGO_SECRET_KEY>
+    depends_on:
+      - mongo
+    container_name: authentication-service-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+  # User Management Service - FastAPI for user CRUD without auth endpoints
+  user-management-api:
+    build:
+      context: ./user_management
+      dockerfile: Dockerfile
+    ports:
+      - "8800:8800"
+    volumes:
+      - ./user_management:/app
+    environment:
+      - MONGO_USER=root
+      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MASTER_PASSWORD=master_password
+      - KEYCLOAK_BASE_URL=http://${HOST_ADDR}:9090
+      - KEYCLOAK_CLIENT_ID=user-management-api
+      - KEYCLOAK_ISSUER=http://${HOST_ADDR}:9090/realms/dips_services
+      - KEYCLOAK_JWKS_URL=http://${HOST_ADDR}:9090/realms/dips_services/protocol/openid-connect/certs
+      - KEYCLOAK_AUDIENCE=user-management-api
+      - KEYCLOAK_REALM=dips_services
+      - KEYCLOAK_ADMIN_REALM=master
+      - KEYCLOAK_ADMIN_CLIENT_ID=admin-cli
+      - KEYCLOAK_ADMIN_CLIENT_SECRET=
+      - KEYCLOAK_ADMIN_USERNAME=admin
+      - KEYCLOAK_ADMIN_PASSWORD=<CHANGE_ME_KEYCLOAK_ADMIN_PASSWORD>
+    depends_on:
+      - mongo
+    container_name: user-management-api-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+  user-management-web:
+    build:
+      context: ./user_management
+      dockerfile: user_management_frontend/Dockerfile
+    ports:
+      - "8801:8801"
+    volumes:
+      - ./user_management:/app
+    environment:
+      - USER_MANAGEMENT_API_URL=http://user-management-api:8800
+      - MONGO_USER=root
+      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=dips_services
+      - HOST_ADDR=${HOST_ADDR}
+      - KEYCLOAK_ISSUER=http://${HOST_ADDR}:9090/realms/dips_services
+      - KEYCLOAK_JWKS_URL=http://${HOST_ADDR}:9090/realms/dips_services/protocol/openid-connect/certs
+      - KEYCLOAK_AUDIENCE=user-management-web
+      - KEYCLOAK_CLIENT_ID=user-management-web
+      - KEYCLOAK_CLIENT_SECRET=
+      - KEYCLOAK_ALGORITHMS=RS256
+    depends_on:
+      - user-management-api
+      - mongo
+    container_name: user-management-web-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+
+
+
+  # MongoDB for Negotiation Plugin
+  mongo:
+    image: mongo:8.0
+    container_name: mongo-local
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - dips-local
+    command: ["--auth"]
+
+  # Mongo Express - Web UI for MongoDB
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express-local
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+      - ME_CONFIG_MONGODB_URL=mongodb://root:<CHANGE_ME_MONGO_PASSWORD>@mongo:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=<CHANGE_ME_MONGO_EXPRESS_PASSWORD>
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+  # MongoDB for Legacy API v1
+  mongo-v1:
+    image: mongo:6.0
+    container_name: mongo-v1-local
+    ports:
+      - "27020:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
+    volumes:
+      - mongo-v1-data:/data/db
+    restart: unless-stopped
+    networks:
+      - dips-local
+    command: ["--auth"]
+
+  # Kafka for event streaming
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka-local
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+  # Zookeeper for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper-local
+    ports:
+      - "2182:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    restart: unless-stopped
+    networks:
+      - dips-local
+
+  # Policy Editor - Django Web Interface
+  policy-editor-web:
+    build:
+      context: ./ODRL_Editor
+      dockerfile: Dockerfile
+    ports:
+      - "8018:8005"
+    volumes:
+      - ./ODRL_Editor:/app
+    environment:
+      - DEBUG=True
+    container_name: policy-editor-web-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+    command: ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8005"]
+
+  # Policy Editor - API
+  policy-editor-api:
+    build:
+      context: ./ODRL_Editor
+      dockerfile: Dockerfile
+    ports:
+      - "8020:8001"
+    volumes:
+      - ./ODRL_Editor:/app
+    environment:
+      - DEBUG=True
+    container_name: policy-editor-api-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+    command: python api.py
+
+  # Policy Engine
+  policy-engine:
+    build:
+      context: ./PolicyEngine
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./PolicyEngine:/app
+    environment:
+      - DEBUG=True
+    container_name: policy-engine-local
+    restart: unless-stopped
+    networks:
+      - dips-local
+    command: python main.py
+
+
+networks:
+  dips-local:
+    name: dips-local
+    driver: bridge
+
+volumes:
+  mongo-data:
+  mongo-v1-data:
+  firebase-emulator-data:
+  firebase-emulator-cache:
