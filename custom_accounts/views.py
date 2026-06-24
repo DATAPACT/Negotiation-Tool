@@ -11,6 +11,7 @@
 # -----------------------------------------------------------------------------
 import difflib
 import html
+import inspect
 import json
 import logging
 import os
@@ -195,6 +196,33 @@ def _resolve_local_session_user_from_claims(claims: Dict[str, Any]) -> Dict[str,
     return resolve_local_session_user_sync(_get_mongo_users(), claims, logger)
 
 
+def _is_ajax_request(request) -> bool:
+    accept = request.headers.get("Accept") or ""
+    return (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        or "application/json" in accept
+    )
+
+
+def _handle_expired_session(request):
+    # Clear the stale session first so the next login starts cleanly.
+    request.session.flush()
+
+    # AJAX callers expect JSON so the front end can decide how to redirect.
+    if _is_ajax_request(request):
+        return JsonResponse(
+            {
+                "error": "session_expired",
+                "message": "Your session has expired. Please log in again.",
+                "redirect_url": reverse("login"),
+            },
+            status=401,
+        )
+
+    messages.warning(request, "Your session has expired. Please log in again.")
+    return redirect("login")
+
+
 User = get_user_model()
 
 
@@ -234,6 +262,7 @@ def set_auto_login_session(request):
         request.session["user_id"] = user.get("id")
         request.session["user_type"] = user.get("type")
         request.session["is_sso"] = False
+        request.session["claims"] = claims
 
         return JsonResponse({"success": True})
 
@@ -329,23 +358,43 @@ def signin(request):
     # For GET requests, just render login page
     return render(request, "register_login/login.html")
 
-
-
-
 def keycloak_login_required(view_func):
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
+    def _validate_request_session(request):
         access_token = request.session.get("access_token")
         claims = request.session.get("claims")
 
-        if not access_token or not claims:
-            return redirect("login")
+        if not access_token:
+            return _handle_expired_session(request)
+
+        if not claims:
+            try:
+                claims = _decode_keycloak_claims(access_token)
+                request.session["claims"] = claims
+            except Exception:
+                return _handle_expired_session(request)
 
         exp = claims.get("exp")
         if not exp or exp < int(time.time()):
-            request.session.flush()
-            return redirect("login")
+            return _handle_expired_session(request)
 
+        return None
+
+    # Use the same decorator for both page views and AJAX/JSON endpoints.
+    if inspect.iscoroutinefunction(view_func):
+        @wraps(view_func)
+        async def async_wrapper(request, *args, **kwargs):
+            invalid_response = _validate_request_session(request)
+            if invalid_response is not None:
+                return invalid_response
+            return await view_func(request, *args, **kwargs)
+
+        return async_wrapper
+
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        invalid_response = _validate_request_session(request)
+        if invalid_response is not None:
+            return invalid_response
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -591,7 +640,7 @@ def ajax_get_constraints_for_instances(request):
 
 
 ####################policy editor ends###########################################
-
+@keycloak_login_required
 def negotiation(request):
     # Ensure user is authenticated via token in session
     # Check URL parameters first (priority over session to allow fresh login)
@@ -609,13 +658,14 @@ def negotiation(request):
             request.session["user_id"] = user.get("id")
             request.session["user_type"] = user.get("type")
             request.session["is_sso"] = False
+            request.session["claims"] = claims
             print(f"✅ Session updated from URL parameters for user {user.get('id')}")
             token = url_token
             user_id = user.get("id")
             user_type = user.get("type")
         except Exception as e:
             print(f"❌ Error verifying token: {e}")
-            return redirect("login")
+            return _handle_expired_session(request)
     else:
         # Fallback to session
         token = request.session.get("access_token")
@@ -623,7 +673,7 @@ def negotiation(request):
         user_type = request.session.get("user_type")
 
     if not token or not user_id:
-        return redirect("login")
+        return _handle_expired_session(request)
 
     selected_negotiation_id = request.GET.get("negotiation_id", None)
 
@@ -700,8 +750,9 @@ def negotiation(request):
     }
     return render(request, "admin_organization/configure.html", context=context)
 
-
+@keycloak_login_required
 def get_negotiations(request):
+
     # Ensure user is authenticated via token in session
     token = request.session.get("access_token")
     print(f"Token from session: {token}")
@@ -735,6 +786,7 @@ def get_negotiations(request):
         return JsonResponse({'error': 'Error fetching negotiations'}, status=500)
 
 
+@keycloak_login_required
 def get_offer(request):
     print('calling get_offer')
     offer_id = request.GET["offer_id"]
@@ -786,6 +838,7 @@ def get_offer(request):
         return None
 
 
+@keycloak_login_required
 def get_negotiation_last_policy(request, negotiation_id=None, return_json=True):
     """
     Retrieve the last policy diff for a negotiation.
@@ -845,6 +898,7 @@ def get_negotiation_last_policy(request, negotiation_id=None, return_json=True):
         return None
 
 
+@keycloak_login_required
 def get_penultimate_policy(request):
     negotiation_id = request.GET.get("negotiation_id")
     if not negotiation_id:
@@ -875,6 +929,7 @@ def get_penultimate_policy(request):
         return JsonResponse(error_payload, status=status_code)
 
 
+@keycloak_login_required
 def get_penultimate_policy_diff(request):
     negotiation_id = request.GET.get("negotiation_id")
     if not negotiation_id:
@@ -905,6 +960,7 @@ def get_penultimate_policy_diff(request):
         return JsonResponse(error_payload, status=status_code)
 
 
+@keycloak_login_required
 def update_policy(request):
     print('calling update_policy')
 
@@ -998,6 +1054,7 @@ def update_policy(request):
 
 
 #
+@keycloak_login_required
 def create_policy(request):
     # negotiation_id = request.headers.get("negotiationid")
     # print(f'Negotiation ID: {negotiation_id}')
@@ -1097,6 +1154,7 @@ def create_policy(request):
         return JsonResponse({"error": "Failed to send request to remote API"}, status=500)
 
 
+@keycloak_login_required
 def create_policy_from_upload(request):
     print('calling create_policy_from_upload')
 
@@ -1480,6 +1538,7 @@ def _update_contract_if_present(policy_payload, api_response=None, access_token=
         raise
 
 
+@keycloak_login_required
 def updatenegotiation(request):
     # Ensure user is authenticated via token in session
     token = request.session.get("access_token")
@@ -1665,6 +1724,7 @@ def get_users_details(token, consumer_id, provider_id):
     return contacts
 
 
+@keycloak_login_required
 def gather_agreement_inputs(request):
     """
     Retrieve agreement information from the front end, translate ODRL policy,
@@ -1847,6 +1907,7 @@ def gather_agreement_inputs(request):
 
 
 # to call Contract Service API
+@keycloak_login_required
 def generate_legal_agreement(request):
     print("to call API generating a contract!")
     # parse JSON
@@ -1892,6 +1953,7 @@ def generate_legal_agreement(request):
     return JsonResponse(contract_obj)
 
 
+@keycloak_login_required
 async def download_contract(request):
     user_id = request.session.get("user_id")
     access_token = request.session.get("access_token")
@@ -2478,6 +2540,7 @@ def ajax_get_properties_from_properties_file(request):
 
 
 ###Recommender agent views###
+@keycloak_login_required
 def create_agent_record(request):
     # Ensure user is authenticated via token in session
     token = request.session.get("access_token")
@@ -2529,6 +2592,7 @@ def create_agent_record(request):
         return JsonResponse({"error": "Failed to send request to remote API"}, status=500)
 
 
+@keycloak_login_required
 def get_agent_record(request):
     # Ensure user is authenticated via token in session
     token = request.session.get("access_token")
@@ -2619,5 +2683,6 @@ def sso_login(request):
     request.session["user_id"] = user.get("id")
     request.session["user_type"] = user.get("type", user_type)
     request.session["is_sso"] = True
+    request.session["claims"] = claims
 
     return JsonResponse({"status": "ok", "redirect_url": reverse("datacontrollernegotiation")})

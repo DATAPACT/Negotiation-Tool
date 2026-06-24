@@ -101,6 +101,10 @@ MIDDLEWARE = [
 ROOT_URLCONF = "privux.urls"
 SESSION_COOKIE_NAME = "negotiation_sessionid"
 
+SESSION_COOKIE_AGE = 1800
+SESSION_SAVE_EVERY_REQUEST = True
+
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
