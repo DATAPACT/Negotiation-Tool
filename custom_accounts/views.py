@@ -22,7 +22,8 @@ from urllib.parse import urlencode
 from copy import deepcopy
 from datetime import datetime
 from difflib import SequenceMatcher
-
+import time
+from functools import wraps
 import jwt
 import requests
 from bs4 import BeautifulSoup
@@ -311,6 +312,8 @@ def signin(request):
             request.session["user_id"] = user.get("id")
             request.session["user_type"] = user.get("type")
             request.session["is_sso"] = False
+            request.session["claims"] = claims
+
             return redirect("datacontrollernegotiation")
         else:
             # Extract API error message if any, or default message
@@ -326,6 +329,26 @@ def signin(request):
     # For GET requests, just render login page
     return render(request, "register_login/login.html")
 
+
+
+
+def keycloak_login_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        access_token = request.session.get("access_token")
+        claims = request.session.get("claims")
+
+        if not access_token or not claims:
+            return redirect("login")
+
+        exp = claims.get("exp")
+        if not exp or exp < int(time.time()):
+            request.session.flush()
+            return redirect("login")
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
 
 # def send_activation_email(register_user, email_host_user, request):
 #     # Email Address Confirmation Email
