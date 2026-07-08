@@ -89,6 +89,7 @@ def _get_mongo_users():
                 mongo_host = os.environ.get("MONGO_HOST", "mongo")
                 mongo_port = os.environ.get("MONGO_PORT", "27017")
                 uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}"
+                print("uri", uri)
                 _mongo_client = PyMongoClient(uri)
     return _mongo_client[MONGO_DB]["users"]
 
@@ -320,6 +321,7 @@ def signin(request):
             try:
                 claims = _decode_keycloak_claims(access_token)
                 user = _resolve_local_session_user_from_claims(claims)
+                print("user:", user)
             except Exception as exc:
                 logger.error("Keycloak login succeeded but local user resolution failed: %s", exc)
                 messages.error(request, "Login succeeded, but the user is not authorized in Negotiation-Tool.")
