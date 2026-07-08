@@ -180,6 +180,10 @@ def _decode_keycloak_claims(token: str) -> Dict[str, Any]:
     keycloak_issuer = settings.KEYCLOAK_ISSUER
     if not keycloak_issuer:
         raise ValueError("KEYCLOAK_ISSUER is not configured")
+
+    print(f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/certs",)
+    print(keycloak_issuer.rstrip("/"))
+
     return decode_keycloak_token(
         token,
         issuer=keycloak_issuer.rstrip("/"),
