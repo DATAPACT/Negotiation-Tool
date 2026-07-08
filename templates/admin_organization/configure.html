@@ -2255,7 +2255,7 @@
                   };
 
                   $.ajax({
-                    url: '/negotiation/organization/generate_legal_agreement',
+                    url: `${window.APP_BASE_PATH}/organization/generate_legal_agreement`,
                     type: 'POST',
                     headers: headers,
                     contentType: 'application/json',
@@ -3821,14 +3821,14 @@ function doSendNow() {
                 messageBox.style.display = 'block';
             }
 
-            // Function to fetch negotiation
-            async function fetchNegotiation(negotiationId, userId) {
-                //the negotiation url doesn't take variables
-                //this function doesn't seem to be used
-                const url = `/negotiation/${negotiationId}`;
-                try {
-                    const response = await fetch(url, {
-                        method: 'GET',
+                // Function to fetch negotiation
+                async function fetchNegotiation(negotiationId, userId) {
+                    //the negotiation url doesn't take variables
+                    //this function doesn't seem to be used
+                    const url = `${window.APP_BASE_PATH}/${negotiationId}`;
+                    try {
+                        const response = await fetch(url, {
+                            method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
                             'user_id': userId

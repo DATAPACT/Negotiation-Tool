@@ -29,13 +29,14 @@
 <script>
 
 const DJANGO_BASE_URL = "{{ django_base_url }}";
+const APP_BASE_PATH = "{{ APP_BASE_PATH }}";
 
 $(document).ready(function () {
     $('#autoLoginButton').click(function () {
         const token = $('#autoLoginToken').val();
         const negotiationId = $('#autoLoginNegotiationId').val();
 
-        const url = `${DJANGO_BASE_URL}/negotiation/auto-login-session`;
+        const url = `${DJANGO_BASE_URL}${APP_BASE_PATH}/auto-login-session`;
 
         $.ajax({
           url: url,
@@ -43,7 +44,7 @@ $(document).ready(function () {
           contentType: 'application/json',
           data: JSON.stringify({ token: token }),
           success: function () {
-              window.location.href = `/negotiation/organization/negotiation?negotiation_id=${negotiationId}`
+              window.location.href = `${APP_BASE_PATH}/organization/negotiation?negotiation_id=${negotiationId}`
           },
           error: function (xhr) {
               alert("Auto-login failed: " + xhr.responseText);

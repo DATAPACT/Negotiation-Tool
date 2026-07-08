@@ -167,6 +167,7 @@
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
   <script>
+    window.APP_BASE_PATH = "{{ APP_BASE_PATH }}";
     window.TRUSTED_ORIGINS = {{ SSO_TRUSTED_ORIGINS_JSON|safe }};
     window.SSO_AUTHENTICATED = {{ request.session.access_token|yesno:"true,false" }};
     document.addEventListener('DOMContentLoaded', function() {

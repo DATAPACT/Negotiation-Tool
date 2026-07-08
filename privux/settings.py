@@ -10,14 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
 
 API_BASE_URL = os.environ.get("API_BASE_URL")
 DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
+APP_SLUG = "negotiation"
+COMPOSE_PROJECT_NAME = os.getenv("COMPOSE_PROJECT_NAME", "").strip().strip("/")
+_configured_app_base_path = os.getenv("APP_BASE_PATH", "").strip()
+if _configured_app_base_path:
+    APP_BASE_PATH = "/" + _configured_app_base_path.strip("/")
+elif COMPOSE_PROJECT_NAME:
+    APP_BASE_PATH = f"/{COMPOSE_PROJECT_NAME}/{APP_SLUG}"
+else:
+    APP_BASE_PATH = f"/{APP_SLUG}"
+FORCE_SCRIPT_NAME = APP_BASE_PATH
 KEYCLOAK_ISSUER = os.environ.get("KEYCLOAK_ISSUER", "")
 if not KEYCLOAK_ISSUER:
     import warnings
@@ -87,6 +97,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "custom_accounts.base_path.AppBasePathMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -100,6 +111,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "privux.urls"
 SESSION_COOKIE_NAME = "negotiation_sessionid"
+SESSION_COOKIE_PATH = f"{APP_BASE_PATH}/"
+CSRF_COOKIE_PATH = f"{APP_BASE_PATH}/"
 
 SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = True
@@ -175,8 +188,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-STATIC_URL = '/negotiation/static/'
-MEDIA_URL = '/negotiation/media/'
+STATIC_URL = f"{APP_BASE_PATH}/static/"
+MEDIA_URL = f"{APP_BASE_PATH}/media/"
 
 #STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]

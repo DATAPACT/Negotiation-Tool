@@ -24,8 +24,9 @@
         if (ssoInProgress) return;
         ssoInProgress = true;
         tokenReceived = true;
+        var appBasePath = (window.APP_BASE_PATH || "/negotiation").replace(/\/$/, "");
 
-        fetch("/negotiation/sso-login", {
+        fetch(appBasePath + "/sso-login", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({token: token}),

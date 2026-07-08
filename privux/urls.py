@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("negotiation/", include("custom_accounts.urls")),
+    path("", include("custom_accounts.urls")),
     path("superadmin", admin.site.urls),
     # path("policy_editor/", include('django_policy_editor_app.urls')),
 ]
