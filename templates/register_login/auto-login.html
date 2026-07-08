@@ -27,8 +27,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
-
-const DJANGO_BASE_URL = "{{ django_base_url }}";
 const APP_BASE_PATH = "{{ APP_BASE_PATH }}";
 
 $(document).ready(function () {
@@ -36,7 +34,7 @@ $(document).ready(function () {
         const token = $('#autoLoginToken').val();
         const negotiationId = $('#autoLoginNegotiationId').val();
 
-        const url = `${DJANGO_BASE_URL}${APP_BASE_PATH}/auto-login-session`;
+        const url = `${APP_BASE_PATH}/auto-login-session`;
 
         $.ajax({
           url: url,

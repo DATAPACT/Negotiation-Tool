@@ -16,18 +16,46 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def _normalize_base_path(value):
+    value = (value or "").strip()
+    if not value:
+        return ""
+    return "/" + value.strip("/")
+
+
 API_BASE_URL = os.environ.get("API_BASE_URL")
 DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
 APP_SLUG = "negotiation"
 COMPOSE_PROJECT_NAME = os.getenv("COMPOSE_PROJECT_NAME", "").strip().strip("/")
-_configured_app_base_path = os.getenv("APP_BASE_PATH", "").strip()
+DEFAULT_APP_BASE_PATH = f"/{APP_SLUG}"
+_configured_app_base_path = _normalize_base_path(os.getenv("APP_BASE_PATH", ""))
 if _configured_app_base_path:
-    APP_BASE_PATH = "/" + _configured_app_base_path.strip("/")
+    APP_BASE_PATH = _configured_app_base_path
 elif COMPOSE_PROJECT_NAME:
     APP_BASE_PATH = f"/{COMPOSE_PROJECT_NAME}/{APP_SLUG}"
 else:
-    APP_BASE_PATH = f"/{APP_SLUG}"
+    APP_BASE_PATH = DEFAULT_APP_BASE_PATH
+
+# The browser-facing URL can include a project prefix, while nginx may still
+# proxy requests upstream as /negotiation/...
+APP_REQUEST_PREFIXES = tuple(
+    dict.fromkeys(
+        prefix
+        for prefix in [
+            APP_BASE_PATH,
+            DEFAULT_APP_BASE_PATH if APP_BASE_PATH != DEFAULT_APP_BASE_PATH else "",
+        ]
+        if prefix
+    )
+)
+
 FORCE_SCRIPT_NAME = APP_BASE_PATH
+COOKIE_NAME_PREFIX = "_".join(
+    part for part in [COMPOSE_PROJECT_NAME.strip().replace("-", "_"), APP_SLUG.replace("-", "_")] if part
+)
+if not COOKIE_NAME_PREFIX:
+    COOKIE_NAME_PREFIX = APP_SLUG.replace("-", "_")
 KEYCLOAK_ISSUER = os.environ.get("KEYCLOAK_ISSUER", "")
 if not KEYCLOAK_ISSUER:
     import warnings
@@ -110,9 +138,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "privux.urls"
-SESSION_COOKIE_NAME = "negotiation_sessionid"
 SESSION_COOKIE_PATH = f"{APP_BASE_PATH}/"
 CSRF_COOKIE_PATH = f"{APP_BASE_PATH}/"
+SESSION_COOKIE_NAME = f"{COOKIE_NAME_PREFIX}_sessionid"
+CSRF_COOKIE_NAME = f"{COOKIE_NAME_PREFIX}_csrftoken"
 
 SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = True
@@ -209,6 +238,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
 AUTH_USER_MODEL = "custom_accounts.User"
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
 SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "False").lower() in {"1", "true", "yes", "on"}

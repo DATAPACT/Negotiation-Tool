@@ -74,10 +74,6 @@ API_USER_MANAGEMENT_URL = os.environ.get("API_USER_MANAGEMENT_URL")
 if not API_USER_MANAGEMENT_URL:
     raise ValueError("API_USER_MANAGEMENT_URL environment variable is not set.")
 
-DJANGO_BASE_URL = os.environ.get("DJANGO_BASE_URL")
-if not DJANGO_BASE_URL:
-    raise ValueError("DJANGO_BASE_URL environment variable is not set.")
-
 _mongo_client = None
 _mongo_lock = threading.Lock()
 MONGO_DB = os.environ.get("MONGO_DB", "dips_services")
@@ -233,8 +229,7 @@ def index(request):
 
 
 def auto_login(request):
-    return render(request, "register_login/auto-login.html",
-                  {"django_base_url": DJANGO_BASE_URL})
+    return render(request, "register_login/auto-login.html")
 
 
 @csrf_exempt

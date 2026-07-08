@@ -162,6 +162,11 @@
 
 <!-- Template Main JS File -->
 <script src="{% static 'js/main.js' %}"></script>
+<script>
+    window.APP_BASE_PATH = "{{ APP_BASE_PATH }}";
+    window.TRUSTED_ORIGINS = {{ SSO_TRUSTED_ORIGINS_JSON|safe }};
+    window.SSO_AUTHENTICATED = {{ request.session.access_token|yesno:"true,false" }};
+</script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{% static 'js/jquery.quicksearch.js' %}"></script>
 <script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
