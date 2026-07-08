@@ -323,6 +323,17 @@ def signin(request):
                 return redirect("login")
 
             try:
+
+                unverified = jwt.decode(
+                    access_token,
+                    options={"verify_signature": False, "verify_aud": False},
+                )
+                print("EXPECTED_ISSUER =", settings.KEYCLOAK_ISSUER.rstrip("/"))
+                print("TOKEN_ISSUER    =", str(unverified.get("iss", "")).rstrip("/"))
+                print("TOKEN_AUD       =", unverified.get("aud"))
+                print("TOKEN_AZP       =", unverified.get("azp"))
+
+
                 claims = _decode_keycloak_claims(access_token)
                 user = _resolve_local_session_user_from_claims(claims)
                 print("user:", user)
