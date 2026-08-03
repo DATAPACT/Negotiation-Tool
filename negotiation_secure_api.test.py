@@ -204,7 +204,7 @@ async def verify_master(master_password_input):
 
         # Initialize the first admin user if no admin exists
         first_admin = {
-            "username_email": "admin@example.com",
+            "email": "admin@example.com",
             "password": master_password,
             "is_admin": True
         }
@@ -237,7 +237,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
 
     # Fetch the user from the database
-    user = await users_collection.find_one({"username_email": email})
+    user = await users_collection.find_one({"email": email})
     if user is None:
         raise credentials_exception
 
@@ -299,7 +299,7 @@ async def update_user_password(
 
 
     # Fetch the user to update
-    existing_user = await users_collection.find_one({"username_email": user_update.username_email})
+    existing_user = await users_collection.find_one({"email": user_update.email})
 
     if not existing_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -347,7 +347,7 @@ async def register_user(user: User, master_password_input: str):
     #   raise HTTPException(status_code=403, detail="Invalid master password")
     #else:
     # Check if the email is already registered
-    if await users_collection.find_one({"username_email": user.username_email}):
+    if await users_collection.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     is_strong, resp = await is_strong_password(user.password)
@@ -370,13 +370,13 @@ async def register_user(user: User, master_password_input: str):
 # User Login
 @router.post("/user/login/")
 async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await users_collection.find_one({"username_email": form_data.username})
+    user = await users_collection.find_one({"email": form_data.username})
     if not user or not verify_password(form_data.password, user["password"]):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user["username_email"]}, expires_delta=access_token_expires
+        data={"sub": user["email"]}, expires_delta=access_token_expires
     )
 
     return {"access_token": access_token, "token_type": "bearer", "user_id":str(user["_id"]), "user_type":user["type"]}
@@ -1854,7 +1854,7 @@ async def get_all_users(master_password_input: str):
 
         # Initialize the first admin user if no admin exists
         first_admin = {
-            "username_email": "admin@example.com",
+            "email": "admin@example.com",
             "password": master_password,
             "is_admin": True
         }
@@ -2435,7 +2435,7 @@ async def verify_token(token: str = Body(..., description="JWT token to verify")
             )
 
         # Fetch the user from the database
-        user = await users_collection.find_one({"username_email": email})
+        user = await users_collection.find_one({"email": email})
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -2446,7 +2446,7 @@ async def verify_token(token: str = Body(..., description="JWT token to verify")
         # Convert ObjectId to string and remove password for security
         user_response = {
             "id": str(user["_id"]),
-            "username_email": user["username_email"],
+            "email": user["email"],
             "type": user.get("type"),
             "is_admin": user.get("is_admin", False)
         }
@@ -2486,7 +2486,7 @@ async def verify_token_get(current_user: User = Depends(get_current_user)):
     try:
         user_response = {
             "id": str(current_user.id),
-            "username_email": current_user.username_email,
+            "email": current_user.email,
             "type": current_user.type,
             "is_admin": getattr(current_user, 'is_admin', False)
         }

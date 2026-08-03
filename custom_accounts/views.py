@@ -461,7 +461,7 @@ def register(request):
             "name": user_name,
             "username": username,
             "type": user_type,
-            "username_email": email,
+            "email": email,
             "password": password,
             "organization": organization,
 
@@ -2678,7 +2678,7 @@ def sso_login(request):
     # If the user already exists locally, keep the existing business role/type.
     user_type = "provider"
     try:
-        existing_user = _get_mongo_users().find_one({"username_email": email}) if email else None
+        existing_user = _get_mongo_users().find_one({"email": email}) if email else None
         if existing_user and existing_user.get("type"):
             user_type = existing_user["type"]
     except Exception as exc:

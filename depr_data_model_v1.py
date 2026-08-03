@@ -57,7 +57,7 @@ class PartyType(str, Enum):
 class User(MongoObject):
     name: Optional[str] = None
     type: Optional[PartyType] = None
-    username_email: Optional[EmailStr] = None
+    email: Optional[EmailStr] = None
     password: Optional[str] = Field(default=None)
 
 class UpcastResourceDescriptionObject(BaseModel):

@@ -246,7 +246,7 @@ async def verify_master(master_password_input):
 
         # Initialize the first admin user if no admin exists
         first_admin = {
-            "username_email": "admin@example.com",
+            "email": "admin@example.com",
             "password": master_password,
             "is_admin": True
         }
@@ -344,7 +344,7 @@ def _extract_contact_details(user_doc: Dict[str, Any], role: str) -> Dict[str, A
     allowed_fields = [
         "name",
         "type",
-        "username_email",
+        "email",
         "organization",
         "incorporation",
         "address",
@@ -2754,7 +2754,7 @@ async def create_initial_upcast_offer_from_dataset(
                         {"organization": provider_lookup_value},  # array element match
                         {"organization": {"$regex": token_pat, "$options": "i"}},  # legacy string
                         {"name": {"$regex": word_pat, "$options": "i"}},  # whole word
-                        {"username_email": {"$regex": word_pat, "$options": "i"}},  # whole word
+                        {"email": {"$regex": word_pat, "$options": "i"}},  # whole word
                     ]
                 })
 
@@ -2762,7 +2762,7 @@ async def create_initial_upcast_offer_from_dataset(
                     raise HTTPException(
                         status_code=400,
                         detail=f"contactPoint '{provider_lookup_str}' is not associated with "
-                               f"any user, please provide a valid name, organization, username_email or a MongoDB _id"
+                               f"any user, please provide a valid name, organization, email or a MongoDB _id"
                     )
                 resolved_provider_id = provider_doc["_id"]
             if not provider_doc:
@@ -3022,7 +3022,7 @@ async def get_all_users(master_password_input: str):
 
         # Initialize the first admin user if no admin exists
         first_admin = {
-            "username_email": "admin@example.com",
+            "email": "admin@example.com",
             "password": master_password,
             "is_admin": True
         }
@@ -3715,7 +3715,7 @@ async def verify_token(token: str = Body(..., description="JWT token to verify")
             "valid": True,
             "user": {
                 "id": str(user["_id"]),
-                "username_email": user["username_email"],
+                "email": user["email"],
                 "type": user["type"],
             }
         }
@@ -3738,7 +3738,7 @@ async def verify_token_get(current_user: User = Depends(verify_access_token_and_
     """
     user_response = {
         "id": str(current_user.id),
-        "username_email": current_user.username_email,
+        "email": current_user.email,
         "type": current_user.type,
     }
 

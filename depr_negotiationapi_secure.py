@@ -77,7 +77,7 @@ class PartyType(str, Enum):
 class User(MongoObject):
     name: Optional[str] = None
     type: PartyType
-    username_email: Optional[EmailStr] = None
+    email: Optional[EmailStr] = None
     hashed_password: Optional[str] = Field(default=None)
 
 class UpcastResourceDescriptionObject(BaseModel):
@@ -205,7 +205,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 # User Registration
 @router.post("/register", response_model=User)
 async def register_user(user: User):
-    if await users_collection.find_one({"email": user.username_email}):
+    if await users_collection.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     user.hashed_password = get_password_hash(user.hashed_password)

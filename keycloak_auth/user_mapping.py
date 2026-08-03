@@ -79,7 +79,7 @@ def _build_placeholder_user(claims: Dict[str, Any]) -> Dict[str, Any]:
         "name": display_name,
         "username": username,
         "type": user_type,
-        "username_email": email,
+        "email": email,
         "password": None,
         "organization": organization,
         "incorporation": incorporation,
@@ -108,8 +108,8 @@ def _build_update_fields(user: Dict[str, Any], claims: Dict[str, Any]) -> Dict[s
 
     if user.get("keycloak_sub") != keycloak_sub:
         update_fields["keycloak_sub"] = keycloak_sub
-    if email and user.get("username_email") != email:
-        update_fields["username_email"] = email
+    if email and user.get("email") != email:
+        update_fields["email"] = email
     if username and user.get("username") != username:
         update_fields["username"] = username
     if first_name and user.get("first_name") != first_name:
@@ -152,7 +152,7 @@ def resolve_or_create_local_user_sync(
 
     user = users_collection.find_one({"keycloak_sub": keycloak_sub})
     if user is None:
-        user = users_collection.find_one({"username_email": email})
+        user = users_collection.find_one({"email": email})
     if user is None and username:
         user = users_collection.find_one({"username": username})
 
@@ -178,7 +178,7 @@ def build_session_user(user: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "id": str(user["_id"]),
         "username": user.get("username"),
-        "username_email": user.get("username_email"),
+        "email": user.get("email"),
         "type": user.get("type"),
         "name": user.get("name"),
         "first_name": user.get("first_name"),
@@ -219,7 +219,7 @@ async def resolve_or_create_local_user_async(
 
     user = await users_collection.find_one({"keycloak_sub": keycloak_sub})
     if user is None:
-        user = await users_collection.find_one({"username_email": email})
+        user = await users_collection.find_one({"email": email})
     if user is None and username:
         user = await users_collection.find_one({"username": username})
 

@@ -63,7 +63,7 @@ class User(MongoObject):
     name: Optional[str] = None
     username: Optional[str] = None
     type: Optional[PartyType] = None
-    username_email: Optional[EmailStr] = None
+    email: Optional[EmailStr] = None
     password: Optional[str] = Field(default=None)
     # organization: Optional[str] = Field(default=None)
     organization: Optional[Union[List[str], str]] = Field(default=None)
