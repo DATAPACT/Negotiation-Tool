@@ -88,6 +88,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-e+dfmqm))kmz9k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in {"1", "true", "yes", "on"}
 
+# adding allow_host_ip
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "10.22.12.250", "UOS-24012.ecs.soton.ac.uk", "dips.soton.ac.uk"]
 
 JAZZMIN_SETTINGS = {
