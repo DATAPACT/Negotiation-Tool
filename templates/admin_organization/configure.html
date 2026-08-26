@@ -441,6 +441,9 @@
         </div>
     </div>
 
+    <div id="send-feedback" role="status" aria-live="polite"
+         style="display:none;position:fixed;top:24px;right:24px;z-index:11000;max-width:420px;"></div>
+
     <!-- ODRL Diff Modal (read-only, like Merge Contract Versions) -->
     <div id="odrl-diff-modal" class="diff-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:10050;overflow:auto;">
         <div class="diff-modal-content compare-last-changes-content" style="max-width: 1100px;z-index:10051;margin:60px auto;">
@@ -2268,6 +2271,12 @@
                     error: function (xhr, status, error) {
                       console.error('Error creating policy:', error);
                       alert("Failed to generate Data SharingAgreement. Please try again.");
+                      if (window._sendAfterRegenerate) {
+                        window._sendAfterRegenerate = false;
+                        window._suppressMergeModalOnce = false;
+                        window._sendingInProgress = false;
+                        $('#sending-spinner').css('display', 'none');
+                      }
                     },
                     complete: function () {
                       $button[0]?.style.removeProperty('background-color');
@@ -2676,6 +2685,7 @@
 
             const agreementGenerationButton = $('#agreement-generation');
             let agreementPayloadSignature = null;
+            let isCompareDiffPending = false;
 
             function updateTextEditedBadge() {
                 try {
@@ -2691,7 +2701,8 @@
             }
 
             function setAgreementGenerationEnabled(enabled) {
-                if (enabled) {
+                const shouldEnable = !!enabled && !isCompareDiffPending;
+                if (shouldEnable) {
                     agreementGenerationButton.prop('disabled', false);
                     agreementGenerationButton.css('opacity', '1');
                     agreementGenerationButton.css('cursor', 'pointer');
@@ -2735,6 +2746,10 @@
             }
 
             function evaluateAgreementGenerationState() {
+                if (isCompareDiffPending) {
+                    setAgreementGenerationEnabled(false);
+                    return;
+                }
                 if (!agreementPayloadBaseline) {
                     setAgreementGenerationEnabled(true);
                     return;
@@ -2774,8 +2789,23 @@
             });
 
 
+            let sendFeedbackTimer = null;
 
+            function showSendFeedback(message, isSuccess) {
+                const feedback = $('#send-feedback');
+                const alertClass = isSuccess ? 'alert-success' : 'alert-danger';
+                feedback
+                    .stop(true, true)
+                    .removeClass('alert-success alert-danger')
+                    .addClass(`alert ${alertClass}`)
+                    .text(message)
+                    .fadeIn(150);
 
+                window.clearTimeout(sendFeedbackTimer);
+                sendFeedbackTimer = window.setTimeout(function () {
+                    feedback.fadeOut(250);
+                }, isSuccess ? 5000 : 10000);
+            }
 
 function doSendNow() {
                 const jsonData = getFormData();
@@ -2794,6 +2824,11 @@ function doSendNow() {
                     data: JSON.stringify(jsonData),
                     success: function (response) {
                         console.log('Policy creation successful:', response);
+                        const userRole = $('#user-role-text').val();
+                        const successMessage = userRole === 'consumer'
+                            ? 'Your request has been sent successfully to the provider.'
+                            : 'Your offer has been sent successfully to the consumer.';
+                        showSendFeedback(successMessage, true);
                         updateNegotiationsTable();
                         updateFinishedNegotiationsTable();
                         modal.style.display = "none";
@@ -2802,6 +2837,11 @@ function doSendNow() {
                     },
                     error: function (xhr, status, error) {
                         console.error('Error creating policy:', error);
+                        const itemName = $('#user-role-text').val() === 'consumer' ? 'request' : 'offer';
+                        showSendFeedback(
+                            `We could not send your ${itemName}. Please try again or contact an administrator if the problem continues.`,
+                            false
+                        );
                     },
                     complete: function () {
                         window._sendingInProgress = false;
@@ -2812,6 +2852,9 @@ function doSendNow() {
 
             // Function to handle button click
             $('#submit-details').click(function () {
+                if (window._sendingInProgress) {
+                    return;
+                }
                 window._sendingInProgress = true;
                 try { $('#sending-spinner').css('display','flex'); } catch(e) {}
                 // Do not allow send while comparison/merge is pending
@@ -2839,10 +2882,13 @@ function doSendNow() {
                     const useRegenerated = confirm('You modified the agreement text! Regenerate agreement text from policy before sending?\nOK = Regenerate (Replace edited text) and Send! \nCancel = Use edited text and Send');
                     if (useRegenerated) {
                         // Refresh derived sections first, then regenerate (skip merge UI)
-                        gatherAgreementData(true).always(function () {
+                        gatherAgreementData(true).done(function () {
                             window._suppressMergeModalOnce = true;
                             window._sendAfterRegenerate = true;
                             handleAgreementGeneration.call($('#agreement-generation')[0]);
+                        }).fail(function () {
+                            window._sendingInProgress = false;
+                            $('#sending-spinner').css('display', 'none');
                         });
                         return;
                     }
@@ -2853,10 +2899,13 @@ function doSendNow() {
 
                 if (payloadChanged) {
                     // Structural changes → gather, then regenerate (skip merge UI), then send
-                    gatherAgreementData(true).always(function () {
+                    gatherAgreementData(true).done(function () {
                         window._suppressMergeModalOnce = true;
                         window._sendAfterRegenerate = true;
                         handleAgreementGeneration.call($('#agreement-generation')[0]);
+                    }).fail(function () {
+                        window._sendingInProgress = false;
+                        $('#sending-spinner').css('display', 'none');
                     });
                     return;
                 }
@@ -3165,7 +3214,7 @@ function doSendNow() {
             // Initial binding
             bindNegotiationRowClickEvent();
 
-            $('.createRequestBtn').click(function () {
+            $('.createRequestBtn[data-offer-id]').click(function () {
                 console.log('click request button')
                 // Get the offer details from the clicked row
                 var negotiationId = $(this).data('negotiation-id');
@@ -3677,7 +3726,7 @@ function doSendNow() {
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'datacontrollersavesignature' %}",
-                    headers: { 'X-CSRFToken': getCookie('csrftoken'),
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}',
                     'negotiationid': $('#negotiation-id-text').val()
                     },
                     data: { signature: signatureData },
@@ -3790,7 +3839,7 @@ function doSendNow() {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token for CSRF protection
+                            'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token for CSRF protection
                         },
                         body: JSON.stringify({ party, action, negotiationId }) // Include party, action, and negotiationId in the body
                     });
@@ -4405,7 +4454,7 @@ function doSendNow() {
 
 
             $('#fieldset-dpw').on('click', '#upload-dpw', function () {
-                dpwFileInput.click(); // trigger hidden file input
+                document.getElementById('dpwFileInput').click(); // trigger hidden file input
                 window.console.log('Upload DPW button clicked');
             });
 
@@ -4719,7 +4768,6 @@ function doSendNow() {
                 changeCount: null,
                 response: null
             };
-            let isCompareDiffPending = false;
             let lastResolvedDiff = null;
             let lastComparisonResponse = null;
 
@@ -4749,11 +4797,15 @@ function doSendNow() {
                     lastResolvedDiff = null;
                     lastComparisonResponse = null;
                 }
-                agreementGenerationButton.prop('disabled', isPending);
                 agreementGenerationButton.attr('title', isPending ? 'Resolve pending text changes before generating the agreement.' : '');
                 agreementTextarea.prop('readonly', isPending);
                 agreementTextarea.toggleClass('readonly-lock', isPending);
                 updateCompareButtonState();
+                if (isPending) {
+                    setAgreementGenerationEnabled(false);
+                } else {
+                    evaluateAgreementGenerationState();
+                }
             }
 
             setDiffPending(false);

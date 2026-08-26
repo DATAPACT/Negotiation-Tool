@@ -3,13 +3,11 @@ import json
 import os
 import time
 import traceback
-import urllib.parse
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional, Any
 
 import httpx
 import jwt
-import requests
 from bson import ObjectId
 from bson.errors import InvalidId
 from confluent_kafka import Producer, KafkaException
@@ -128,15 +126,10 @@ except KafkaException as e:
     producer = None  # Ensure the provider is not used further
 
 MONGO_USER = os.getenv("MONGO_USER")
-print(f'MONGO_USER {MONGO_USER}')
 MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
-print(f'MONGO_PASSWORD {MONGO_PASSWORD}')
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
-print(f'MONGO_HOST {MONGO_HOST}')
 MONGO_PORT = os.getenv("MONGO_PORT")
-print(f'MONGO_PORT {MONGO_PORT}')
 MONGO_DB = os.getenv("MONGO_DB", "dips_services")
-print(f'MONGO_DB {MONGO_DB}')
 if MONGO_PORT:  # Assumption: A local or remote installation of MongoDB is provided.
     MONGO_PORT = int(MONGO_PORT)
     MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}"
@@ -152,9 +145,7 @@ DEFAULT_CONTRACT_NOTICE_PERIOD = int(os.getenv("CONTRACT_NOTICE_PERIOD", "30"))
 DEFAULT_CONTRACT_VALIDITY_PERIOD = int(os.getenv("CONTRACT_VALIDITY_PERIOD", "12"))
 
 client = AsyncIOMotorClient(MONGO_URI)
-print(f'MONGO_URI {MONGO_URI}')
 db = client[MONGO_DB]
-print(f'db {db}')
 negotiations_collection = db.negotiations
 requests_collection = db.requests
 offers_collection = db.offers
@@ -162,8 +153,6 @@ policy_collection = db.policies
 contracts_collection = db.contracts
 users_collection = db.users
 agent_records_collection = db.agent_records
-print(f'agents_collection {agent_records_collection}')
-print(f'users_collection {users_collection}')
 
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback_key")
 
@@ -199,7 +188,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # JWT Creation Function
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + expires_delta if expires_delta else timedelta(minutes=15)
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -233,7 +222,6 @@ async def verify_master(master_password_input):
     if admin_user is not None:
         # Use the admin's hashed password as the master password
         master_password = admin_user.get("password")
-        print("master_password", master_password)
     else:
         # Use the master password from the environment variable
         raw_master_password = os.getenv("MASTER_PASSWORD")
@@ -655,10 +643,8 @@ async def sso_provision(
         name: str = Body(...),
         user_type: str = Body(default="provider"),
 ):
-    # Old code created or updated the local Mongo user and then minted an
-    # internal HS256 JWT for Negotiation-Tool.
-    #
-    # New code:
+
+
     # Keycloak is now the authentication authority, so negotiation-api must not
     # issue a second auth token. Keep the endpoint only as an explicit marker
     # that the old exchange flow is retired.
@@ -671,9 +657,7 @@ async def sso_provision(
 # User Login
 @router.post("/user/login/")
 async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
-    # Old code authenticated users against MongoDB and issued a local JWT.
-    #
-    # New code:
+
     # negotiation-api proxies Swagger/UI password login to Keycloak so docs can
     # still use the built-in "Authorize" flow while injecting the correct
     # Keycloak client settings.
@@ -894,7 +878,9 @@ async def create_upcast_negotiation(current_user: User = Depends(verify_access_t
         else:
             raise HTTPException(status_code=500, detail=f"Negotiation could not be created.")
 
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Negotiation could not be created. {str(e)}. Traceback: {error_message}")
@@ -923,7 +909,9 @@ async def get_upcast_negotiation(
             return UpcastNegotiationObject(**pydantic_to_dict(negotiation, True))
 
         raise HTTPException(status_code=404, detail="Negotiation not found")
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -1080,7 +1068,9 @@ async def update_upcast_negotiation(
             raise HTTPException(status_code=400, detail="No changes")
 
         return {"message": "Negotiation updated successfully", "negotiation_id": body.id}
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -1114,7 +1104,9 @@ async def delete_upcast_negotiation(
 
         return {"message": "Negotiation and corresponding requests and offers deleted successfully",
                 "negotiation_id": negotiation_id}
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception. {str(e)}. Traceback: {error_message}")
@@ -1177,7 +1169,7 @@ async def get_upcast_contract(
 
     except HTTPException:
         raise
-    except BaseException as e:
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -1205,7 +1197,9 @@ async def get_upcast_policy(
             return UpcastPolicyObject(**pydantic_to_dict(policy, True))
 
         raise HTTPException(status_code=404, detail="Policy not found")
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -1254,7 +1248,9 @@ async def get_last_policy(
         #     last_policy_dict=last_policy_dict,
         # )
         return last_policy_dict
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -1602,7 +1598,9 @@ async def get_last_policy(
             raise
 
         return response
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -2107,7 +2105,9 @@ async def create_new_upcast_request(
         }
         await push_messages("create", message)
         return message
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         print(e)
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
@@ -2122,7 +2122,6 @@ async def update_upcast_request(
         body: UpcastPolicyObject = Body(..., description="The request object"),
         current_user: User = Depends(verify_access_token_and_resolve_user)
 ):
-    print(f"Updating request with ID: {request_id} for user: {current_user.id}")
     try:
         # Verify the request exists and belongs to the current user
         if secure:
@@ -2131,7 +2130,6 @@ async def update_upcast_request(
                 "consumer_id": current_user.id,
                 "type": PolicyType.REQUEST.value
             })
-            print(f"Existing request: {existing_request}")
         else:
             existing_request = await policy_collection.find_one({
                 "_id": ObjectId(request_id),
@@ -2195,6 +2193,8 @@ async def update_upcast_request(
             "negotiation_id": str(existing_request.get("negotiation_id", ""))
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         error_message = traceback.format_exc()
         raise HTTPException(
@@ -2360,7 +2360,9 @@ async def update_upcast_offer(
 
         print(f'negotiation id before return statement {negotiation_id}')
         return {"message": "Request sent successfully", "request_id": request_id, "negotiation_id": str(negotiation_id)}
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -2531,9 +2533,14 @@ async def create_new_upcast_offer(
         await push_messages("create", message)
         return message
 
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()
-        raise HTTPException(status_code=500, detail=f"Exception: {str(e)}. Traceback: {error_message}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Exception: {str(e)}. Traceback: {error_message}",
+        )
 
 
 @app.post("/provider/offer/initial", summary="Create a new initial offer")
@@ -2586,7 +2593,9 @@ async def create_initial_upcast_offer(
         return {"message": "Offer created successfully", "offer_id": offer_id,
                 "negotiation_id": str(body.negotiation_id)}
 
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"Exception: {str(e)}. Traceback: {error_message}")
 
@@ -2684,7 +2693,9 @@ async def create_initial_upcast_offer_from_dataset(
 
         return UpcastPolicyObject(**pydantic_to_dict(offer, True))
 
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"Exception: {str(e)}. Traceback: {error_message}")
 
@@ -2857,7 +2868,9 @@ async def create_initial_upcast_offer_from_dataset(
 
         return UpcastPolicyObject(**pydantic_to_dict(offer, True))
 
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"Exception: {str(e)}. Traceback: {error_message}")
 
@@ -2867,7 +2880,7 @@ async def get_all_users(current_user: User = Depends(verify_access_token_and_res
     users = await users_collection.find().to_list(length=None)
     for user in users:
         user["id"] = str(user.pop("_id"))
-        user.pop("password")  # Convert _id to id and stringify
+        user.pop("password", None)  # Convert _id to id and stringify
     users = [user for user in users if not user.get("is_admin", False)]
     return JSONResponse(content=users)
 
@@ -2945,7 +2958,9 @@ async def delete_upcast_offer(
 
         return {"message": "Offer deleted successfully", "offer_id": offer_object_id,
                 "negotiation_id": str(offer["negotiation_id"])}
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -3071,7 +3086,9 @@ async def accept_upcast_request(
                    "negotiation_status": NegotiationStatus.ACCEPTED.value}
         await push_messages("update", message)
         return message
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -3095,7 +3112,9 @@ async def verify_upcast_request(
                    "negotiation_status": NegotiationStatus.VERIFIED.value}
         await push_messages("update", message)
         return message
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -3118,7 +3137,9 @@ async def agree_upcast_offer(
                    "negotiation_status": NegotiationStatus.AGREED.value}
         await push_messages("update", message)
         return message
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -3154,7 +3175,9 @@ async def finalize_upcast_offer(
                    }
         await push_messages("update", message, doContractsKafkaPush=True)
         return message
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -3180,7 +3203,9 @@ async def terminate_upcast_negotiation(
                    "negotiation_status": NegotiationStatus.TERMINATED.value}
         await push_messages("update", message)
         return message
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -3300,7 +3325,9 @@ async def create_new_agent(
         return {"message": "agent created successfully", "agent_id": str(inserted_id),
                 "recommender_agent_record": recommender_agent_record}
 
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()  # get the full traceback
         raise HTTPException(status_code=500,
                             detail=f"Exception: {str(e)}. Traceback: {error_message}")
@@ -3317,8 +3344,14 @@ async def get_recommender_agent_records(
             raise HTTPException(status_code=404, detail="No agent records found for this user")
 
         return [RecommenderAgentRecord(**pydantic_to_dict(agent_record, True)) for agent_record in agent_records]
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Exception: {str(e)}. Traceback: {error_message}",
+        )
 
 
 # get recommender agent records from a user id for a particular negotiation
@@ -3335,8 +3368,14 @@ async def get_recommender_agent_records_for_negotiation(
             raise HTTPException(status_code=404, detail="No agent records found for this user")
 
         return [RecommenderAgentRecord(**pydantic_to_dict(agent_record, True)) for agent_record in agent_records]
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Exception: {str(e)}. Traceback: {error_message}",
+        )
 
 
 # get the latest recommender agent records from a user id for a particular negotiation
@@ -3357,35 +3396,28 @@ async def get_latest_recommender_agent_record(
 
         return RecommenderAgentRecord(**pydantic_to_dict(agent_record))
 
-    except BaseException as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         error_message = traceback.format_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Exception: {str(e)}. Traceback: {error_message}",
+        )
 
 
 async def push_messages(action, message, doKafkaPush=True, doProviderPush=True, doConsumerPush=True, doContractsKafkaPush=False):
-    negotiation_id = message.get("negotiation_id")
-    provider_username = os.getenv("PROVIDER_DASHBOARD_USERNAME")
-    provider_password = os.getenv("PROVIDER_DASHBOARD_PASSWORD")
-    # print(f"[push_messages] negotiation_id={negotiation_id}")
-    # print(f"[push_messages] provider_username_set={bool(provider_username)} provider_password_set={bool(provider_password)} push_provider_enabled={push_provider_enabled}")
-    negotiation_uri = None
-    if negotiation_id:
-        try:
-            negotiation = await negotiations_collection.find_one({"_id": ObjectId(negotiation_id)})
-            if negotiation:
-                negotiation_uri = negotiation.get("resource_description", {}).get("uri")
-        except Exception as exc:
-            print(f"[push_messages] failed to resolve negotiation {negotiation_id}: {exc}")
-    # print(f"[push_messages] negotiation_uri_present={bool(negotiation_uri)}")
-
+    dashboard_pushes = []
     if doProviderPush:
-        start = time.perf_counter()
-        await push_provider_dashboard_message(action, message)
-        logging.debug(f"push_provider_dashboard_message took {time.perf_counter() - start:.3f} seconds")
+        dashboard_pushes.append(push_provider_dashboard_message(action, message))
 
     if doConsumerPush:
+        dashboard_pushes.append(push_consumer_dashboard_message(action, message))
+
+    if dashboard_pushes:
         start = time.perf_counter()
-        await push_consumer_dashboard_message(action, message)
-        logging.debug(f"push_consumer_dashboard_message took {time.perf_counter() - start:.3f} seconds")
+        await asyncio.gather(*dashboard_pushes)
+        logging.debug(f"Dashboard message pushes took {time.perf_counter() - start:.3f} seconds")
 
     if doKafkaPush:
         start = time.perf_counter()
@@ -3507,11 +3539,6 @@ async def push_consumer_dashboard_message(action, object):
             username = os.getenv("CONSUMER_DASHBOARD_USERNAME")
             password = os.getenv("CONSUMER_DASHBOARD_PASSWORD")
 
-            # Old code:
-            # username_encoded = urllib.parse.quote(username)
-            # password_encoded = urllib.parse.quote(password)
-            #
-            # New code:
             # Validate env values before trying to build the token request. This
             # avoids TypeError when username/password are missing or not strings.
             if not isinstance(username, str) or not username.strip():
@@ -3541,6 +3568,7 @@ async def push_consumer_dashboard_message(action, object):
                     return
                 access_token = token_resp.json()["access_token"]
 
+                # send the message to partners, need to be update the target url according to partner needs
                 url = "https://upcast-api.ict-abovo.gr/negotiation"
                 negotiation = await negotiations_collection.find_one({"_id": ObjectId(object["negotiation_id"])})
                 if not negotiation:
@@ -3591,7 +3619,9 @@ async def push_provider_dashboard_message(action, object):
                 if response.status_code == 200:
                     data = response.json()
                     access_token = data.get("access_token")
-                    logging.debug(f"Access Token retrieved successfully: {access_token[:20]}...")
+                    if not access_token:
+                        logging.error("Provider dashboard token response did not include an access token")
+                        return
                 else:
                     logging.error(f"Token Error: {response.status_code} {response.text}")
                     return

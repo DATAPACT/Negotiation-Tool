@@ -164,33 +164,6 @@ services:
      #command: python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m uvicorn negotiation_secure_api:app --host 0.0.0.0 --port 8001
     command: python -m debugpy --listen 0.0.0.0:5678 -m uvicorn negotiation_secure_api:app --host 0.0.0.0 --port 8001
 
-  # Negotiation Plugin - Legacy API v1
-  negotiation-api-v1:
-    build:
-      context: ./Negotiation-Tool
-      dockerfile: Dockerfile.api
-    ports:
-      - "8007:8001"
-    volumes:
-      - ./Negotiation-Tool:/app
-    environment:
-      - MONGO_USER=root
-      - MONGO_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
-      - MONGO_HOST=mongo-v1
-      - MONGO_PORT=27017
-      - MONGO_DB=dips_services
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - KAFKA_SECURITY_PROTOCOL=PLAINTEXT
-      - MASTER_PASSWORD=master_password
-    depends_on:
-      - mongo-v1
-      - kafka
-    container_name: negotiation-api-v1-local
-    restart: unless-stopped
-    networks:
-      - dips-local
-    command: python negotiationapi_v1.py
-
   # Contract Service - FastAPI for contract creation and management
   contract-service:
     build:
@@ -346,22 +319,6 @@ services:
     networks:
       - dips-local
 
-  # MongoDB for Legacy API v1
-  mongo-v1:
-    image: mongo:6.0
-    container_name: mongo-v1-local
-    ports:
-      - "27020:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=<CHANGE_ME_MONGO_PASSWORD>
-    volumes:
-      - mongo-v1-data:/data/db
-    restart: unless-stopped
-    networks:
-      - dips-local
-    command: ["--auth"]
-
   # Kafka for event streaming
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -452,6 +409,5 @@ networks:
 
 volumes:
   mongo-data:
-  mongo-v1-data:
   firebase-emulator-data:
   firebase-emulator-cache:

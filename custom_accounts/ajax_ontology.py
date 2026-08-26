@@ -10,6 +10,7 @@
 # software or the use or other dealings in the software.
 # -----------------------------------------------------------------------------
 import os
+import threading
 import time
 import uuid
 # CM CHANGE telnetlib deprecated at pyton 3.13
@@ -20,13 +21,9 @@ else:
     from telnetlib3 import EC
 
 from owlready2 import owl, default_world
-import rdflib
-from rdflib import Graph, Namespace, BNode, URIRef, RDF, Literal
+from rdflib import Graph, Namespace, BNode, URIRef, RDF
 from rdflib.collection import Collection
 from rdflib.namespace import NamespaceManager
-from collections import defaultdict
-
-import json
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -244,26 +241,42 @@ def get_fields_from_datasets(dataset):
 
     fields = [
         {"uri": row.columnName.value,"label": row.columnName.value,"columnName": row.columnName.value,"columnType": row.columnType.value,"columnDescription": row.columnDescription.value,"columnExample": row.columnExample.value}
-        for row in g.query(actions_query)
+        for row in _query_graph(g, actions_query)
     ]
 
     return fields
 
 global_graph = Graph()
+_graph_lock = threading.RLock()
+_loaded_graph_files = set()
+
+
+def _query_graph(graph, query, **kwargs):
+    """Execute SPARQL serially because RDFLib's parser is not thread-safe."""
+    with _graph_lock:
+        return list(graph.query(query, **kwargs))
+
 
 def populate_graph(ttl_file_path, format="xml"):
-    g = Graph()
-    g.parse(ttl_file_path, format=format)
     global global_graph
-    global_graph += g
-    print(global_graph)
+    graph_key = (os.path.realpath(ttl_file_path), format)
+    with _graph_lock:
+        if graph_key in _loaded_graph_files:
+            return
+
+        g = Graph()
+        g.parse(ttl_file_path, format=format)
+        global_graph += g
+        _loaded_graph_files.add(graph_key)
+
 
 def populate_content_to_graph(ttl_content, format="xml"):
     try:
-        g = Graph()
-        g.parse(data=ttl_content, format=format)
-        global global_graph
-        global_graph += g
+        with _graph_lock:
+            g = Graph()
+            g.parse(data=ttl_content, format=format)
+            global global_graph
+            global_graph += g
     except:
         pass
 
@@ -297,7 +310,8 @@ def get_rules_from_odrl():
     odrl = Namespace("http://www.w3.org/ns/odrl/2/")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 
-    qres = g.query(
+    qres = _query_graph(
+        g,
         """
         SELECT ?subClass ?label
         WHERE {
@@ -330,7 +344,7 @@ def get_actors_from_dpv():
     """
 
     # Execute the query
-    subclasses_result = g.query(subclasses_query)
+    subclasses_result = _query_graph(g, subclasses_query)
 
     # Convert results to a list of dictionaries
     result_list = [
@@ -404,7 +418,7 @@ def get_constraints_types_from_odrl():
     """
 
     # Execute the query
-    result = g.query(query)
+    result = _query_graph(g, query)
 
     # Convert results to a list of dictionaries
     result_list = [
@@ -431,7 +445,7 @@ def get_dataset_titles_and_uris():
     """
 
     # Execute the query
-    result = g.query(query, initNs={"ex": ex, "dct": dct})
+    result = _query_graph(g, query, initNs={"ex": ex, "dct": dct})
 
     # Extract and return the list of dataset titles and URIs
     dataset_info_list = [
@@ -464,7 +478,7 @@ def get_action_hierarchy_from_odrl():
     action_hierarchy = {}
 
     # Execute the query and populate the dictionaries
-    for row in g.query(actions_query):
+    for row in _query_graph(g, actions_query):
         action_uri = str(row.action)
         action_label = str(row.label)
         sub_action_uri = str(row.sub_action)
@@ -513,7 +527,7 @@ def get_purpose_hierarchy_from_dpv():
     purpose_hierarchy = {}
 
     # Execute the query and populate the dictionaries
-    for row in g.query(purpose_query):
+    for row in _query_graph(g, purpose_query):
         purpose_uri = str(row.purpose)
         purpose_label = str(row.label)
         sub_purpose_uri = str(row.sub_purpose)
@@ -568,7 +582,7 @@ def get_actor_hierarchy_from_dpv():
     actor_hierarchy = {}
 
     # Execute the query and populate the dictionaries
-    for row in g.query(actor_query):
+    for row in _query_graph(g, actor_query):
         actor_uri = str(row.actor)
         actor_label = str(row.label)
         sub_actor_uri = str(row.sub_actor)
@@ -612,7 +626,7 @@ def get_actions_from_odrl():
     """
     actions = [
         {"uri": str(row.action), "label": str(row.label), "parent_uri" : str(row.parent_action), "parent_label" : str(row.parent_label)}
-        for row in g.query(actions_query)
+        for row in _query_graph(g, actions_query)
     ]
 
     return actions
@@ -672,7 +686,7 @@ def get_properties_of_a_class(class_uri):
     """
     properties = [
         {"uri": str(row.property), "label": str(row.label)}
-        for row in g.query(properties_query)
+        for row in _query_graph(g, properties_query)
     ]
     print("<<<<< We are leaving get_properties_of a_class")
     return properties
@@ -706,7 +720,7 @@ def get_constraints_for_instances(instance):
     """
 
     # Execute the query
-    result = g.query(query)
+    result = _query_graph(g, query)
 
     # Convert results to a list of dictionaries
     result_list = [
@@ -741,7 +755,7 @@ def get_purposes_from_dpv():
     """
 
     # Execute the query
-    subclasses_result = g.query(subclasses_query)
+    subclasses_result = _query_graph(g, subclasses_query)
 
     # Convert results to a list of dictionaries
     result_list = [
@@ -771,7 +785,7 @@ def get_operators_from_odrl():
 
     actions = [
         {"uri": str(row.action), "label": str(row.label)}
-        for row in g.query(actions_query)
+        for row in _query_graph(g, actions_query)
     ]
 
     return actions
@@ -963,7 +977,7 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
                     "constraint": [],
                 }
             if "query" in data:
-                if data["query"] is not '':
+                if data["query"] != '':
                     odrl_jsonld["constraint"].append(
                         {
                             "leftOperand": "ex:query",
@@ -1143,7 +1157,7 @@ def custom_convert_odrl_policy(jsonld_str):
     ns_manager.bind('odrl', ODRL)
     g.namespace_manager = ns_manager
 
-    for row in g.query(rule_query, initNs={'odrl': ODRL}):
+    for row in _query_graph(g, rule_query, initNs={'odrl': ODRL}):
         rule_uri = row['rule']
         rule_type = str(row['ruleType'])
         processed_rule = process_rule(g, rule_uri, rule_type)
@@ -1155,7 +1169,12 @@ def custom_convert_odrl_policy(jsonld_str):
 def process_rule(g, rule_uri, rule_type):
     # Helper to run SPARQL query and get first result
     def get_single_value(query, bindings={}):
-        qres = g.query(query, initBindings=bindings, initNs={'odrl': ODRL, 'dpv': DPV, 'rdf': RDF})
+        qres = _query_graph(
+            g,
+            query,
+            initBindings=bindings,
+            initNs={'odrl': ODRL, 'dpv': DPV, 'rdf': RDF},
+        )
         for row in qres:
             return str(row[0])
         return ""
@@ -1191,7 +1210,7 @@ def process_rule(g, rule_uri, rule_type):
     def group_constraints_or_refinements(query):
         result = []
 
-        qres = g.query(query, initNs={'odrl': ODRL, 'dpv': DPV, 'rdf': RDF})
+        qres = _query_graph(g, query, initNs={'odrl': ODRL, 'dpv': DPV, 'rdf': RDF})
 
         for row in qres:
             left = str(row.left)

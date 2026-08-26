@@ -25,7 +25,6 @@ from datetime import datetime
 from difflib import SequenceMatcher
 import time
 from functools import wraps
-import jwt
 import requests
 from bs4 import BeautifulSoup
 from django.contrib import messages
@@ -38,10 +37,10 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
 from pymongo import MongoClient as PyMongoClient
-from typing import List, Dict, Optional, Any
+from typing import Dict, Optional, Any
 
 from keycloak_auth.auth import decode_keycloak_token
-from keycloak_auth.user_mapping import build_full_name, resolve_local_session_user_sync
+from keycloak_auth.user_mapping import resolve_local_session_user_sync
 
 from PolicyEngine.Parsers import ODRLParser
 from PolicyEngine.Translators import LogicTranslator
@@ -50,18 +49,14 @@ from constract_service.contract_service import ContractAPIService
 # contract service
 from custom_accounts.ajax_ontology import (
     get_rules_from_odrl,
-    get_dataset_titles_and_uris,
     get_constraints_types_from_odrl,
     get_operators_from_odrl,
     get_fields_from_datasets, convert_list_to_odrl_jsonld_no_user, get_properties_of_a_class,
     populate_graph, get_action_hierarchy_from_odrl, get_actor_hierarchy_from_dpv,
     get_purpose_hierarchy_from_dpv, get_constraints_for_instances,
-    normalize_odrl_graph,
     custom_convert_odrl_policy,
-    process_rule,
 )
 from privux import settings
-import uuid
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -89,7 +84,6 @@ def _get_mongo_users():
                 mongo_host = os.environ.get("MONGO_HOST", "mongo")
                 mongo_port = os.environ.get("MONGO_PORT", "27017")
                 uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}"
-                print("uri", uri)
                 _mongo_client = PyMongoClient(uri)
     return _mongo_client[MONGO_DB]["users"]
 
@@ -181,9 +175,6 @@ def _decode_keycloak_claims(token: str) -> Dict[str, Any]:
     if not keycloak_issuer:
         raise ValueError("KEYCLOAK_ISSUER is not configured")
 
-    print(f"{keycloak_issuer.rstrip('/')}/protocol/openid-connect/certs",)
-    print(keycloak_issuer.rstrip("/"))
-
     return decode_keycloak_token(
         token,
         issuer=keycloak_issuer.rstrip("/"),
@@ -253,8 +244,6 @@ def set_auto_login_session(request):
         # calling negotiation-api during login/session setup.
         claims = _decode_keycloak_claims(token)
 
-        print("\n claims", claims)
-
         user = _resolve_local_session_user_from_claims(claims)
 
         # Save in session
@@ -278,9 +267,6 @@ def signin(request):
             or request.POST.get("email")
         )
         password = request.POST.get("password")
-
-        print("\n\nidentifier (username or email: )", identifier)
-        print("\n\npassword: ", password)
 
         if not identifier or not password:
             messages.error(request, "Please enter both username/email and password.")
@@ -309,9 +295,7 @@ def signin(request):
             # Keycloak access token directly instead of asking negotiation-api
             # to mint an internal JWT.
             response = requests.post(token_url, data=data, timeout=10)
-            print(f"Response status code: {response.status_code}")
-            print(f"Response content: {response.content}")
-        except requests.RequestException as e:
+        except requests.RequestException:
             messages.error(request, "Login service is unavailable. Please try again later.")
             return redirect("login")
 
@@ -324,19 +308,8 @@ def signin(request):
 
             try:
 
-                unverified = jwt.decode(
-                    access_token,
-                    options={"verify_signature": False, "verify_aud": False},
-                )
-                print("EXPECTED_ISSUER =", settings.KEYCLOAK_ISSUER.rstrip("/"))
-                print("TOKEN_ISSUER    =", str(unverified.get("iss", "")).rstrip("/"))
-                print("TOKEN_AUD       =", unverified.get("aud"))
-                print("TOKEN_AZP       =", unverified.get("azp"))
-
-
                 claims = _decode_keycloak_claims(access_token)
                 user = _resolve_local_session_user_from_claims(claims)
-                print("user:", user)
             except Exception as exc:
                 logger.error("Keycloak login succeeded but local user resolution failed: %s", exc)
                 messages.error(request, "Login succeeded, but the user is not authorized in Negotiation-Tool.")
@@ -607,17 +580,17 @@ def ajax_get_properties_from_properties_file(request):
 
 
 def ajax_get_fields_from_datasets(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            dataset = data.get("uri")
-            fields = get_fields_from_datasets(dataset)
-            res = 200
-            # res = _fetch_valid_status(odrl)
-            return JsonResponse({"fields": fields})
-        except BaseException as b:
-            print("The error response from get_fields_from_datasets is " + str(b));
-            return b
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        dataset = data.get("uri")
+        fields = get_fields_from_datasets(dataset)
+        return JsonResponse({"fields": fields})
+    except Exception as b:
+        logger.warning("Unable to get dataset fields: %s", b)
+        return JsonResponse({"error": str(b)}, status=400)
 
 
 def ajax_get_properties_of_a_class(request):
@@ -671,12 +644,12 @@ def negotiation(request):
             request.session["user_type"] = user.get("type")
             request.session["is_sso"] = False
             request.session["claims"] = claims
-            print(f"✅ Session updated from URL parameters for user {user.get('id')}")
+            print(f"Session updated from URL parameters for user {user.get('id')}")
             token = url_token
             user_id = user.get("id")
             user_type = user.get("type")
         except Exception as e:
-            print(f"❌ Error verifying token: {e}")
+            print(f"Error verifying token: {e}")
             return _handle_expired_session(request)
     else:
         # Fallback to session
@@ -714,8 +687,6 @@ def negotiation(request):
         "user-id": user_id
     }
 
-    print(f'Negotiation API headers: {headers}')
-
     negotiations_url = f"{API_BASE_URL}/negotiation"
     offers_url = f"{API_BASE_URL}/consumer/offer"
 
@@ -734,7 +705,13 @@ def negotiation(request):
 
     try:
         offers_res = requests.get(offers_url, headers=headers)
-        offers = offers_res.json()
+        if offers_res.status_code == 404:
+            offers = []
+        else:
+            offers_res.raise_for_status()
+            offers = offers_res.json()
+        if not isinstance(offers, list) or not all(isinstance(offer, dict) for offer in offers):
+            raise ValueError("Negotiation API returned an invalid offers response")
         offers = [{"id": d.pop("_id"), **d} if "_id" in d else d for d in offers]
         filtered_offers = [
             offer for offer in offers
@@ -767,11 +744,8 @@ def get_negotiations(request):
 
     # Ensure user is authenticated via token in session
     token = request.session.get("access_token")
-    print(f"Token from session: {token}")
     user_id = request.session.get("user_id")
-    print(f"User ID from session: {user_id}")
     user_type = request.session.get("user_type")
-    print(f"User Type from session: {user_type}")
 
     # Construct API endpoint URL for fetching all negotiations
     negotiations_url = f"{API_BASE_URL}/negotiation"
@@ -1068,6 +1042,7 @@ def update_policy(request):
 #
 @keycloak_login_required
 def create_policy(request):
+    request_started = time.perf_counter()
     # negotiation_id = request.headers.get("negotiationid")
     # print(f'Negotiation ID: {negotiation_id}')
 
@@ -1124,8 +1099,6 @@ def create_policy(request):
         "previous-policy-id": policy_id
     }
 
-    print(f'\n\nHeaders: {headers}')
-
     if type == "request":
         api_endpoint = "/consumer/request/new"
         policy["consumer_id"] = user_id
@@ -1140,8 +1113,10 @@ def create_policy(request):
     try:
 
         # Make POST request to the API
+        api_started = time.perf_counter()
         response = requests.post(api_url, json=policy, headers=headers)
         response.raise_for_status()  # Raise exception for HTTP errors
+        logger.info("Create-policy negotiation API call took %.3f seconds", time.perf_counter() - api_started)
 
         # Parse JSON response
         api_response = response.json()
@@ -1150,13 +1125,19 @@ def create_policy(request):
         print(response.status_code)
 
         try:
+            contract_update_started = time.perf_counter()
             _update_contract_if_present(policy, api_response, access_token=token)
+            logger.info(
+                "Create-policy final contract update took %.3f seconds",
+                time.perf_counter() - contract_update_started,
+            )
         except Exception as exc:
             return JsonResponse(
                 {"error": "Failed to update contract", "details": str(exc)},
                 status=502
             )
 
+        logger.info("Create-policy request took %.3f seconds", time.perf_counter() - request_started)
         return JsonResponse(api_response)
 
     except requests.exceptions.RequestException as e:
@@ -1563,11 +1544,9 @@ def updatenegotiation(request):
     }
 
     # Extract request body data
-    data = request.POST  # If you're sending data via POST form data
     data = json.loads(request.body)
     # Or
     # data = json.loads(request.body)  # If you're sending data via JSON
-    party, action, negotiation_id = "", "", ""
     # Construct URL
     base_url = f"{API_BASE_URL}"
     if data["action"] == "terminate":
@@ -1743,11 +1722,19 @@ def gather_agreement_inputs(request):
     summarize rules (convert each ODRL to natural language description), and return a JSON response.
     """
 
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
     negotiation_id = request.headers.get("negotiationid")
     policy_type = request.headers.get("type")  # e.g. "request"
     policy_id = request.headers.get("policyid")
 
-    payload = json.loads(request.body)
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    if not isinstance(payload, dict):
+        return JsonResponse({"error": "JSON body must be an object"}, status=400)
 
     removed_custom_clauses = {
         str(key) for key in (payload.get("custom_arrangement_removed") or []) if key
@@ -1814,10 +1801,19 @@ def gather_agreement_inputs(request):
     odrl_policy = payload.get("odrl_policy", {}).get("odrl", {})
 
     # to call APIs get description and definitions
-    extract_res = contract_service_interface.get_des_by_odrl_translation(odrl)
+    try:
+        extract_res = contract_service_interface.get_des_by_odrl_translation(odrl)
+    except Exception as exc:
+        status_code = getattr(exc, "status_code", None)
+        if status_code is None:
+            raise
+        detail = getattr(exc, "detail", str(exc))
+        return JsonResponse({"error": detail}, status=status_code)
 
     rule_summary = extract_res.get("odrl_des")
     definitions = extract_res.get("definitions")
+    if not isinstance(rule_summary, dict) or not isinstance(definitions, dict):
+        return JsonResponse({"error": "Agreement API returned invalid translation data"}, status=502)
 
     custom_definitions = {}
     for key, items in payload.get("custom_definitions_section", {}).items():
@@ -1922,6 +1918,9 @@ def gather_agreement_inputs(request):
 @keycloak_login_required
 def generate_legal_agreement(request):
     print("to call API generating a contract!")
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
     # parse JSON
     try:
         token = request.session.get("access_token")
@@ -1932,6 +1931,8 @@ def generate_legal_agreement(request):
         body = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
+    if not isinstance(body, dict):
+        return JsonResponse({"error": "JSON body must be an object"}, status=400)
 
     negotiation_id = request.headers.get("negotiationid", "")
     body.setdefault("client_optional_info", {})["type"] = request.headers.get("type")
@@ -1950,8 +1951,12 @@ def generate_legal_agreement(request):
         # Keep session baseline for backward-compat UI flows; client will send it back explicitly.
         request.session["agreement_payload_current"] = agreement_payload
 
-    except requests.exceptions.RequestException as exc:
-        raise RuntimeError(f"Agreement API error: {exc}")
+    except Exception as exc:
+        status_code = getattr(exc, "status_code", None)
+        if status_code is None:
+            raise
+        detail = getattr(exc, "detail", str(exc))
+        return JsonResponse({"error": detail}, status=status_code)
 
     def serialize_payload(value):
         try:
@@ -1994,561 +1999,6 @@ async def download_contract(request):
     response["Content-Disposition"] = f'attachment; filename="negotiation_agreement_{negotiation_id}.pdf"'
     return response
 
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def ajax_use_case_ontology_classes(request):
-#     selected_option = request.GET.get("selected_option")
-#     # ontology = read_ontology(selected_option, None)
-
-#     ontology_classes = use_case_ontology_classes(selected_option)
-#     return JsonResponse({"ontology_classes": ontology_classes})
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def submit_consent_form(request):
-#     response = json.loads(request.body)
-#     ConsentRequest.create(response)
-#     return JsonResponse(response)
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATA_PROVIDER")
-# def userdataprofile(request):
-#     data_subject_data_list = DataSubjectData.objects.filter(
-#         consent_given_by=request.user.id, consent_revoked_date__isnull=True
-#     ).values_list("data_subject_data", flat=True)
-#     context = {"sensors": SensorData.objects.all(), "consents": data_subject_data_list}
-#     return render(request, "users/user-sensor-data-profile.html", context=context)
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATA_PROVIDER")
-# def saveconsent(request):
-#     """
-#     This function is used to save the user or the data subject information regarding
-#     the sensors or the data that data subject has.
-#     """
-#     if request.method == "POST":
-#         selected_sensors = request.POST.getlist("sensor")
-#         for s in selected_sensors:
-#             # Data you want to insert or update
-#             data = {
-#                 "data_subject_data": s,
-#                 "consent_status": True,
-#                 "consent_given_date": date.today(),
-#                 "consent_given_by": request.user.id,
-#                 "consent_revoked_date": None,
-#             }
-
-#             # Try to get a record that matches 'data_subject_data' and 'consent_given_by'
-#             # If it doesn't exist, create a new one
-#             data_subject, created = DataSubjectData.objects.get_or_create(
-#                 data_subject_data=data["data_subject_data"],
-#                 consent_given_by=data["consent_given_by"],
-#                 defaults=data,
-#             )
-
-#             # If the record already existed, update it with the new data
-#             if not created:
-#                 DataSubjectData.objects.filter(id=data_subject.id).update(**data)
-
-#         # Update the records that are not in the 'sensors_to_keep' list
-#         DataSubjectData.objects.exclude(data_subject_data__in=selected_sensors).update(
-#             consent_status=False, consent_revoked_date=date.today()
-#         )
-#     #        messages.success(request, "Consent Updated!")
-#     return redirect("userdataprofile")
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def get_purpose_processing_data_ajax(request):
-#     if request.method == "POST":
-#         request_data = json.loads(request.body)  # request.POST
-#         from owlready2 import World
-
-#         purposeprocessingworld = World()
-#         dataworld = World()
-#         try:
-#             dataschema_ontology = read_ontology(
-#                 request_data["selectedOntology"]["data_schema_ontology"], dataworld
-#             )
-#             default_ontology = read_ontology(
-#                 request_data["selectedOntology"]["default_ontology"]
-#             )
-#             domain_ontology = read_ontology(
-#                 request_data["selectedOntology"]["domain_ontology"],
-#                 purposeprocessingworld,
-#             )
-
-#             if request_data["type"] == "purposeprocessing":
-#                 fetched_data_source_ontology_data = ontology_data_to_dict_tree(
-#                     dataschema_ontology,
-#                     root="datasource",
-#                     class_first_name="datasource",
-#                     class_second_name=None,
-#                 )
-
-#                 fetched_data_processing_default_ontology = ontology_data_to_dict_tree(
-#                     default_ontology,
-#                     root="processing",
-#                     class_first_name="processing",
-#                     class_second_name=None,
-#                 )
-#                 fetched_data_processing_domain_ontology = ontology_data_to_dict_tree(
-#                     domain_ontology,
-#                     root="processing",
-#                     class_first_name="processing",
-#                     class_second_name=None,
-#                 )
-#                 combined_processing_operations = merge_dictionaries(
-#                     fetched_data_processing_default_ontology,
-#                     fetched_data_processing_domain_ontology,
-#                 )
-#                 fetched_data_purpose_default_ontology = ontology_data_to_dict_tree(
-#                     default_ontology,
-#                     root="purpose",
-#                     class_first_name="purpose",
-#                     class_second_name=None,
-#                 )
-
-#                 fetched_data_purpose_domain_ontology = ontology_data_to_dict_tree(
-#                     domain_ontology,
-#                     root="purpose",
-#                     class_first_name="purpose",
-#                     class_second_name=None,
-#                 )
-
-#                 combined_purposes = merge_dictionaries(
-#                     fetched_data_purpose_default_ontology,
-#                     fetched_data_purpose_domain_ontology,
-#                 )
-
-#             fetched_data = {
-#                 "processing": combined_processing_operations,
-#                 "purpose": combined_purposes,
-#                 "datasource": fetched_data_source_ontology_data,
-#             }
-#             return JsonResponse({"data": fetched_data})
-#         except Exception as e:
-#             print(
-#                 f"Issue with ontology. Cannot read. Please select different ontology. Error: {e}."
-#             )
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def uploadontology(request):
-#     if request.method == "POST":
-#         name = request.POST.get("name")
-#         file = request.FILES.get("ontologyfile")
-#         ontology_type = request.POST.get("ontologytype")
-#         print(f"file is ={file}")
-
-#         if len(name) < 4 or len(name) > 20:
-#             messages.error(
-#                 request, "Ontology name should be between 4 and 50 charcters."
-#             )
-#             return redirect("uploadontology")
-
-#         if file is None:
-#             messages.error(
-#                 request, "You must upload an ontology file in an owl or rdf format."
-#             )
-#             return redirect("uploadontology")
-
-#         if not (str(file).endswith(".owl") or str(file).endswith(".rdf")):
-#             messages.error(request, "You can only upload an owl or rdf file.")
-#             return redirect("uploadontology")
-
-#         savedata = OntologyUpload()
-#         savedata.name = name
-#         savedata.ontology_type = ontology_type
-#         savedata.created_by = request.user
-#         savedata.file = file
-#         savedata.save()
-
-#         """
-#         Read the ontology and convert it to a dictionary tree"""
-#         if ontology_type == "DATA_SCHEMA":
-#             dataschema_ontology = read_ontology(str(savedata.file))
-#             data_sources = ontology_data_to_dict_tree(
-#                 dataschema_ontology,
-#                 root="datasource",
-#                 class_first_name="datasource",
-#                 class_second_name=None,
-#             )
-#             data_list = convert_to_list(data_sources)
-
-#             for item in data_list:
-#                 if not SensorData.objects.filter(sensor_data=item).exists():
-#                     # Data does not exist, insert it
-#                     SensorData.objects.create(sensor_data=item)
-#                 else:
-#                     # Data already exists, do nothing
-#                     pass
-
-#         messages.success(request, "File uploaded.")
-#         return redirect("uploadontology")
-
-#     return render(request, "admin_organization/ontology_upload.html")
-
-# def create_rule_dataset_no_user(request):
-#     rules = get_rules_from_odrl("./media/default_ontology/ODRL22.rdf")
-#     actors = get_actors_from_dpv("./media/default_ontology/dpv.rdf")
-#     actions = get_actions_from_odrl("./media/default_ontology/ODRL22.rdf")
-#     targets = get_dataset_titles_and_uris("./media/default_ontology/Datasets.ttl")
-#     constraints = get_constraints_types_from_odrl("./media/default_ontology/ODRL22.rdf")
-#     purposes = get_purposes_from_dpv("./media/default_ontology/dpv.rdf")
-#     operators = get_operators_from_odrl("./media/default_ontology/ODRL22.rdf")
-
-#     rules.append({"label": "Obligation", "uri": "http://www.w3.org/ns/odrl/2/Obligation"})
-
-#     context = {
-#         "rules": rules,
-#         "actors": actors,
-#         "actions": actions,
-#         "targets": targets,
-#         "constraints": constraints,
-#         "operators": operators,
-#         "purposes": purposes,
-#     }
-#     return render(request, "../templates/policy/policy.html", context=context)
-
-# def extract_logic_expressions_page(request):
-
-#     return render(request, "../templates/policy/logic.html")
-
-# def extract_logic_expressions(request):
-#     translator = LogicTranslator()
-#     incoming_request = translator.odrl.parse_list(json.loads(str(request.body, "UTF")))
-#     print (incoming_request)
-#     result = translator.translate_policy(incoming_request)
-#     # return JsonResponse({"logic_expression":result})
-
-
-# return JsonResponse(
-#     {
-#         "logic_expression": result
-#     }
-# )
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def viewontology(request):
-#     ontologies = OntologyUpload.objects.filter(created_by=request.user)
-#     if ontologies.exists():
-#         print("ontologies exists")
-#     context = {"ontologies": ontologies}
-#     return render(request, "admin_organization/view_ontology.html", context=context)
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def deleteconsentrequestform(request, consentform_id):
-#     """
-#     This function is used to delete the consent request form. However, it is important to note that we are not deleting the forms, just deactivating it.
-#     The reason for this is that later for the audit purpose, we need to keep the record of the consent request form.
-#     :param request:
-#     :param consentform_id: form id
-#     :return:
-#     """
-#     try:
-#         consentform = ConsentRequest.objects.get(id=consentform_id)
-#         consentform.consent_form_delete_status = "DELETED"
-#         consentform.save()
-#         return redirect("datacontrollerconfiguredprivacylists")
-#     except Exception as e:
-#         return HttpResponseServerError(f"Error.{consentform_id, request.user, e}")
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def deleteontology(request, ontology_id):
-#     try:
-#         ontology = OntologyUpload.objects.get(pk=ontology_id, created_by=request.user)
-#         # Get the file path from the model instance
-#         file_path = ontology.file
-#         print(f"file path is {file_path}, type is {type(file_path)} ")
-#         # Delete the file from db
-#         ontology.delete()
-#         # delete file from storage
-#         try:
-#             os.remove(os.path.join(settings.MEDIA_ROOT, str(file_path)))
-#         except OSError as e:
-#             HttpResponseServerError(f"Error deleting file: {e}")
-#         messages.success(request, "Ontology deleted.")
-#         return redirect("viewontology")
-#     except ObjectDoesNotExist:
-#         return HttpResponseServerError("Ontology does not exist.")
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def configuredprivacylists(request):
-#     consent_request_form = ConsentRequest.objects.filter(
-#         consent_requested_by=request.user, consent_form_delete_status="ACTIVE"
-#     )
-#     context = {"consentforms": consent_request_form, "users": get_all_users()}
-#     return render(
-#         request,
-#         "admin_organization/configured-sent-consents-rule.html",
-#         context=context,
-#     )
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def send_consent_to_selected_user(request):
-#     if request.method == "POST":
-#         try:
-#             request_data = json.loads(request.body)
-#             consentform = ConsentRequest.objects.get(id=request_data["consentform"])
-
-#             requested_data_from_controller = consentform.consent_data
-#             requested_data_from_controller = requested_data_from_controller.strip("[]")
-#             # Split the string by commas and remove extra spaces
-#             requested_data_from_controller_list = [
-#                 s.strip() for s in requested_data_from_controller.split(",")
-#             ]
-#             fixed_list_requested_data_from_controller = [
-#                 s.strip("'") for s in requested_data_from_controller_list
-#             ]
-#             # peform the data checks with the user and the consent request form
-#             success_usr = 0
-#             for user in request_data["selected_users"]:
-#                 data_subject_data_list = list(
-#                     DataSubjectData.objects.filter(
-#                         consent_given_by=user, consent_revoked_date__isnull=True
-#                     ).values_list("data_subject_data", flat=True)
-#                 )
-
-#                 does_data_match = match_user_data_with_controller_request_data(
-#                     data_subject_data_list, fixed_list_requested_data_from_controller
-#                 )
-#                 print("+" * 100)
-#                 print("does_data_match", does_data_match)
-#                 print("+" * 100)
-#                 if (
-#                     does_data_match
-#                 ):  # if the data matches, then send the consent request form to the user
-#                     ConsentRequestFormSendToUser.objects.create(
-#                         consent_requestform=ConsentRequest.objects.get(
-#                             id=request_data["consentform"]
-#                         ),
-#                         consent_request_form_sent_to=User.objects.get(id=user),
-#                         consent_answer_status="REQUESTED",
-#                         consent_given_status="Requested",
-#                         additional_constraints={},
-#                     )
-#                     success_usr += 1
-
-#                 # update the consent request form status
-#                 consentform = ConsentRequest.objects.get(id=request_data["consentform"])
-#                 consentform.consent_request_sent_status = "SENT"
-#                 consentform.save()
-
-#             if success_usr > 0:
-#                 return JsonResponse(
-#                     {
-#                         "success": True,
-#                         "message": f"Consent request sent to {success_usr}/{len(request_data['selected_users'])} the selected user(s).",
-#                     }
-#                 )
-#             else:
-#                 return JsonResponse(
-#                     {
-#                         "success": False,
-#                         "message": "Consent request cannot be sent. Reason: The requested data from the controller do not match with the available users data.",
-#                     }
-#                 )
-
-#         except Exception as b:
-#             return b
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def view_consent_form(request, consent_form_id):
-#     consentform = ConsentRequest.objects.get(id=consent_form_id)
-#     return render(
-#         request,
-#         "admin_organization/view-consent-form.html",
-#         {"consentform": consentform},
-#     )
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATA_PROVIDER")
-# def view_consent_request_user(request):
-#     consent_request = ConsentRequestFormSendToUser.objects.filter(
-#         consent_request_form_sent_to=request.user
-#     )
-#     context = {"consent_requests": consent_request}
-
-#     return render(request, "users/consent-request.html", context=context)
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATA_PROVIDER")
-# def view_consent_request_user_single(request, consent_request_id):
-#     consent_request = ConsentRequestFormSendToUser.objects.get(id=consent_request_id)
-#     custom_restrictions = consent_request.consent_requestform.additional_requests
-#     consent_given_status = consent_request.consent_given_status
-#     consent_additional_permission_status = consent_request.additional_constraints
-#     if consent_given_status == "Requested":
-#         list_of_rules = sentence_rule_permission_status(custom_restrictions)
-#     else:
-#         list_of_rules = sentence_rule_permission_status_revoke(
-#             consent_additional_permission_status
-#         )
-
-#     if consent_request.consent_answer_status == "REVOKED":
-#         return render(
-#             request,
-#             "users/consent-view-response-revoke.html",
-#             {
-#                 "consent_request": consent_request,
-#                 "custom_restrictions": list_of_rules,
-#                 "has_custom_restrictions": len(list_of_rules),
-#             },
-#         )
-#     elif (
-#         consent_request.consent_answer_status == "RESPONDED"
-#         and consent_given_status == "NotGiven"
-#     ):
-#         return render(
-#             request,
-#             "users/consent-view-response-revoke.html",
-#             {
-#                 "consent_request": consent_request,
-#                 "custom_restrictions": list_of_rules,
-#                 "has_custom_restrictions": len(list_of_rules),
-#             },
-#         )
-
-#     else:
-#         return render(
-#             request,
-#             "users/consent-request-single.html",
-#             {
-#                 "consent_request": consent_request,
-#                 "custom_restrictions": list_of_rules,
-#                 "has_custom_restrictions": len(list_of_rules),
-#             },
-#         )
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATA_PROVIDER")
-# def save_user_consent_response_data(request):
-#     if request.method == "POST":
-#         response = json.loads(request.body)
-#         consent_request_form_id = ConsentRequestFormSendToUser.objects.get(
-#             id=response["consent_requestform_id"]
-#         )
-#         consenting_user = request.user
-#         dataprocessor_controller = User.objects.get(
-#             id=response["data_processor_controller_id"]
-#         )
-#         # to update to responsed
-#         changeformstatusresponse = ConsentRequestFormSendToUser.objects.get(
-#             id=response["consent_requestform_id"],
-#             consent_request_form_sent_to=consenting_user,
-#         )
-
-#         if (
-#             changeformstatusresponse.consent_given_status == "Requested"
-#             and changeformstatusresponse.consent_answer_status == "REQUESTED"
-#         ):
-#             changeformstatusresponse.consent_answer_status = "RESPONDED"
-#         if (
-#             changeformstatusresponse.consent_given_status == "Given"
-#             and response["consentwithadditioalconstraintsresponse"]["consent"][
-#                 "consentgivenstatus"
-#             ]
-#             == "NotGiven"
-#         ):
-#             changeformstatusresponse.consent_answer_status = "REVOKED"
-#             # update ODRL response
-#             updateODRL = ConsentRequestFormResponseODRL.objects.get(
-#                 consentrequestsendtouserformid=consent_request_form_id,
-#                 data_controller_processor_id=dataprocessor_controller,
-#                 consented_by_user=request.user,
-#             )
-
-#             updateODRL.odrl_consent_additional_constraints = (
-#                 convert_user_consent_to_odrl(
-#                     response["consentwithadditioalconstraintsresponse"]
-#                 )
-#             )
-#             updateODRL.save()
-
-#         else:
-#             # new respose so crete a new one
-#             ConsentRequestFormResponseODRL.objects.create(
-#                 odrl_consent_additional_constraints=convert_user_consent_to_odrl(
-#                     response["consentwithadditioalconstraintsresponse"]
-#                 ),
-#                 data_controller_processor_id=dataprocessor_controller,
-#                 consentrequestsendtouserformid=consent_request_form_id,
-#                 consented_by_user=request.user,
-#             )
-
-#         changeformstatusresponse.additional_constraints = response[
-#             "consentwithadditioalconstraintsresponse"
-#         ]["additional_constraints"]
-#         changeformstatusresponse.consent_given_status = response[
-#             "consentwithadditioalconstraintsresponse"
-#         ]["consent"]["consentgivenstatus"]
-
-
-#         changeformstatusresponse.save()
-
-#         return JsonResponse({"success": True, "message": "Consent response saved."})
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def view_responses_controller_processor_odrl(request):
-#     odrl_responses = ConsentRequestFormResponseODRL.objects.filter(
-#         data_controller_processor_id=request.user
-#     )
-#     return render(
-#         request,
-#         "admin_organization/view-odrl-response-list.html",
-#         {"odrl_responses": odrl_responses},
-#     )
-
-
-# @login_required(login_url="login")
-# @user_passes_test(lambda u: u.role == "DATACONTROLLER_PROCESSOR")
-# def view_responses_controller_processor_odrl_single(request, odrl_id):
-#     odrl_response = ConsentRequestFormResponseODRL.objects.get(id=odrl_id)
-#     pretty_json = json.dumps(
-#         odrl_response.odrl_consent_additional_constraints, indent=2
-#     )
-#     return render(
-#         request,
-#         "admin_organization/odrl-single.html",
-#         {"odrl_response": odrl_response, "pretty_json": pretty_json},
-#     )
-
-
-###policy editor views###
-
-def ajax_get_properties_from_properties_file(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            uri = data.get("uri")
-            fields = get_properties_of_a_class(uri)
-            return JsonResponse({"fields": fields}, status=200)
-        except BaseException as e:
-            return JsonResponse({"error": str(e)}, status=400)
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 ###Recommender agent views###

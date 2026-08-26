@@ -2,7 +2,6 @@ import logging
 from typing import Any, Dict, List, Optional
 
 import jwt
-import requests
 from fastapi import HTTPException, status
 from jwt import PyJWKClient
 
