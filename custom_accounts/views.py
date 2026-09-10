@@ -307,7 +307,7 @@ def signin(request):
                 return redirect("login")
 
             try:
-
+                logging.info(f"\n\n access_token: {access_token}")
                 claims = _decode_keycloak_claims(access_token)
                 user = _resolve_local_session_user_from_claims(claims)
             except Exception as exc:
@@ -322,6 +322,7 @@ def signin(request):
             except Exception:
                 pass
             request.session["access_token"] = access_token
+            logging.info(f"\n\n access_token: {access_token}")
             request.session["refresh_token"] = resp_data.get("refresh_token")
             request.session["user_id"] = user.get("id")
             request.session["user_type"] = user.get("type")
