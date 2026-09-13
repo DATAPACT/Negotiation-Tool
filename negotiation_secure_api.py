@@ -50,11 +50,17 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-# Load environment variables from .env file
-root_path = "/negotiation-api"
+# Load environment variables before deriving deployment-specific paths.
+load_dotenv(dotenv_path=".env")
+compose_project_name = os.getenv("COMPOSE_PROJECT_NAME", "").strip().strip("/")
+root_path = (
+    f"/{compose_project_name}/negotiation-api"
+    if compose_project_name
+    else "/negotiation-api"
+)
 app = FastAPI(
     title="Negotiation Plugin API",
-    description="UPCAST Negotiation Plugin API",
+    description="DIPS Negotiation Plugin API",
     version="1.0",
     root_path=root_path
 )
@@ -78,9 +84,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load environment variables from .env file
-load_dotenv(dotenv_path=".env")
-
 KEYCLOAK_ISSUER = os.getenv("KEYCLOAK_ISSUER", "").rstrip("/")
 KEYCLOAK_JWKS_URL = os.getenv("KEYCLOAK_JWKS_URL") or (
     f"{KEYCLOAK_ISSUER}/protocol/openid-connect/certs" if KEYCLOAK_ISSUER else ""
@@ -96,7 +99,7 @@ KEYCLOAK_LOGOUT_URL = os.getenv("KEYCLOAK_LOGOUT_URL") or (
 )
 # Swagger UI works more reliably when it posts credentials to a local endpoint
 # that can inject Keycloak client settings such as client_id/client_secret.
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=root_path + "/user/login/")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login/")
 
 # Define Kafka broker configuration
 # kafka_conf = {
