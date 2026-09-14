@@ -850,6 +850,7 @@ async def create_upcast_negotiation(current_user: User = Depends(verify_access_t
         print("negotiation_status_type", negotiation_status_type)
         negotiation = UpcastNegotiationObject(
             user_id=ObjectId(current_user.id),
+            title=body.title,
             consumer_id=ObjectId(consumer["_id"]),
             provider_id=ObjectId(provider["_id"]),
             negotiation_status=negotiation_status_type,
