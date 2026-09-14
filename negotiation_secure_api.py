@@ -788,6 +788,14 @@ async def create_upcast_negotiation(current_user: User = Depends(verify_access_t
                                     body: UpcastPolicyObject = Body(..., description="The request object")
                                     ):
     try:
+        if body.type is None:
+            body.type = PolicyType.REQUEST.value
+        elif body.type not in (PolicyType.OFFER.value, PolicyType.REQUEST.value):
+            raise HTTPException(
+                status_code=400,
+                detail="type must be either 'offer' or 'request'",
+            )
+
         conflict_status = "no conflict"
 
         # Retrieve consumer and provider objects from users_collection
@@ -800,7 +808,8 @@ async def create_upcast_negotiation(current_user: User = Depends(verify_access_t
         # Normalise ODRL payload before persistence
         body = odrl_convertor(body)
 
-        body.type = PolicyType.REQUEST.value
+        # body.type = PolicyType.REQUEST.value
+
         # Save the offer to MongoDB
 
         body.consumer_id = ObjectId(str(body.consumer_id))
@@ -831,12 +840,19 @@ async def create_upcast_negotiation(current_user: User = Depends(verify_access_t
                 body.natural_language_document = contract_text
         except Exception as contract_exc:
             print(f"Failed to generate contract for negotiation {negotiation_id}: {contract_exc}")
+        negotiation_status_type = body.type
+        print("negotiation_status_type", body.type)
+        if negotiation_status_type == PolicyType.OFFER.value:
+            negotiation_status_type = NegotiationStatus.OFFERED
+        else:
+            negotiation_status_type = NegotiationStatus.REQUESTED
 
+        print("negotiation_status_type", negotiation_status_type)
         negotiation = UpcastNegotiationObject(
             user_id=ObjectId(current_user.id),
             consumer_id=ObjectId(consumer["_id"]),
             provider_id=ObjectId(provider["_id"]),
-            negotiation_status=NegotiationStatus.REQUESTED,
+            negotiation_status=negotiation_status_type,
             resource_description=body.resource_description_object.dict(),
             dpw=body.data_processing_workflow_object,
             nlp=body.natural_language_document,
